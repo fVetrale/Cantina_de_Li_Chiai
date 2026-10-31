@@ -11,8 +11,8 @@
 ## 🟡 Fase 2: Sviluppo Backend Core
 - [x] Creazione utente Admin Medusa (tramite CLI)
 - [x] Configurazione CORS per Admin e Storefront nei file `.env`
-- [ ] Seed del database con prodotti fittizi (es. 2-3 bottiglie di vino di test)
-- [ ] Test di avvio del backend (`pnpm run dev`) e accesso API
+- [x] Seed del database con prodotti fittizi (es. 2-3 bottiglie di vino di test)
+- [x] Test di avvio del backend (`pnpm run dev`) e accesso API
 
 ## 🟠 Fase 3: Moduli Custom & Sicurezza Backend
 - [ ] Setup integrazione Stripe (modulo `@medusajs/payment-stripe`)
