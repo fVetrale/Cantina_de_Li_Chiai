@@ -1,0 +1,34 @@
+{
+  "name": "@winery/backend",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Winery e-commerce backend — Medusa v2 headless commerce engine",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "medusa develop",
+    "build": "medusa build",
+    "start": "medusa start",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "db:generate": "medusa db:generate",
+    "db:migrate": "medusa db:migrate",
+    "clean": "rm -rf .medusa dist"
+  },
+  "dependencies": {
+    "@medusajs/cli": "^2.0.0",
+    "@medusajs/framework": "^2.0.0",
+    "@medusajs/medusa": "^2.0.0",
+    "dotenv": "^16.4.5",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

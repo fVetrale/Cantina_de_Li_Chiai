@@ -1,0 +1,46 @@
+# Local development infrastructure — PostgreSQL + Redis
+# Ports are bound to 127.0.0.1 to prevent exposure on the local network.
+#
+# Credentials below are for LOCAL DEVELOPMENT ONLY and are not secrets.
+# Production credentials must never appear here; use your secrets manager.
+
+name: cantina-de-li-chiai
+
+services:
+
+  # ── PostgreSQL 16 ─────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: winery_dev
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d winery_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis 7 ───────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ── Named volumes (data persisted across restarts) ──────────────────────────
+volumes:
+  pg_data:
+  redis_data:
