@@ -18,7 +18,9 @@
     "clean": "rm -rf .medusa dist"
   },
   "dependencies": {
+    "@medusajs/cache-redis": "^2.0.0",
     "@medusajs/cli": "^2.0.0",
+    "@medusajs/event-bus-redis": "^2.0.0",
     "@medusajs/framework": "^2.0.0",
     "@medusajs/medusa": "^2.0.0",
     "dotenv": "^16.4.5",

@@ -15,10 +15,9 @@ export default defineConfig({
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
-      authCors:  process.env.AUTH_CORS!,
-      jwtSecret:    process.env.JWT_SECRET!,
+      authCors: process.env.AUTH_CORS!,
+      jwtSecret: process.env.JWT_SECRET!,
       cookieSecret: process.env.COOKIE_SECRET!,
-      port: parseInt(process.env.PORT ?? "9000", 10),
     },
   },
 
