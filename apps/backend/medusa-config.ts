@@ -26,8 +26,19 @@ export default defineConfig({
     backendUrl: process.env.MEDUSA_BACKEND_URL,
   },
 
-  // ── Custom modules ───────────────────────────────────────────────────────
-  // Add domain modules here (e.g. Stripe plugin, custom workflows).
-  // Keep this list empty until a module is actually needed.
-  modules: [],
+  // ── Infrastructure modules (Redis) ──────────────────────────────────────
+  modules: [
+    {
+      resolve: "@medusajs/medusa/event-bus-redis",
+      options: {
+        redisUrl: process.env.REDIS_URL,
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/cache-redis",
+      options: {
+        redisUrl: process.env.REDIS_URL,
+      },
+    },
+  ],
 })

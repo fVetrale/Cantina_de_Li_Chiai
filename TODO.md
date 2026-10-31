@@ -9,8 +9,8 @@
 - [x] Esecuzione prime migrazioni Medusa e test connessione DB (`pnpm exec medusa db:migrate`)
 
 ## 🟡 Fase 2: Sviluppo Backend Core
-- [ ] Creazione utente Admin Medusa (tramite CLI)
-- [ ] Configurazione CORS per Admin e Storefront nei file `.env`
+- [x] Creazione utente Admin Medusa (tramite CLI)
+- [x] Configurazione CORS per Admin e Storefront nei file `.env`
 - [ ] Seed del database con prodotti fittizi (es. 2-3 bottiglie di vino di test)
 - [ ] Test di avvio del backend (`pnpm run dev`) e accesso API
 
@@ -21,7 +21,7 @@
 - [ ] Stesura ADR per moduli di pagamento e spedizione
 
 ## 🔵 Fase 4: Storefront Next.js
-- [ ] Inizializzazione applicazione Next.js in `apps/storefront`
+- [x] Inizializzazione applicazione Next.js in `apps/storefront`
 - [ ] Setup TailwindCSS e libreria componenti (es. shadcn/ui)
 - [ ] Integrazione Medusa JS Client per chiamate API sicure
 - [ ] Creazione UI: Home page e catalogo vini

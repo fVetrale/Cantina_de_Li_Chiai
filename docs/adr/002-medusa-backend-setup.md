@@ -38,8 +38,9 @@ Key architectural choices:
 1. **Configuration via environment variables only.** `medusa-config.ts` reads every secret and URL from `process.env`; no defaults are hardcoded. This prevents accidental secret leakage and allows environment parity between local, staging, and production.
 2. **PostgreSQL** as the primary data store (managed via Medusa's built-in MikroORM integration). All migrations are generated with `medusa db:generate` and reviewed before running.
 3. **Redis** for the event bus, job queue, and cache layer. This keeps slow operations (email, invoice generation, webhook delivery) out of the HTTP request cycle, consistent with `backend.md`.
-4. **pnpm hoisting for Medusa packages** via `apps/backend/.npmrc` (`public-hoist-pattern[]=*medusa*`). Medusa uses dynamic `require()` internally and cannot resolve packages in strict pnpm isolation without hoisting.
+4. **pnpm hoisting for Medusa packages** via root and package-level `.npmrc` (`public-hoist-pattern[]=*medusa*` and `public-hoist-pattern[]=*@mikro-orm*`). Medusa uses dynamic `require()` internally and requires package hoisting in pnpm virtual store layouts.
 5. **Modules list starts empty.** Custom domain modules (Stripe, age verification, shipping rules) are added in dedicated ADRs and feature branches. No speculative dependencies are pre-installed.
+6. **Admin Dashboard bundler dependencies.** The embedded Medusa Admin Dashboard (`@medusajs/dashboard`) is compiled via Vite. To resolve correctly in strict pnpm monorepos without phantom dependency failures, `react` and `react-dom` (`^18.3.1`) are declared as direct dependencies in `apps/backend`, with `@medusajs/admin-sdk` in devDependencies to support admin route extensions.
 
 ---
 
@@ -50,9 +51,10 @@ Key architectural choices:
 - The modular v2 architecture allows protected zones (`age-verification`, `payment-webhooks`, `auth`, `shipping-rules`) to remain fully human-controlled without touching core Medusa code.
 - Apache 2.0 license — no commercial restrictions.
 - TypeScript throughout enables end-to-end type sharing via `packages/shared`.
+- The Admin UI dashboard (`/app`) builds cleanly out of the box with Vite.
 
 **Trade-offs:**
 - Medusa v2 requires Node ≥ 20.19. All environments must be pinned accordingly.
-- `pg` (PostgreSQL driver) and `dotenv` are direct dependencies; they are well-maintained, MIT/BSD licensed, and have no known critical CVEs at the time of writing.
+- `pg` (PostgreSQL driver), `dotenv`, `react`, and `react-dom` are direct dependencies; they are well-maintained, standard open-source packages without known critical vulnerabilities.
 - pnpm hoisting for Medusa packages slightly relaxes strict isolation; the scope is intentionally limited to `*medusa*` and `*@mikro-orm*` patterns.
 - Medusa Admin UI is bundled but served separately; admin credentials must never be exposed to the browser via storefront code.
