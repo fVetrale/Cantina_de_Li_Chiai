@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Wine,
-  ShoppingBag,
+  ShoppingCart,
   Search,
   Menu,
   X,
@@ -314,17 +314,15 @@ export function Navbar({
             )}
           </div>
 
-          {/* Floating Cart Bubble */}
+          {/* Cart Icon Button (Simbolo Carrello compatto con badge) */}
           <Link
             href="/#catalog"
-            className="flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-[#521521] hover:bg-[#681c2b] border border-gold-400/50 shadow-lg text-white group transition-all duration-200 hover:scale-105 active:scale-95"
-            aria-label={dict.nav.cart}
+            className="relative flex items-center justify-center p-2 rounded-full text-gold-300 hover:text-white hover:bg-white/10 transition-colors shrink-0 active:scale-95 group"
+            aria-label={`${dict.nav.cart} (€ ${formattedTotal})`}
+            title={`${dict.nav.cart} (€ ${formattedTotal})`}
           >
-            <ShoppingBag className="w-4 h-4 text-gold-300 group-hover:scale-110 transition-transform" />
-            <span className="text-xs font-bold text-gold-200 hidden sm:inline">
-              € {formattedTotal}
-            </span>
-            <span className="w-4 h-4 rounded-full bg-gold-400 text-wine-950 font-bold text-[10px] flex items-center justify-center">
+            <ShoppingCart className="w-4.5 h-4.5 text-gold-300 group-hover:scale-110 transition-transform" />
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gold-400 text-wine-950 font-extrabold text-[9px] flex items-center justify-center shadow">
               {cartCount}
             </span>
           </Link>
