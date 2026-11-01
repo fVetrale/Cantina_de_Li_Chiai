@@ -22,10 +22,10 @@
 
 ## 🔵 Fase 4: Storefront Next.js
 - [x] Inizializzazione applicazione Next.js in `apps/storefront`
-- [ ] Setup TailwindCSS e libreria componenti (es. shadcn/ui)
-- [ ] Integrazione Medusa JS Client per chiamate API sicure
-- [ ] Creazione UI: Home page e catalogo vini
-- [ ] Creazione UI: Pagina prodotto di dettaglio
+- [x] Setup TailwindCSS v4, typography di lusso (`Cormorant Garamond` / `Plus Jakarta Sans`) e design tokens cantina
+- [x] Integrazione Medusa Store API (`/store/products`) con ISR caching (60s) e fallback resiliente
+- [x] Creazione UI: Home page, catalogo vini con filtri, terroir Parco Nazionale del Cilento (Salerno) e age verification gate (bilingue IT/EN)
+- [x] Creazione UI: Pagina prodotto di dettaglio dinamica (`/prodotti/[handle]`) con schede tecniche, terroir Flysch e controlli interattivi
 - [ ] Creazione UI: Flusso di carrello e Checkout sicuro (con Stripe Elements)
 
 ## 🟣 Fase 5: Affidabilità & Produzione

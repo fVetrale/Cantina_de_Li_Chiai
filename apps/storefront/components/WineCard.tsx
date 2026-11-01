@@ -1,0 +1,126 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Check, Plus } from "lucide-react";
+import type { WineProduct } from "@/lib/data/products";
+import type { getDictionary } from "@/lib/i18n";
+
+interface WineCardProps {
+  product: WineProduct;
+  dict: ReturnType<typeof getDictionary>;
+  priority?: boolean;
+}
+
+export function WineCard({ product, dict, priority = false }: WineCardProps) {
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    setIsAdded(true);
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
+
+  const formattedPrice = Number(product.price).toLocaleString("it-IT", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const productUrl = `/prodotti/${product.handle}`;
+
+  return (
+    <article className="group relative rounded-2xl bg-white border border-ivory-200 shadow-sm hover:shadow-xl hover:border-wine-300 transition-all duration-300 flex flex-col overflow-hidden">
+      {/* Top Header: Badge on left, Price on right (Signorvino Style) */}
+      <div className="p-4 sm:p-5 flex items-start justify-between gap-2 z-10">
+        <span className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-[#4a141b] text-gold-200 border border-gold-400/20 shadow-sm">
+          {product.badge}
+        </span>
+        <div className="flex flex-col items-end">
+          <span className="text-xl sm:text-2xl font-bold font-serif text-[#4a141b]">
+            € {formattedPrice}
+          </span>
+          <span className="text-[10px] text-cellar-500 font-medium">IVA inclusa</span>
+        </div>
+      </div>
+
+      {/* Center Bottle Container (Tall, clean, centered bottle on white background) */}
+      <Link
+        href={productUrl}
+        className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
+        aria-label={`Visualizza scheda di ${product.title}`}
+      >
+        <div className="relative w-full h-full max-h-72 transition-transform duration-500 ease-out group-hover:scale-105">
+          <Image
+            src={product.image}
+            alt={`${product.title} - ${product.badge} di Cantina de Li Chiai`}
+            fill
+            priority={priority}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-contain drop-shadow-md"
+          />
+        </div>
+      </Link>
+
+      {/* Information Block Below Bottle (Signorvino Style) */}
+      <div className="p-5 sm:p-6 flex flex-col flex-grow border-t border-ivory-100 bg-white">
+        {/* Region | Vintage | Format Metadata */}
+        <div className="flex items-center gap-1.5 text-[11px] text-cellar-500 uppercase tracking-widest font-semibold mb-1">
+          <span>Cilento (SA)</span>
+          <span>•</span>
+          <span>{product.format}</span>
+          <span>•</span>
+          <span>{product.alcohol}</span>
+        </div>
+
+        {/* Brand / Denomination in bold uppercase */}
+        <span className="text-xs font-bold uppercase tracking-wider text-terracotta-700 mb-1">
+          {product.appellation}
+        </span>
+
+        {/* Wine Full Title */}
+        <h3 className="font-serif text-lg sm:text-xl font-bold text-wine-950 mb-2 leading-snug group-hover:text-[#4a141b] transition-colors">
+          <Link href={productUrl} className="hover:underline">
+            {product.title}
+          </Link>
+        </h3>
+
+        {/* Sensory Tasting Notes */}
+        <p className="text-xs text-cellar-600 line-clamp-2 leading-relaxed mb-4 flex-grow">
+          {product.description}
+        </p>
+
+        {/* In Stock status */}
+        <div className="flex items-center gap-1.5 text-[11px] font-medium text-olive-700 mb-4">
+          <span className="w-1.5 h-1.5 rounded-full bg-olive-600" />
+          <span>{dict.common.inStock}</span>
+        </div>
+
+        {/* Signorvino-Style "Aggiungi" Button */}
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className={`w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-sm active:scale-95 ${
+            isAdded
+              ? "bg-olive-700 text-white shadow-olive-700/20"
+              : "bg-[#4a141b] hover:bg-[#3d0f18] text-gold-100 hover:text-white border border-gold-500/20"
+          }`}
+          aria-label={`${dict.common.addToCart}: ${product.title}`}
+        >
+          {isAdded ? (
+            <>
+              <Check className="w-4 h-4 text-emerald-300" />
+              <span>{dict.common.addedToCart}</span>
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4 text-gold-400" />
+              <span>{dict.common.addToCart}</span>
+            </>
+          )}
+        </button>
+      </div>
+    </article>
+  );
+}

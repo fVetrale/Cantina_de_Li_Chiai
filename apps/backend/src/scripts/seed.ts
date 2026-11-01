@@ -109,10 +109,10 @@ export default async function seedDemoData({ container }: ExecArgs) {
             name: "Magazzino Cantina de Li Chiai",
             address: {
               address_1: "Località Li Chiai",
-              city: "Tempio Pausania",
+              city: "Parco Nazionale del Cilento",
               country_code: "it",
-              postal_code: "07029",
-              province: "SS",
+              postal_code: "84078",
+              province: "SA",
             },
           },
         ],
@@ -149,7 +149,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const riservaCategory = categories.find((c) => c.name === "Riserve")
 
   // ── 7. Wine Products ──────────────────────────────────────────────────────
-  const existingWines = await productModuleService.listProducts({
+  const oldLegacyWines = await productModuleService.listProducts({
     handle: [
       "vermentino-di-gallura-docg-superiore",
       "cannonau-di-sardegna-doc-riserva",
@@ -157,16 +157,29 @@ export default async function seedDemoData({ container }: ExecArgs) {
     ],
   })
 
+  if (oldLegacyWines.length > 0) {
+    logger.info("Removing legacy products from Medusa database...")
+    await productModuleService.deleteProducts(oldLegacyWines.map((p) => p.id))
+  }
+
+  const existingWines = await productModuleService.listProducts({
+    handle: [
+      "fiano-del-cilento-doc",
+      "aglianico-del-cilento-doc-riserva",
+      "cilento-doc-rosso-paestum-igt",
+    ],
+  })
+
   if (existingWines.length === 0) {
-    logger.info("Creating wine products (Vermentino, Cannonau, Cagnulari)...")
+    logger.info("Creating Cilento wine products (Fiano, Aglianico Riserva, Cilento Rosso)...")
     await createProductsWorkflow(container).run({
       input: {
         products: [
           {
-            title: "Vermentino di Gallura DOCG Superiore",
-            handle: "vermentino-di-gallura-docg-superiore",
+            title: "Fiano del Cilento DOC",
+            handle: "fiano-del-cilento-doc",
             description:
-              "Vino bianco sardo di straordinaria eleganza, sapido, fresco e minerale, prodotto dai vigneti storici della Gallura. Gradazione alcolica 13.5% vol.",
+              "Vino bianco campano di straordinaria eleganza, sapido, fresco e minerale, prodotto nel cuore del Parco Nazionale del Cilento su terreni da flysch. Gradazione alcolica 13.5% vol.",
             category_ids: whiteCategory ? [whiteCategory.id] : [],
             shipping_profile_id: defaultShippingProfile.id,
             sales_channels: [{ id: defaultSalesChannel.id }],
@@ -180,7 +193,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
             variants: [
               {
                 title: "Bottiglia 750ml",
-                sku: "VERM-DOCG-750",
+                sku: "FIAN-DOC-750",
                 manage_inventory: false,
                 options: {
                   Formato: "Bottiglia 750ml",
@@ -195,10 +208,10 @@ export default async function seedDemoData({ container }: ExecArgs) {
             ],
           },
           {
-            title: "Cannonau di Sardegna DOC Riserva",
-            handle: "cannonau-di-sardegna-doc-riserva",
+            title: "Aglianico del Cilento DOC Riserva",
+            handle: "aglianico-del-cilento-doc-riserva",
             description:
-              "Vino rosso profondo, caldo e avvolgente. Note di frutti di bosco maturi, macchia mediterranea e spezie, affinato in botti di rovere. Gradazione alcolica 14.5% vol.",
+              "Il re dei vini rossi campani. Caldo, profondo e avvolgente con note di marasca matura, spezie fini e carruba, affinato per 18 mesi in rovere. Gradazione alcolica 14.5% vol.",
             category_ids: [redCategory?.id, riservaCategory?.id].filter(Boolean) as string[],
             shipping_profile_id: defaultShippingProfile.id,
             sales_channels: [{ id: defaultSalesChannel.id }],
@@ -212,7 +225,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
             variants: [
               {
                 title: "Bottiglia 750ml",
-                sku: "CANN-RIS-750",
+                sku: "AGLI-RIS-750",
                 manage_inventory: false,
                 options: {
                   Formato: "Bottiglia 750ml",
@@ -227,10 +240,10 @@ export default async function seedDemoData({ container }: ExecArgs) {
             ],
           },
           {
-            title: "Cagnulari Isola dei Nuraghi IGT",
-            handle: "cagnulari-isola-dei-nuraghi-igt",
+            title: "Cilento DOC Rosso - Paestum IGT",
+            handle: "cilento-doc-rosso-paestum-igt",
             description:
-              "Autentico gioiello della viticoltura sarda. Vitigno autoctono dal profilo aromatico complesso, con note balsamiche e tannini setosi. Gradazione alcolica 14.0% vol.",
+              "Autentico gioiello della viticoltura salernitana. Blend armonico di Aglianico e Piedirosso con note balsamiche di macchia cilentana e tannini setosi. Gradazione alcolica 14.0% vol.",
             category_ids: redCategory ? [redCategory.id] : [],
             shipping_profile_id: defaultShippingProfile.id,
             sales_channels: [{ id: defaultSalesChannel.id }],
@@ -244,7 +257,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
             variants: [
               {
                 title: "Bottiglia 750ml",
-                sku: "CAGN-IGT-750",
+                sku: "CIL-ROSSO-750",
                 manage_inventory: false,
                 options: {
                   Formato: "Bottiglia 750ml",
