@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Sparkles, ArrowRight, Compass } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
+import { TickerBar } from "@/components/TickerBar";
 
 interface HeroSectionProps {
   dict: ReturnType<typeof getDictionary>;
@@ -10,7 +11,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
   return (
     <section
       aria-label="Presentazione Cantina de Li Chiai"
-      className="relative min-h-[520px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#180a0e] text-white"
+      className="relative h-screen min-h-[580px] flex flex-col justify-between overflow-hidden bg-[#180a0e] text-white"
     >
       {/* Background High-Res Vineyard Photography */}
       <div className="absolute inset-0 z-0">
@@ -23,12 +24,15 @@ export function HeroSection({ dict }: HeroSectionProps) {
           className="object-cover object-center brightness-90"
         />
         {/* Layered Gradient: Caldo e sobrio */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#151211] via-black/40 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2e0e13]/60 via-transparent to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#151211] via-black/35 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2e0e13]/50 via-transparent to-black/40" />
       </div>
 
-      {/* Content Container */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center flex flex-col items-center">
+      {/* Top Spacer for floating navbar */}
+      <div className="h-20 sm:h-24 pointer-events-none" />
+
+      {/* Center Content Container */}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-auto py-4 sm:py-6 text-center flex flex-col items-center">
         {/* Prestige Tag */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#4a141b]/90 backdrop-blur-md border border-gold-400/30 text-gold-200 text-xs sm:text-sm font-semibold tracking-widest uppercase mb-6 shadow-md">
           <Sparkles className="w-3.5 h-3.5 text-gold-400" />
@@ -63,6 +67,9 @@ export function HeroSection({ dict }: HeroSectionProps) {
           </a>
         </div>
       </div>
+
+      {/* Bottom Docked Single-Line Ticker Bar */}
+      <TickerBar dict={dict} />
     </section>
   );
 }

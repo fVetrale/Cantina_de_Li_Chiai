@@ -1,7 +1,6 @@
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getProducts, getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
-import { TickerBar } from "@/components/TickerBar";
 import { HeroSection } from "@/components/HeroSection";
 import { WineCatalog } from "@/components/WineCatalog";
 import { PromoBanner } from "@/components/PromoBanner";
@@ -28,17 +27,14 @@ export default async function HomePage(props: {
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
-      {/* 1. Two-Level Signorvino Header */}
+      {/* 1. Floating Glass Island Header */}
       <Navbar dict={dict} currentLocale={currentLocale} />
 
-      {/* 2. Top Marquee Guarantee Ticker */}
-      <TickerBar dict={dict} />
-
       <main className="flex-grow">
-        {/* 3. Hero Promotional Banner */}
+        {/* 2. Full-Screen 100vh Hero with docked single-line TickerBar */}
         <HeroSection dict={dict} />
 
-        {/* 4. Vetrina Prodotti (La nostra grande cantina) */}
+        {/* 3. Vetrina Prodotti (La nostra grande cantina) */}
         <WineCatalog
           products={products}
           categories={categories}

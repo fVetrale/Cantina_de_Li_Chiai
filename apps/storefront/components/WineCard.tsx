@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Check, Plus } from "lucide-react";
 import type { WineProduct } from "@/lib/data/products";
 import type { getDictionary } from "@/lib/i18n";
@@ -27,6 +28,8 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
     maximumFractionDigits: 2,
   });
 
+  const productUrl = `/prodotti/${product.handle}`;
+
   return (
     <article className="group relative rounded-2xl bg-white border border-ivory-200 shadow-sm hover:shadow-xl hover:border-wine-300 transition-all duration-300 flex flex-col overflow-hidden">
       {/* Top Header: Badge on left, Price on right (Signorvino Style) */}
@@ -43,7 +46,11 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
       </div>
 
       {/* Center Bottle Container (Tall, clean, centered bottle on white background) */}
-      <div className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white">
+      <Link
+        href={productUrl}
+        className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
+        aria-label={`Visualizza scheda di ${product.title}`}
+      >
         <div className="relative w-full h-full max-h-72 transition-transform duration-500 ease-out group-hover:scale-105">
           <Image
             src={product.image}
@@ -54,7 +61,7 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
             className="object-contain drop-shadow-md"
           />
         </div>
-      </div>
+      </Link>
 
       {/* Information Block Below Bottle (Signorvino Style) */}
       <div className="p-5 sm:p-6 flex flex-col flex-grow border-t border-ivory-100 bg-white">
@@ -74,7 +81,9 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
 
         {/* Wine Full Title */}
         <h3 className="font-serif text-lg sm:text-xl font-bold text-wine-950 mb-2 leading-snug group-hover:text-[#4a141b] transition-colors">
-          {product.title}
+          <Link href={productUrl} className="hover:underline">
+            {product.title}
+          </Link>
         </h3>
 
         {/* Sensory Tasting Notes */}

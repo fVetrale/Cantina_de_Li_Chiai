@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Sparkles, Gift, ArrowRight } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { WineCard } from "./WineCard";
 import type { WineProduct, WineCategory } from "@/lib/data/products";
 import type { getDictionary } from "@/lib/i18n";
@@ -99,34 +99,8 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
           })}
         </div>
 
-        {/* Products Grid (Signorvino Style including promotional gift box card) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Signorvino-Style Embedded Promo Card */}
-          <div className="rounded-2xl bg-gradient-to-br from-[#3b0f18] to-[#1c1815] p-6 text-white flex flex-col justify-between border border-gold-500/20 shadow-md">
-            <div>
-              <div className="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center text-gold-300 mb-4 border border-gold-400/40">
-                <Gift className="w-5 h-5 text-gold-400" />
-              </div>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-gold-300 block mb-2">
-                {dict.promoBanner.badge}
-              </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold leading-snug mb-3 text-gold-100">
-                {dict.promoBanner.title}
-              </h3>
-              <p className="text-xs text-ivory-200/80 leading-relaxed mb-6 font-sans">
-                {dict.promoBanner.description}
-              </p>
-            </div>
-            <a
-              href="#promo"
-              className="inline-flex items-center justify-between w-full py-3 px-4 rounded-xl bg-gradient-gold text-wine-950 font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all shadow-sm"
-            >
-              <span>{dict.promoBanner.cta}</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-
-          {/* Wine Bottle Cards */}
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((wine, index) => (
             <WineCard
               key={wine.id}
@@ -135,6 +109,12 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
               priority={index < 3}
             />
           ))}
+
+          {filteredProducts.length === 0 && (
+            <div className="col-span-full text-center py-12 text-cellar-600 text-sm">
+              {dict.catalog.noProducts}
+            </div>
+          )}
         </div>
       </div>
     </section>

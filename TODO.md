@@ -25,7 +25,7 @@
 - [x] Setup TailwindCSS v4, typography di lusso (`Cormorant Garamond` / `Plus Jakarta Sans`) e design tokens cantina
 - [x] Integrazione Medusa Store API (`/store/products`) con ISR caching (60s) e fallback resiliente
 - [x] Creazione UI: Home page, catalogo vini con filtri, terroir Parco Nazionale del Cilento (Salerno) e age verification gate (bilingue IT/EN)
-- [ ] Creazione UI: Pagina prodotto di dettaglio (`/prodotti/[handle]`)
+- [x] Creazione UI: Pagina prodotto di dettaglio dinamica (`/prodotti/[handle]`) con schede tecniche, terroir Flysch e controlli interattivi
 - [ ] Creazione UI: Flusso di carrello e Checkout sicuro (con Stripe Elements)
 
 ## 🟣 Fase 5: Affidabilità & Produzione

@@ -149,6 +149,19 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const riservaCategory = categories.find((c) => c.name === "Riserve")
 
   // ── 7. Wine Products ──────────────────────────────────────────────────────
+  const oldLegacyWines = await productModuleService.listProducts({
+    handle: [
+      "vermentino-di-gallura-docg-superiore",
+      "cannonau-di-sardegna-doc-riserva",
+      "cagnulari-isola-dei-nuraghi-igt",
+    ],
+  })
+
+  if (oldLegacyWines.length > 0) {
+    logger.info("Removing legacy products from Medusa database...")
+    await productModuleService.deleteProducts(oldLegacyWines.map((p) => p.id))
+  }
+
   const existingWines = await productModuleService.listProducts({
     handle: [
       "fiano-del-cilento-doc",
