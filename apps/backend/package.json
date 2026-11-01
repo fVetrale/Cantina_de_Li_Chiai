@@ -15,6 +15,7 @@
     "test": "jest --passWithNoTests",
     "db:generate": "medusa db:generate",
     "db:migrate": "medusa db:migrate",
+    "seed": "medusa exec ./src/scripts/seed.ts",
     "clean": "rm -rf .medusa dist"
   },
   "dependencies": {
