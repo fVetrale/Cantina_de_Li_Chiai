@@ -25,7 +25,11 @@
 - [x] Setup TailwindCSS v4, typography di lusso (`Cormorant Garamond` / `Plus Jakarta Sans`) e design tokens cantina
 - [x] Integrazione Medusa Store API (`/store/products`) con ISR caching (60s) e fallback resiliente
 - [x] Creazione UI: Home page, catalogo vini con filtri, terroir Parco Nazionale del Cilento (Salerno) e age verification gate (bilingue IT/EN)
-- [x] Creazione UI: Pagina prodotto di dettaglio dinamica (`/prodotti/[handle]`) con schede tecniche, terroir Flysch e controlli interattivi
+- [x] Creazione UI: Pagina prodotto di dettaglio dinamica (`/prodotti/[handle]`) con rendering studio della bottiglia, galleria carosello, popover di selezione casse bottiglia (x1, x2, x3, x4, x6, x9, x12, x18) e schede tecniche
+- [x] Creazione UI: Pagina catalogo completa (`/vini`) con filtri sfaccettati (categoria, prezzo, ordinamento, ricerca)
+- [x] Creazione UI: Pagina storica e tenuta (`/la-cantina`) con cenno storico, fotografia della bottaia in pietra e layout minimale con solo footer
+- [x] Creazione UI: Navbar con menu a tendina dinamico (sincronizzato con le categorie Medusa) e rimozione ridondanza Terroir
+- [x] Creazione UI: Sezione Accedi / Registrati con menu a tendina e popup modal in-place (stile Signorvino, senza abbandonare la pagina) e fallback `/account` con validazione Zod
 - [ ] Creazione UI: Flusso di carrello e Checkout sicuro (con Stripe Elements)
 
 ## 🟣 Fase 5: Affidabilità & Produzione

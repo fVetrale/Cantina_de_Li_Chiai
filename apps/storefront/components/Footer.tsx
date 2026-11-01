@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Wine, Mail, Phone, MapPin, ShieldAlert, Clock } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
 
@@ -60,29 +61,29 @@ export function Footer({ dict }: FooterProps) {
             </h3>
             <ul className="space-y-2 text-xs text-ivory-300/80">
               <li>
-                <a href="#catalog" className="hover:text-gold-300 transition-colors">
+                <Link href="/prodotti/fiano-del-cilento-doc" className="hover:text-gold-300 transition-colors">
                   Fiano del Cilento DOC
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#catalog" className="hover:text-gold-300 transition-colors">
+                <Link href="/prodotti/aglianico-del-cilento-doc-riserva" className="hover:text-gold-300 transition-colors">
                   Aglianico del Cilento DOC Riserva
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#catalog" className="hover:text-gold-300 transition-colors">
+                <Link href="/prodotti/cilento-doc-rosso-paestum-igt" className="hover:text-gold-300 transition-colors">
                   Cilento DOC Rosso - Paestum IGT
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#catalog" className="hover:text-gold-300 transition-colors">
+                <Link href="/vini?categoria=riserve" className="hover:text-gold-300 transition-colors">
                   Riserve Speciali del Parco
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#promo" className="hover:text-gold-300 transition-colors">
+                <Link href="/#promo" className="hover:text-gold-300 transition-colors">
                   Confezioni Regalo in Legno
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -94,29 +95,29 @@ export function Footer({ dict }: FooterProps) {
             </h3>
             <ul className="space-y-2 text-xs text-ivory-300/80">
               <li>
-                <a href="#story" className="hover:text-gold-300 transition-colors">
+                <Link href="/la-cantina" className="hover:text-gold-300 transition-colors">
                   Storia &amp; Filosofia
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#terroir" className="hover:text-gold-300 transition-colors">
+                <Link href="/#terroir" className="hover:text-gold-300 transition-colors">
                   Il Flysch Cilentano
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#story" className="hover:text-gold-300 transition-colors">
+                <Link href="/#story" className="hover:text-gold-300 transition-colors">
                   Vendemmia Manuale
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#promo" className="hover:text-gold-300 transition-colors">
+                <Link href="/#promo" className="hover:text-gold-300 transition-colors">
                   Visite &amp; Degustazioni
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#footer" className="hover:text-gold-300 transition-colors">
+                <Link href="/#footer" className="hover:text-gold-300 transition-colors">
                   Lavora con Noi
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

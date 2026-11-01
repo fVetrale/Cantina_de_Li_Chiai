@@ -34,6 +34,7 @@ export interface WineProduct {
   alcohol: string
   format: string
   image: string
+  images?: string[]
   badge: string
   appellation: string
   details?: WineDetails
@@ -51,6 +52,7 @@ interface MedusaRawProduct {
   handle?: string
   description?: string
   thumbnail?: string
+  images?: Array<{ url: string; id?: string }>
   categories?: Array<{ id: string; name: string; handle: string }>
   variants?: Array<{
     sku?: string
@@ -176,6 +178,11 @@ const FALLBACK_PRODUCTS: WineProduct[] = [
     alcohol: "13.5% vol.",
     format: "750 ml",
     image: "/images/fiano-cilento.jpg",
+    images: [
+      "/images/fiano-cilento.jpg",
+      "/images/estate-cellar.jpg",
+      "/images/hero-vineyard.jpg",
+    ],
     badge: "Cilento DOC",
     appellation: "Cilento DOC Fiano",
     details: FIANO_DETAILS,
@@ -194,6 +201,11 @@ const FALLBACK_PRODUCTS: WineProduct[] = [
     alcohol: "14.5% vol.",
     format: "750 ml",
     image: "/images/aglianico-cilento.jpg",
+    images: [
+      "/images/aglianico-cilento.jpg",
+      "/images/estate-cellar.jpg",
+      "/images/hero-vineyard.jpg",
+    ],
     badge: "DOC Riserva",
     appellation: "Cilento DOC Aglianico",
     details: AGLIANICO_DETAILS,
@@ -212,6 +224,11 @@ const FALLBACK_PRODUCTS: WineProduct[] = [
     alcohol: "14.0% vol.",
     format: "750 ml",
     image: "/images/cilento-rosso.jpg",
+    images: [
+      "/images/cilento-rosso.jpg",
+      "/images/estate-cellar.jpg",
+      "/images/hero-vineyard.jpg",
+    ],
     badge: "Cilento DOC",
     appellation: "Cilento DOC Rosso",
     details: ROSSO_DETAILS,
@@ -223,6 +240,11 @@ function getWineMetadata(handle: string) {
   if (normalized.includes("fiano") || normalized.includes("bianco")) {
     return {
       image: "/images/fiano-cilento.jpg",
+      images: [
+        "/images/fiano-cilento.jpg",
+        "/images/estate-cellar.jpg",
+        "/images/hero-vineyard.jpg",
+      ],
       badge: "Cilento DOC",
       alcohol: "13.5% vol.",
       format: "750 ml",
@@ -235,6 +257,11 @@ function getWineMetadata(handle: string) {
   if (normalized.includes("aglianico") || normalized.includes("riserv")) {
     return {
       image: "/images/aglianico-cilento.jpg",
+      images: [
+        "/images/aglianico-cilento.jpg",
+        "/images/estate-cellar.jpg",
+        "/images/hero-vineyard.jpg",
+      ],
       badge: "DOC Riserva",
       alcohol: "14.5% vol.",
       format: "750 ml",
@@ -246,6 +273,11 @@ function getWineMetadata(handle: string) {
   }
   return {
     image: "/images/cilento-rosso.jpg",
+    images: [
+      "/images/cilento-rosso.jpg",
+      "/images/estate-cellar.jpg",
+      "/images/hero-vineyard.jpg",
+    ],
     badge: "Cilento DOC",
     alcohol: "14.0% vol.",
     format: "750 ml",
@@ -262,7 +294,7 @@ export async function getProducts(categoryFilter?: string): Promise<WineProduct[
 
   try {
     const url = new URL(`${backendUrl}/store/products`)
-    url.searchParams.set("fields", "*variants,*categories,*variants.prices")
+    url.searchParams.set("fields", "*variants,*categories,*variants.prices,*images")
 
     const res = await fetch(url.toString(), {
       headers: {
@@ -301,6 +333,10 @@ export async function getProducts(categoryFilter?: string): Promise<WineProduct[
         alcohol: meta.alcohol,
         format: meta.format,
         image: p.thumbnail || meta.image,
+        images:
+          p.images && p.images.length > 0
+            ? p.images.map((img) => img.url)
+            : meta.images,
         badge: meta.badge,
         appellation: meta.appellation,
         details: meta.details,
@@ -325,7 +361,7 @@ export async function getProductByHandle(handle: string): Promise<WineProduct | 
   try {
     const url = new URL(`${backendUrl}/store/products`)
     url.searchParams.set("handle", handle)
-    url.searchParams.set("fields", "*variants,*categories,*variants.prices")
+    url.searchParams.set("fields", "*variants,*categories,*variants.prices,*images")
 
     const res = await fetch(url.toString(), {
       headers: {
@@ -357,6 +393,10 @@ export async function getProductByHandle(handle: string): Promise<WineProduct | 
           alcohol: meta.alcohol,
           format: meta.format,
           image: p.thumbnail || meta.image,
+          images:
+            p.images && p.images.length > 0
+              ? p.images.map((img) => img.url)
+              : meta.images,
           badge: meta.badge,
           appellation: meta.appellation,
           details: meta.details,
