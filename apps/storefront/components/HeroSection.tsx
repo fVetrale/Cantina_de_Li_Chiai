@@ -16,16 +16,16 @@ export function HeroSection({ dict }: HeroSectionProps) {
       {/* Background High-Res Vineyard Photography */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero-vineyard.jpg"
-          alt="Vigneti e colline del Parco Nazionale del Cilento al tramonto - Cantina de Li Chiai"
+          src="/images/home_page.jpeg"
+          alt={dict.hero.imageAlt || "Tenuta e vigneti di Cantina de Li Chiai nel Parco Nazionale del Cilento"}
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center brightness-90"
+          className="object-cover object-[center_35%] brightness-95"
         />
-        {/* Layered Gradient: Caldo e sobrio */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#151211] via-black/35 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2e0e13]/50 via-transparent to-black/40" />
+        {/* Layered Gradient: Caldo e sobrio per massima leggibilità ed eleganza */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#151211] via-black/40 to-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2e0e13]/60 via-transparent to-black/45" />
       </div>
 
       {/* Top Spacer for floating navbar */}

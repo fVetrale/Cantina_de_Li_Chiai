@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: "Cantina de Li Chiai",
     images: [
       {
-        url: "/images/hero-vineyard.jpg",
+        url: "/images/home_page.jpeg",
         width: 1200,
         height: 630,
         alt: "Vigneti di Cantina de Li Chiai nel Parco Nazionale del Cilento",

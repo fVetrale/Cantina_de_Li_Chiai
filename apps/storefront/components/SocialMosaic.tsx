@@ -11,7 +11,7 @@ export function SocialMosaic({ dict }: SocialMosaicProps) {
     {
       title: "Vendemmia all'alba",
       tag: "#FianoDelCilento",
-      image: "/images/hero-vineyard.jpg",
+      image: "/images/raccolta.jpeg",
     },
     {
       title: "Note di macchia cilentana",

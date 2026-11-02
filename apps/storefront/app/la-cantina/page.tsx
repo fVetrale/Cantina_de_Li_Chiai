@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, Mountain, ShieldCheck, Award, ArrowRight, Quote } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
@@ -8,6 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { FeaturesSection } from "@/components/FeaturesSection";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
+import { CellarGallery } from "@/components/CellarGallery";
 
 export async function generateMetadata(props: {
   searchParams?: Promise<{ lang?: string }>;
@@ -80,31 +80,8 @@ export default async function EstatePage(props: {
             </p>
           </header>
 
-          {/* Historic Cellar Image Showcase */}
-          <div className="space-y-3">
-            <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full rounded-3xl overflow-hidden shadow-2xl border border-gold-500/30 bg-cellar-950">
-              <Image
-                src="/images/estate-cellar.jpg"
-                alt="I sotterranei in pietra della Cantina de Li Chiai con le botti storiche in rovere di Slavonia"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 896px"
-                className="object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/15 pointer-events-none" />
-              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex items-center justify-between text-white text-xs">
-                <span className="px-3 py-1 rounded-full bg-[#18060b]/80 backdrop-blur-md border border-gold-400/40 font-semibold tracking-wide text-gold-200 text-[11px] sm:text-xs">
-                  {t.eyebrow}
-                </span>
-                <span className="hidden sm:inline-block text-ivory-200/90 text-xs font-serif italic">
-                  Cantina de Li Chiai • Parco Nazionale del Cilento
-                </span>
-              </div>
-            </div>
-            <p className="text-center text-xs text-cellar-600 italic px-4">
-              {t.imageCaption}
-            </p>
-          </div>
+          {/* Authentic Documentary Cellar Gallery (Sliding Carousel & Archive) */}
+          <CellarGallery dict={dict} />
 
           {/* 3 Pillar Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">

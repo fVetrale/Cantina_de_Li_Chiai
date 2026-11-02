@@ -48,11 +48,11 @@ export function PromoBanner({ dict }: PromoBannerProps) {
           {/* Right Visual Frame */}
           <div className="relative w-full max-w-sm sm:max-w-md aspect-[4/3] rounded-2xl overflow-hidden border-2 border-gold-400/20 shadow-xl">
             <Image
-              src="/images/hero-vineyard.jpg"
-              alt="Confezioni regalo e cofanetti in legno Cantina de Li Chiai nel Parco del Cilento"
+              src="/images/VecchiaBottiglia.jpeg"
+              alt="Cofanetto Tradizione Cilentana - Cantina de Li Chiai"
               fill
               sizes="(max-width: 1024px) 100vw, 450px"
-              className="object-cover"
+              className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
               <div className="text-left">

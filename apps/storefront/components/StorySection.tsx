@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Compass } from "lucide-react";
+import Link from "next/link";
+import { Compass, ArrowRight } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
 
 interface StorySectionProps {
@@ -72,14 +73,25 @@ export function StorySection({ dict }: StorySectionProps) {
                 </span>
               </div>
             </div>
+
+            {/* Link to Cellar Documentary Gallery */}
+            <div className="pt-2">
+              <Link
+                href="/la-cantina#galleria"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4a141b]/80 hover:bg-[#5e1922] border border-gold-400/35 text-gold-200 text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+              >
+                <span>{dict.estatePage.gallery.viewAll}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-gold-300" />
+              </Link>
+            </div>
           </div>
 
           {/* Right Column: Visual Frame */}
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-2xl overflow-hidden border-2 border-gold-500/30 shadow-2xl">
               <Image
-                src="/images/hero-vineyard.jpg"
-                alt="Panoramica dei vigneti di Cantina de Li Chiai nel Parco Nazionale del Cilento"
+                src="/images/vigneto.jpeg"
+                alt="I vigneti sul Flysch di Cantina de Li Chiai verso il cielo del Cilento"
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover"

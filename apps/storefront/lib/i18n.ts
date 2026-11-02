@@ -66,6 +66,7 @@ export const dictionaries = {
       title: "L'Anima del Cilento tra Flysch, Ulivi e Mare",
       subtitle:
         "Dalle colline incontaminate del Parco Nazionale del Cilento, in provincia di Salerno, coltiviamo vitigni storici modellati dalla brezza del Tirreno e dalla roccia millenaria.",
+      imageAlt: "Tenuta e vigneti storici di Cantina de Li Chiai nel Parco Nazionale del Cilento",
       ctaCollection: "Scopri le Nostre Etichette",
       ctaEstate: "La Nostra Tenuta",
       estateMetrics: [
@@ -254,6 +255,129 @@ export const dictionaries = {
       stat3Label: "Suoli di Arenaria Minerale",
       imageCaption: "I sotterranei in pietra con le storiche botti in rovere di Slavonia dedicate all'affinamento dell'Aglianico del Cilento DOC Riserva.",
       ctaExploreWines: "Esplora i Nostri Vini",
+      gallery: {
+        badge: "Archivio Storico & Documentario",
+        title: "Dalla Terra al Calice: La Galleria della Cantina",
+        subtitle:
+          "Un percorso visivo attraverso la memoria di famiglia, la raccolta manuale sui ripidi filari del Flysch e le fasi di vinificazione artigianale.",
+        counterLabel: "Foto",
+        ofLabel: "di",
+        prevButton: "Foto precedente",
+        nextButton: "Foto successiva",
+        openLightbox: "Ingrandisci a tutto schermo",
+        closeLightbox: "Chiudi visualizzazione",
+        viewAll: "Scorri la galleria fotografica",
+        items: [
+          {
+            id: "heritage-bottle",
+            image: "/images/VecchiaBottiglia.jpeg",
+            category: "Origini Storiche",
+            title: "La Storica Bottiglia Chiai",
+            subtitle: "Azienda Agricola Famiglia Imbriaco — Abatemarco (SA)",
+            description:
+              "La preziosa testimonianza delle nostre radici: una storica bottiglia d'Aglianico custodita negli anni, con l'etichetta originaria impressa su carta ocra della Famiglia Imbriaco ad Abatemarco.",
+          },
+          {
+            id: "vineyard-flysch",
+            image: "/images/vigneto.jpeg",
+            category: "Terroir & Vigneto",
+            title: "I Filari sul Flysch verso il Cielo",
+            subtitle: "Versanti scoscesi baciati dal sole cilentano",
+            description:
+              "I vigneti di Cantina de Li Chiai si arrampicano sulle colline del Parco Nazionale, dove le viti affondano le radici nell'arenaria del Flysch tra cielo limpido e macchia mediterranea.",
+          },
+          {
+            id: "grape-cluster",
+            image: "/images/grappolo.jpeg",
+            category: "Cura del Frutto",
+            title: "La Perfezione del Grappolo",
+            subtitle: "Acinatura densa e pruina intatta dell'Aglianico",
+            description:
+              "Ciascun grappolo viene seguito con pazienza giorno dopo giorno, fino a raggiungere il perfetto equilibrio tra concentrazione fenolica e freschezza minerale.",
+          },
+          {
+            id: "harvest-slope",
+            image: "/images/raccolta.jpeg",
+            category: "Vendemmia Eroica",
+            title: "La Raccolta a Mano sui Pendii",
+            subtitle: "Uomini e donne tra i filari scoscesi del Cilento",
+            description:
+              "Una vendemmia autenticamente eroica: nessun macchinario può sostituire il passo fermo dei vendemmiatori che salgono e scendono i ripidi pendii portando le cassette colme d'uva.",
+          },
+          {
+            id: "harvest-cut",
+            image: "/images/raccolta1.jpeg",
+            category: "Gesti di Vendemmia",
+            title: "Il Taglio con le Cesoie Tradizionali",
+            subtitle: "Selezione chirurgica del grappolo sulla pianta",
+            description:
+              "La mano esperta recide il picciolo con cura, preservando l'integrità del grappolo e dei lieviti indigeni che avvieranno naturalmente la fermentazione.",
+          },
+          {
+            id: "cellar-crates",
+            image: "/images/lavorazione.jpeg",
+            category: "Arrivo in Cantina",
+            title: "Le Cassette di Uva Selezionata",
+            subtitle: "Uva bianca Fiano appena giunta nella cantina storica",
+            description:
+              "Le cassette forate preservano l'integrità degli acini durante il trasporto immediato dai filari all'ombra accogliente della cantina di lavorazione.",
+          },
+          {
+            id: "grape-destemming",
+            image: "/images/produzione.jpeg",
+            category: "Pigiatura & Diraspatura",
+            title: "Il Primo Carico nella Tramoggia",
+            subtitle: "I vignaioli avviano la diraspatura soffice",
+            description:
+              "Un rito corale e familiare: le uve appena raccolte vengono versate con delicatezza per separare i raspi e avviare il processo di prima pigiatura.",
+          },
+          {
+            id: "grape-action",
+            image: "/images/produzione2.jpeg",
+            category: "Lavorazione Artigianale",
+            title: "La Cascata d'Uva",
+            subtitle: "L'energia della vendemmia in presa diretta",
+            description:
+              "Ogni acino racchiude l'annata e il clima del Cilento. La lavorazione rapida e attenta evita ogni ossidazione precoce, sigillando i profumi primari.",
+          },
+          {
+            id: "wooden-press",
+            image: "/images/prodotto.jpeg",
+            category: "Il Torchio Tradizionale",
+            title: "Il Mosto Rubino che Stilla dal Torchio",
+            subtitle: "Pressatura soffice tra le doghe in legno",
+            description:
+              "Il momento più emozionante: il mosto color rubino vivo scorre dal torchio tradizionale nella vasca, liberando intensi aromi di marasca, spezie e terra umida.",
+          },
+          {
+            id: "harvest-knife",
+            image: "/images/uva.jpeg",
+            category: "Natura Morta di Cantina",
+            title: "Grappoli, Bottiglia e Coltello da Vendemmia",
+            subtitle: "La sacralità degli strumenti del mestiere",
+            description:
+              "L'essenza del lavoro agricolo racchiusa in una composizione autentica sul banco di legno: la lama da taglio, l'uva bruna e la bottiglia testimone del tempo.",
+          },
+          {
+            id: "tasting-white",
+            image: "/images/Bianco.jpeg",
+            category: "La Degustazione",
+            title: "Il Calice di Fiano all'Ingresso della Cantina",
+            subtitle: "Riflessi paglierini e luce del mattino",
+            description:
+              "La luce della porta della cantina illumina un calice di Fiano fresco posato sul vecchio asse di legno: sentori floreali di biancospino e vibrante sapidità.",
+          },
+          {
+            id: "tasting-red",
+            image: "/images/Rosso.jpeg",
+            category: "Il Momento del Calice",
+            title: "L'Aglianico Alzato al Calice",
+            subtitle: "Colore granato impenetrabile e corpo fiero",
+            description:
+              "L'omaggio al re dei vini campani: un calice d'Aglianico osservato in trasparenza per ammirarne la densità tannica, la stoffa aristocratica e l'eredità cilentana.",
+          },
+        ],
+      },
     },
     footer: {
       description:
@@ -389,6 +513,7 @@ export const dictionaries = {
       title: "The Soul of Cilento between Flysch, Olives and Sea",
       subtitle:
         "From the pristine hills of Cilento National Park in Salerno province, we craft historic vintages shaped by Tyrrhenian sea breezes and ancient soil.",
+      imageAlt: "Historic estate and vineyards of Cantina de Li Chiai in Cilento National Park",
       ctaCollection: "Explore Collection",
       ctaEstate: "Our Estate",
       estateMetrics: [
@@ -577,6 +702,129 @@ export const dictionaries = {
       stat3Label: "Mineral Sandstone Soils",
       imageCaption: "Historic stone cellars with Slavonian oak barrels dedicated to aging Aglianico del Cilento DOC Riserva.",
       ctaExploreWines: "Explore Our Wines",
+      gallery: {
+        badge: "Historic Archive & Documentary",
+        title: "From Soil to Glass: The Cellar Gallery",
+        subtitle:
+          "A visual journey through family heritage, manual harvest along steep Flysch slopes, and artisanal winemaking.",
+        counterLabel: "Photo",
+        ofLabel: "of",
+        prevButton: "Previous photo",
+        nextButton: "Next photo",
+        openLightbox: "Fullscreen view",
+        closeLightbox: "Close view",
+        viewAll: "Browse the photographic gallery",
+        items: [
+          {
+            id: "heritage-bottle",
+            image: "/images/VecchiaBottiglia.jpeg",
+            category: "Historic Origins",
+            title: "The Historic Chiai Bottle",
+            subtitle: "Imbriaco Family Estate — Abatemarco (Salerno)",
+            description:
+              "The invaluable testament of our roots: a vintage Aglianico bottle preserved across decades, bearing the original ochre label of the Imbriaco Family Estate in Abatemarco.",
+          },
+          {
+            id: "vineyard-flysch",
+            image: "/images/vigneto.jpeg",
+            category: "Terroir & Vineyards",
+            title: "Vineyard Rows on Flysch Reaching the Sky",
+            subtitle: "Steep hillside slopes kissed by Cilento sunshine",
+            description:
+              "Cantina de Li Chiai vineyards climb the hills of the National Park, where roots sink deep into Flysch sandstone between clear skies and Mediterranean scrub.",
+          },
+          {
+            id: "grape-cluster",
+            image: "/images/grappolo.jpeg",
+            category: "Fruit Dedication",
+            title: "Perfection of the Cluster",
+            subtitle: "Dense berry structure and intact bloom on Aglianico",
+            description:
+              "Each grape cluster is patiently tended day after day, until achieving optimum balance between phenolic depth and mineral freshness.",
+          },
+          {
+            id: "harvest-slope",
+            image: "/images/raccolta.jpeg",
+            category: "Heroic Harvest",
+            title: "Hand-Harvesting on the Steep Slopes",
+            subtitle: "Winemakers navigating rugged Cilento contours",
+            description:
+              "An authentically heroic harvest: no machinery can replace the steady footsteps of harvesters climbing steep inclines carrying crates laden with grapes.",
+          },
+          {
+            id: "harvest-cut",
+            image: "/images/raccolta1.jpeg",
+            category: "Harvest Ritual",
+            title: "Precise Pruning Shear Cuts",
+            subtitle: "Selective cluster harvesting directly on the vine",
+            description:
+              "Skilled hands snip each stem gently, preserving the bloom of the berries and indigenous yeasts that will naturally trigger fermentation.",
+          },
+          {
+            id: "cellar-crates",
+            image: "/images/lavorazione.jpeg",
+            category: "Cellar Arrival",
+            title: "Crates of Hand-Picked Grapes",
+            subtitle: "Fresh Fiano white grapes arriving in the historic cellar",
+            description:
+              "Aerated wooden crates protect berry integrity during direct transport from the vines into the cool shelter of the historic winemaking room.",
+          },
+          {
+            id: "grape-destemming",
+            image: "/images/produzione.jpeg",
+            category: "Crushing & Destemming",
+            title: "Loading Grapes into the Hopper",
+            subtitle: "Winemakers commencing soft destemming",
+            description:
+              "A familial harvest ritual: freshly picked grapes are delicately unloaded into the hopper to gently separate stems and initiate primary pressing.",
+          },
+          {
+            id: "grape-action",
+            image: "/images/produzione2.jpeg",
+            category: "Artisanal Craft",
+            title: "The Grape Cascade",
+            subtitle: "The vitality of vintage time captured in motion",
+            description:
+              "Every berry holds the climate and essence of Cilento. Swift, mindful cellar work shields the fruit from early oxidation, sealing primary aromas.",
+          },
+          {
+            id: "wooden-press",
+            image: "/images/prodotto.jpeg",
+            category: "Historic Wooden Press",
+            title: "Ruby Must Streaming from the Press",
+            subtitle: "Gentle extraction through traditional wooden staves",
+            description:
+              "The most exhilarating moment: pure ruby-red must streams from the traditional wooden press into the vat, releasing perfumes of dark cherry and Mediterranean herbs.",
+          },
+          {
+            id: "harvest-knife",
+            image: "/images/uva.jpeg",
+            category: "Cellar Still Life",
+            title: "Grapes, Bottle, and Pruning Knife",
+            subtitle: "The sacred simplicity of the craft",
+            description:
+              "The soul of rural Cilento heritage captured in an authentic still life: the harvester's curved knife, dark glowing clusters, and seasoned wooden bench.",
+          },
+          {
+            id: "tasting-white",
+            image: "/images/Bianco.jpeg",
+            category: "Tasting Experience",
+            title: "A Glass of Fiano at the Cellar Threshold",
+            subtitle: "Golden radiance and morning sea light",
+            description:
+              "Natural light pouring through the cellar doorway illuminates a glass of chilled Fiano resting on the weathered timber bench: floral aromas and vibrant minerality.",
+          },
+          {
+            id: "tasting-red",
+            image: "/images/Rosso.jpeg",
+            category: "The Toast",
+            title: "A Glass of Aglianico Raised High",
+            subtitle: "Deep garnet density and noble presence",
+            description:
+              "Honoring the king of Campanian reds: an Aglianico glass admired against the light, showcasing structured tannins, aristocratic poise, and Cilento heritage.",
+          },
+        ],
+      },
     },
     footer: {
       description:
