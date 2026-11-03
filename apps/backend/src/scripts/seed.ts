@@ -130,146 +130,316 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   // ── 6. Categories ─────────────────────────────────────────────────────────
   let categories = await productModuleService.listProductCategories()
-  if (categories.length === 0) {
-    logger.info("Creating wine categories (Vini Bianchi, Vini Rossi, Riserve)...")
+  const existingCatNames = new Set(categories.map((c) => c.name))
+
+  const categoriesToCreate = [
+    { name: "Vini" },
+    { name: "Insaccati" },
+    { name: "Carne fresca" },
+    { name: "Olio EVO" },
+  ].filter((c) => !existingCatNames.has(c.name))
+
+  if (categoriesToCreate.length > 0) {
+    logger.info("Creating authentic estate categories (Vini, Insaccati, Carne fresca, Olio EVO)...")
     const { result: catResult } = await createProductCategoriesWorkflow(container).run({
       input: {
-        product_categories: [
-          { name: "Vini Bianchi" },
-          { name: "Vini Rossi" },
-          { name: "Riserve" },
-        ],
+        product_categories: categoriesToCreate,
       },
     })
-    categories = catResult
+    categories = [...categories, ...catResult]
   }
 
-  const whiteCategory = categories.find((c) => c.name === "Vini Bianchi")
-  const redCategory = categories.find((c) => c.name === "Vini Rossi")
-  const riservaCategory = categories.find((c) => c.name === "Riserve")
+  const viniCat = categories.find((c) => c.name === "Vini" || c.name === "Vini Rossi")
+  const insaccatiCat = categories.find((c) => c.name === "Insaccati")
+  const carneCat = categories.find((c) => c.name === "Carne fresca")
+  const olioCat = categories.find((c) => c.name === "Olio EVO")
 
-  // ── 7. Wine Products ──────────────────────────────────────────────────────
+  // ── 7. Clean Obsolete Legacy Wines ─────────────────────────────────────────
   const oldLegacyWines = await productModuleService.listProducts({
     handle: [
       "vermentino-di-gallura-docg-superiore",
       "cannonau-di-sardegna-doc-riserva",
       "cagnulari-isola-dei-nuraghi-igt",
-    ],
-  })
-
-  if (oldLegacyWines.length > 0) {
-    logger.info("Removing legacy products from Medusa database...")
-    await productModuleService.deleteProducts(oldLegacyWines.map((p) => p.id))
-  }
-
-  const existingWines = await productModuleService.listProducts({
-    handle: [
       "fiano-del-cilento-doc",
       "aglianico-del-cilento-doc-riserva",
       "cilento-doc-rosso-paestum-igt",
     ],
   })
 
-  if (existingWines.length === 0) {
-    logger.info("Creating Cilento wine products (Fiano, Aglianico Riserva, Cilento Rosso)...")
+  if (oldLegacyWines.length > 0) {
+    logger.info("Removing obsolete products from Medusa database...")
+    await productModuleService.deleteProducts(oldLegacyWines.map((p) => p.id))
+  }
+
+  // ── 8. Seed 14 Authentic Products (DeLalla Archive) ───────────────────────
+  const existingProducts = await productModuleService.listProducts({
+    handle: [
+      "chiai-rosso",
+      "rosso-vecchio",
+      "chiai-bianco",
+      "bianco-dolce",
+      "salsiccia-dolce-stagionata",
+      "salsiccia-piccante-stagionata",
+      "salsiccia-di-cinghiale-stagionata",
+      "soppressata-dolce-cilentana",
+      "soppressata-di-cinghiale",
+      "misto-cinghiale",
+      "salsicce-fresche-di-cinghiale",
+      "bistecche-di-cinghiale",
+      "olio-extravergine-oliva-cilento-075",
+      "olio-extravergine-oliva-cilento-latta-3l",
+    ],
+  })
+
+  if (existingProducts.length === 0) {
+    logger.info("Creating authentic 14 estate products across 4 categories...")
     await createProductsWorkflow(container).run({
       input: {
         products: [
+          // Vini
           {
-            title: "Fiano del Cilento DOC",
-            handle: "fiano-del-cilento-doc",
-            description:
-              "Vino bianco campano di straordinaria eleganza, sapido, fresco e minerale, prodotto nel cuore del Parco Nazionale del Cilento su terreni da flysch. Gradazione alcolica 13.5% vol.",
-            category_ids: whiteCategory ? [whiteCategory.id] : [],
+            title: "Chiai Rosso",
+            handle: "chiai-rosso",
+            description: "Il nostro rosso di famiglia, sincero e quotidiano. Vinificato artigianalmente da uve Aglianico coltivate sulle colline di Abatemarco.",
+            category_ids: viniCat ? [viniCat.id] : [],
             shipping_profile_id: defaultShippingProfile.id,
             sales_channels: [{ id: defaultSalesChannel.id }],
             status: "published",
-            options: [
-              {
-                title: "Formato",
-                values: ["Bottiglia 750ml"],
-              },
-            ],
-            variants: [
-              {
-                title: "Bottiglia 750ml",
-                sku: "FIAN-DOC-750",
-                manage_inventory: false,
-                options: {
-                  Formato: "Bottiglia 750ml",
-                },
-                prices: [
-                  {
-                    currency_code: "eur",
-                    amount: 18.5,
-                  },
-                ],
-              },
-            ],
+            options: [{ title: "Formato", values: ["Bottiglia 0,75 l"] }],
+            variants: [{
+              title: "Bottiglia 0,75 l",
+              sku: "CHIAI-ROSSO-750",
+              manage_inventory: false,
+              options: { Formato: "Bottiglia 0,75 l" },
+              prices: [{ currency_code: "eur", amount: 9.0 }],
+            }],
           },
           {
-            title: "Aglianico del Cilento DOC Riserva",
-            handle: "aglianico-del-cilento-doc-riserva",
-            description:
-              "Il re dei vini rossi campani. Caldo, profondo e avvolgente con note di marasca matura, spezie fini e carruba, affinato per 18 mesi in rovere. Gradazione alcolica 14.5% vol.",
-            category_ids: [redCategory?.id, riservaCategory?.id].filter(Boolean) as string[],
+            title: "Rosso Vecchio",
+            handle: "rosso-vecchio",
+            description: "Il rosso importante della cantina. È rimasto a lungo in botte: austero, profondo e avvolgente con note di marasca matura e carruba.",
+            category_ids: viniCat ? [viniCat.id] : [],
             shipping_profile_id: defaultShippingProfile.id,
             sales_channels: [{ id: defaultSalesChannel.id }],
             status: "published",
-            options: [
-              {
-                title: "Formato",
-                values: ["Bottiglia 750ml"],
-              },
-            ],
-            variants: [
-              {
-                title: "Bottiglia 750ml",
-                sku: "AGLI-RIS-750",
-                manage_inventory: false,
-                options: {
-                  Formato: "Bottiglia 750ml",
-                },
-                prices: [
-                  {
-                    currency_code: "eur",
-                    amount: 24.0,
-                  },
-                ],
-              },
-            ],
+            options: [{ title: "Formato", values: ["Bottiglia 0,75 l"] }],
+            variants: [{
+              title: "Bottiglia 0,75 l",
+              sku: "ROSSO-VECCHIO-750",
+              manage_inventory: false,
+              options: { Formato: "Bottiglia 0,75 l" },
+              prices: [{ currency_code: "eur", amount: 15.0 }],
+            }],
           },
           {
-            title: "Cilento DOC Rosso - Paestum IGT",
-            handle: "cilento-doc-rosso-paestum-igt",
-            description:
-              "Autentico gioiello della viticoltura salernitana. Blend armonico di Aglianico e Piedirosso con note balsamiche di macchia cilentana e tannini setosi. Gradazione alcolica 14.0% vol.",
-            category_ids: redCategory ? [redCategory.id] : [],
+            title: "Chiai Bianco",
+            handle: "chiai-bianco",
+            description: "Vino bianco fresco, sapido e minerale. Profumi di ginestra e agrumi cilentani, perfetta espressione del flysch e delle brezze marine.",
+            category_ids: viniCat ? [viniCat.id] : [],
             shipping_profile_id: defaultShippingProfile.id,
             sales_channels: [{ id: defaultSalesChannel.id }],
             status: "published",
-            options: [
-              {
-                title: "Formato",
-                values: ["Bottiglia 750ml"],
-              },
-            ],
-            variants: [
-              {
-                title: "Bottiglia 750ml",
-                sku: "CIL-ROSSO-750",
-                manage_inventory: false,
-                options: {
-                  Formato: "Bottiglia 750ml",
-                },
-                prices: [
-                  {
-                    currency_code: "eur",
-                    amount: 21.0,
-                  },
-                ],
-              },
-            ],
+            options: [{ title: "Formato", values: ["Bottiglia 0,75 l"] }],
+            variants: [{
+              title: "Bottiglia 0,75 l",
+              sku: "CHIAI-BIANCO-750",
+              manage_inventory: false,
+              options: { Formato: "Bottiglia 0,75 l" },
+              prices: [{ currency_code: "eur", amount: 8.0 }],
+            }],
+          },
+          {
+            title: "Bianco Dolce",
+            handle: "bianco-dolce",
+            description: "Vino da fine pasto dolce e aromatico, con sentori di fico bianco del Cilento, miele millefiori e mandorla tostata.",
+            category_ids: viniCat ? [viniCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Formato", values: ["Bottiglia 0,75 l"] }],
+            variants: [{
+              title: "Bottiglia 0,75 l",
+              sku: "BIANCO-DOLCE-750",
+              manage_inventory: false,
+              options: { Formato: "Bottiglia 0,75 l" },
+              prices: [{ currency_code: "eur", amount: 10.0 }],
+            }],
+          },
+
+          // Insaccati
+          {
+            title: "Salsiccia Dolce Stagionata",
+            handle: "salsiccia-dolce-stagionata",
+            description: "Salsiccia artigianale cilentana dolce stagionata naturalmente all'aria di collina. Taglio a punta di coltello e finocchietto selvatico.",
+            category_ids: insaccatiCat ? [insaccatiCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Pezzatura", values: ["Trancio ~400g"] }],
+            variants: [{
+              title: "Trancio ~400g",
+              sku: "SALS-DOLCE-400",
+              manage_inventory: false,
+              options: { Pezzatura: "Trancio ~400g" },
+              prices: [{ currency_code: "eur", amount: 7.0 }],
+            }],
+          },
+          {
+            title: "Salsiccia Piccante Stagionata",
+            handle: "salsiccia-piccante-stagionata",
+            description: "Salsiccia tradizionale preparata con peperoncino rosso campano macinato ed essiccato. Gusto deciso e affumicatura naturale.",
+            category_ids: insaccatiCat ? [insaccatiCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Pezzatura", values: ["Trancio ~400g"] }],
+            variants: [{
+              title: "Trancio ~400g",
+              sku: "SALS-PICC-400",
+              manage_inventory: false,
+              options: { Pezzatura: "Trancio ~400g" },
+              prices: [{ currency_code: "eur", amount: 7.0 }],
+            }],
+          },
+          {
+            title: "Salsiccia di Cinghiale Stagionata",
+            handle: "salsiccia-di-cinghiale-stagionata",
+            description: "Pregiata salsiccia con carne scelta di cinghiale cilentano dei boschi di Abatemarco. Gusto nobile, selvatico e speziato.",
+            category_ids: insaccatiCat ? [insaccatiCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Pezzatura", values: ["Trancio ~400g"] }],
+            variants: [{
+              title: "Trancio ~400g",
+              sku: "SALS-CINGH-400",
+              manage_inventory: false,
+              options: { Pezzatura: "Trancio ~400g" },
+              prices: [{ currency_code: "eur", amount: 10.0 }],
+            }],
+          },
+          {
+            title: "Soppressata Dolce Cilentana",
+            handle: "soppressata-dolce-cilentana",
+            description: "Il salume principe del Cilento: solo le parti nobili del prosciutto e filetto con lardello centrale aromatizzato e pressato a mano.",
+            category_ids: insaccatiCat ? [insaccatiCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Pezzatura", values: ["Pezzo intero ~500g"] }],
+            variants: [{
+              title: "Pezzo intero ~500g",
+              sku: "SOPP-DOLCE-500",
+              manage_inventory: false,
+              options: { Pezzatura: "Pezzo intero ~500g" },
+              prices: [{ currency_code: "eur", amount: 11.0 }],
+            }],
+          },
+          {
+            title: "Soppressata di Cinghiale",
+            handle: "soppressata-di-cinghiale",
+            description: "Rarità gastronomica della nostra salumeria: soppressata di cinghiale stagionata lentamente in cantina di pietra naturale.",
+            category_ids: insaccatiCat ? [insaccatiCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Pezzatura", values: ["Pezzo intero ~500g"] }],
+            variants: [{
+              title: "Pezzo intero ~500g",
+              sku: "SOPP-CINGH-500",
+              manage_inventory: false,
+              options: { Pezzatura: "Pezzo intero ~500g" },
+              prices: [{ currency_code: "eur", amount: 13.0 }],
+            }],
+          },
+
+          // Carne fresca
+          {
+            title: "Misto Cinghiale per Ragù e Spezzatino",
+            handle: "misto-cinghiale",
+            description: "Tagli selezionati di polpa di cinghiale ideali per spezzatini saporiti e per il tradizionale ragù cilentano a cottura lenta.",
+            category_ids: carneCat ? [carneCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Confezione", values: ["Confezione sottovuoto ~1 kg"] }],
+            variants: [{
+              title: "Confezione sottovuoto ~1 kg",
+              sku: "CARN-MIST-1KG",
+              manage_inventory: false,
+              options: { Confezione: "Confezione sottovuoto ~1 kg" },
+              prices: [{ currency_code: "eur", amount: 18.0 }],
+            }],
+          },
+          {
+            title: "Salsicce Fresche di Cinghiale",
+            handle: "salsicce-fresche-di-cinghiale",
+            description: "Salsicce fresche da cuocere alla brace o in padella con vino rosso Chiai. Gusto succoso e autentico.",
+            category_ids: carneCat ? [carneCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Confezione", values: ["Confezione sottovuoto ~500g"] }],
+            variants: [{
+              title: "Confezione sottovuoto ~500g",
+              sku: "CARN-SALS-500",
+              manage_inventory: false,
+              options: { Confezione: "Confezione sottovuoto ~500g" },
+              prices: [{ currency_code: "eur", amount: 8.0 }],
+            }],
+          },
+          {
+            title: "Bistecche di Cinghiale",
+            handle: "bistecche-di-cinghiale",
+            description: "Bistecche fresche di cinghiale tagliate spesse, ideali per grigliate all'aperto sui carboni di legna d'ulivo.",
+            category_ids: carneCat ? [carneCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Confezione", values: ["Confezione sottovuoto ~600g"] }],
+            variants: [{
+              title: "Confezione sottovuoto ~600g",
+              sku: "CARN-BIST-600",
+              manage_inventory: false,
+              options: { Confezione: "Confezione sottovuoto ~600g" },
+              prices: [{ currency_code: "eur", amount: 15.0 }],
+            }],
+          },
+
+          // Olio EVO
+          {
+            title: "Olio Extra Vergine di Oliva - Bottiglia",
+            handle: "olio-extravergine-oliva-cilento-075",
+            description: "Olio EVO biologico di categoria superiore estratto a freddo da olive Rotondella e Pisciottana di Abatemarco.",
+            category_ids: olioCat ? [olioCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Formato", values: ["Bottiglia in vetro scuro 0,75 l"] }],
+            variants: [{
+              title: "Bottiglia in vetro scuro 0,75 l",
+              sku: "OLIO-EVO-750",
+              manage_inventory: false,
+              options: { Formato: "Bottiglia in vetro scuro 0,75 l" },
+              prices: [{ currency_code: "eur", amount: 12.0 }],
+            }],
+          },
+          {
+            title: "Olio Extra Vergine di Oliva - Latta 3L",
+            handle: "olio-extravergine-oliva-cilento-latta-3l",
+            description: "La tradizionale latta salva-freschezza da 3 litri, ideale per la scorta familiare di olio extra vergine artigianale del Cilento.",
+            category_ids: olioCat ? [olioCat.id] : [],
+            shipping_profile_id: defaultShippingProfile.id,
+            sales_channels: [{ id: defaultSalesChannel.id }],
+            status: "published",
+            options: [{ title: "Formato", values: ["Latta serigrafata 3 Litri"] }],
+            variants: [{
+              title: "Latta serigrafata 3 Litri",
+              sku: "OLIO-EVO-3L",
+              manage_inventory: false,
+              options: { Formato: "Latta serigrafata 3 Litri" },
+              prices: [{ currency_code: "eur", amount: 34.0 }],
+            }],
           },
         ],
       },

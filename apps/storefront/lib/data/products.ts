@@ -29,13 +29,16 @@ export interface WineProduct {
   category: string
   categoryHandle: string
   price: number
+  unitPrice?: string
   currencyCode: string
   sku: string
-  alcohol: string
+  alcohol?: string
   format: string
   image: string
+  images?: string[]
   badge: string
   appellation: string
+  left?: number
   details?: WineDetails
 }
 
@@ -51,6 +54,7 @@ interface MedusaRawProduct {
   handle?: string
   description?: string
   thumbnail?: string
+  images?: Array<{ url: string; id?: string }>
   categories?: Array<{ id: string; name: string; handle: string }>
   variants?: Array<{
     sku?: string
@@ -65,194 +69,539 @@ interface MedusaRawCategory {
   handle?: string
 }
 
-const FIANO_DETAILS: WineDetails = {
-  vintage: "2023",
-  grapes: "100% Fiano del Cilento",
+const CHIAI_BIANCO_DETAILS: WineDetails = {
+  vintage: "2024",
+  grapes: "Fiano & vitigni bianchi storici cilentani",
   tastingNotes: {
     visual: "Giallo paglierino luminoso con riflessi verdolini brillanti e vivaci.",
     olfactory:
-      "Naso floreale e aristocratico: ginestra in fiore, erbe aromatiche della macchia mediterranea, mela cotogna, pera williams e una caratteristica scia di nocciola tostata tipica del vitigno.",
+      "Naso floreale e fresco: ginestra, erbe aromatiche della macchia mediterranea, mela cotogna e agrumi cilentani.",
     gustatory:
-      "Teso, fresco e vibrante al palato. Dominato da una mineralità salina scolpita dal flysch arenaceo-argilloso, con un finale lungo, teso e piacevolmente ammandorlato.",
+      "Secco, leggero e vibrante al palato. Dominato dalla fresca sapidità marina e una piacevole beva dissetante.",
   },
   terroir: {
-    soil: "Flysch Cilentano: alternanza geologica di arenarie quarzoso-calcaree e marne argillose ricche di microelementi.",
+    soil: "Flysch Cilentano: arenarie quarzoso-calcaree e marne argillose di Contrada Pozzo.",
     altitude: "280 metri s.l.m.",
-    exposure: "Ovest / Sud-Ovest, rinfrescata dalle brezze pomeridiane del Mar Tirreno.",
-    harvest: "Raccolta manuale al mattino presto in piccole cassette forate con rigorosa selezione dei grappoli.",
-    aging: "Fermentazione in acciaio a 14°C e sosta sui lieviti fini per 6 mesi con bâtonnage periodici.",
+    exposure: "Ovest / Sud-Ovest, rinfrescata dalle brezze del Mar Tirreno.",
+    harvest: "Raccolta manuale in cassette con selezione dei grappoli sui pendii di Abatemarco.",
+    aging: "Fermentazione e sosta in acciaio a temperatura controllata per preservare la freschezza primaria.",
   },
   technical: {
-    serviceTemp: "10 - 12 °C",
-    glass: "Calice a tulipano medio per vini bianchi strutturati",
-    agingPotential: "5 - 7 anni, con notevole evoluzione minerale e idrocarburica nel tempo",
+    serviceTemp: "8 - 10 °C",
+    glass: "Calice a tulipano per bianchi freschi",
+    agingPotential: "2 - 3 anni, da bere giovane e fragrante",
   },
   pairings: [
-    "Mozzarella di Bufala Campana DOP di Paestum e pomodori costoluti",
-    "Spaghetti alle Alici di Menaica e profumo di limone cilentano",
-    "Risotto ai frutti di mare e crostacei del Golfo di Salerno",
-    "Spigola o orata al sale marino con erbe della macchia",
+    "Piccolo tagliere della cantina con formaggi caprini freschi",
+    "Alici di Menaica marinate e fritture di paranza",
+    "Mozzarella di bufala e pomodori dell'orto",
+    "Aperitivo tra amici al banco della cantina",
   ],
 }
 
-const AGLIANICO_DETAILS: WineDetails = {
-  vintage: "2018",
+const ROSSO_VECCHIO_DETAILS: WineDetails = {
+  vintage: "2021",
   grapes: "100% Aglianico del Cilento",
   tastingNotes: {
-    visual: "Rosso rubino impenetrabile e consistente, con nobili riflessi granato.",
+    visual: "Rosso rubino impenetrabile con caldi riflessi granato.",
     olfactory:
-      "Bouquet maestoso e avvolgente: marasca sotto spirito, mora selvatica, carruba cilentana, tabacco da pipa, pepe nero macinato, cuoio nobile e sottobosco balsamico.",
+      "Bouquet avvolgente: marasca matura, mora selvatica, carruba, tabacco da pipa e macchia mediterranea.",
     gustatory:
-      "Imponente, caloroso e aristocratico. La potente trama tannica è fitta e vellutata, sorretta da viva sapidità marina e una persistenza speziata interminabile.",
+      "Corposo, austero e profondo. È rimasto a lungo in botte: tannini levigati dal tempo e lunghissima persistenza.",
   },
   terroir: {
-    soil: "Flysch Cilentano ad alto contenuto argilloso-calcareo con scheletro lapideo ben drenante.",
-    altitude: "350 metri s.l.m.",
-    exposure: "Pieno Sud, riparato dalle correnti fredde grazie ai Monti Alburni.",
-    harvest: "Manuale a fine ottobre alla perfetta maturazione fenolica dei vinaccioli.",
-    aging: "Macerazione di 24 giorni; 18 mesi in botti di rovere francese e 12 mesi di affinamento in bottiglia.",
+    soil: "Flysch Cilentano ad alto tenore argilloso di Contrada Pozzo, Abatemarco.",
+    altitude: "320 metri s.l.m.",
+    exposure: "Pieno Sud, riparato dalle correnti fredde.",
+    harvest: "Raccolta manuale a fine ottobre a piena maturazione fenolica.",
+    aging: "Lungo affinamento in botte di rovere e riposo nelle cantine sotterranee in pietra.",
   },
   technical: {
-    serviceTemp: "18 - 20 °C (consigliata stappatura o caraffa un'ora prima del servizio)",
-    glass: "Calice gran cru ampio tipo Bordeaux",
-    agingPotential: "15 - 20 anni, vino da grandissimo invecchiamento e meditazione",
+    serviceTemp: "18 - 20 °C (consigliata stappatura mezz'ora prima)",
+    glass: "Calice ampio da grandi rossi strutturati",
+    agingPotential: "10 - 15 anni",
   },
   pairings: [
-    "Fusilli cilentani al ferretto con ragù tradizionale di castrato",
-    "Cinghiale in umido con bacche di mirto e ginepro degli Alburni",
-    "Caciocavallo Podolico del Cilento stagionato in grotta",
-    "Tagliata di manzo con riduzione di Aglianico e rosmarino",
+    "Spezzatino o bistecca di cinghiale ai ferri",
+    "Fusilli al ferretto con ragù di castrato",
+    "Soppressata di cinghiale della nostra salumeria",
+    "Caciocavallo podolico stagionato",
   ],
 }
 
-const ROSSO_DETAILS: WineDetails = {
-  vintage: "2021",
-  grapes: "70% Aglianico, 30% Piedirosso",
+const CHIAI_ROSSO_DETAILS: WineDetails = {
+  vintage: "2023",
+  grapes: "Aglianico & vitigni tradizionali di famiglia",
   tastingNotes: {
-    visual: "Rosso rubino vivido con riflessi violacei luminosi e giovanili.",
+    visual: "Rosso rubino vivido con riflessi violacei luminosi.",
     olfactory:
-      "Fragrante e coinvolgente: profumi spiccati di ciliegia durona, prugna selvatica, violetta di bosco, macchia mediterranea e una punta di pepe rosa.",
+      "Fragrante e genuino: ciliegia fresca, prugna selvatica, violetta e spezie dolci della macchia.",
     gustatory:
-      "Equilibrato, agile e succoso. La nobile struttura dell'Aglianico si fonde con l'armonia fruttata del Piedirosso, donando tannini levigati e freschezza salina.",
+      "Il nostro rosso di tutti i giorni, quello che beviamo anche noi a cena. Schietto, armonico e beverino.",
   },
   terroir: {
-    soil: "Arenarie flyschoidi a grana media con intercalazioni marnoso-argillose.",
-    altitude: "220 metri s.l.m.",
-    exposure: "Sud-Est, illuminata dal primo sole del mattino.",
-    harvest: "Raccolta manuale a metà ottobre in cassette da 15 kg.",
-    aging: "Vinificazione in vasche di cemento termocontrollate e 10 mesi tra botte grande di rovere e bottiglia.",
+    soil: "Arenarie e marne di Abatemarco (SA).",
+    altitude: "250 metri s.l.m.",
+    exposure: "Sud-Est, baciata dal sole mattutino.",
+    harvest: "Raccolta manuale in cassette da 15 kg all'alba.",
+    aging: "Vinificazione artigianale tradizionale e riposo in cantina.",
   },
   technical: {
     serviceTemp: "16 - 18 °C",
-    glass: "Calice ballon medio per rossi freschi e profumati",
-    agingPotential: "6 - 8 anni, piacevolissimo fin da subito",
+    glass: "Calice medio per vini rossi quotidiani",
+    agingPotential: "4 - 5 anni",
   },
   pairings: [
-    "Soppressata di Gioi Cilento e formaggi caprini semistagionati",
-    "Zuppa cilentana di ceci di Cicerale e castagne",
-    "Ravioli di ricotta campana con pomodorini del piennolo e basilico",
-    "Pollo ruspante alla cacciatora con olive ammaccate cilentane",
+    "Salsiccia dolce o piccante della nostra cantina",
+    "Pane cotto a legna e soppressata casereccia",
+    "Pasta e fagioli della tradizione cilentana",
+    "Carni alla griglia e cene conviviali di famiglia",
   ],
 }
 
-const FALLBACK_CATEGORIES: WineCategory[] = [
-  { id: "pcat_bianchi", name: "Vini Bianchi", handle: "vini-bianchi" },
-  { id: "pcat_rossi", name: "Vini Rossi", handle: "vini-rossi" },
-  { id: "pcat_riserve", name: "Riserve", handle: "riserve" },
+export const DEFAULT_CATEGORIES: WineCategory[] = [
+  { id: "cat_vini", name: "Vini", handle: "vini" },
+  { id: "cat_insaccati", name: "Insaccati", handle: "insaccati" },
+  { id: "cat_carne", name: "Carne fresca", handle: "carne" },
+  { id: "cat_olio", name: "Olio EVO", handle: "olio" },
 ]
 
-const FALLBACK_PRODUCTS: WineProduct[] = [
+export const FALLBACK_PRODUCTS: WineProduct[] = [
+  // --- VINI ---
   {
-    id: "prod_fiano",
-    title: "Fiano del Cilento DOC",
-    handle: "fiano-del-cilento-doc",
+    id: "v1",
+    title: "Chiai Rosso",
+    handle: "chiai-rosso",
     description:
-      "Vino bianco campano di straordinaria eleganza, sapido, fresco e minerale, prodotto nel cuore del Parco Nazionale del Cilento su terreni da flysch arenaceo-argilloso. Note floreali di ginestra, erbe mediterranee e nocciola tostata.",
-    category: "Vini Bianchi",
-    categoryHandle: "vini-bianchi",
-    price: 18.5,
+      "Il nostro rosso di tutti i giorni, quello che beviamo anche noi a cena. Va bene con tutto. Prodotto con le uve della nostra vigna di Abatemarco.",
+    category: "Vini",
+    categoryHandle: "vini",
+    price: 9.0,
     currencyCode: "EUR",
-    sku: "FIAN-DOC-750",
+    sku: "CHIAI-ROSSO-750",
     alcohol: "13.5% vol.",
-    format: "750 ml",
-    image: "/images/fiano-cilento.jpg",
-    badge: "Cilento DOC",
-    appellation: "Cilento DOC Fiano",
-    details: FIANO_DETAILS,
-  },
-  {
-    id: "prod_aglianico",
-    title: "Aglianico del Cilento DOC Riserva",
-    handle: "aglianico-del-cilento-doc-riserva",
-    description:
-      "Il re dei vini rossi campani. Profondo, caldo e avvolgente, con note di marasca matura, spezie fini e carruba, affinato per 18 mesi in botti di rovere. Struttura maestosa, mineralità salina e tannini vellutati.",
-    category: "Riserve",
-    categoryHandle: "riserve",
-    price: 24.0,
-    currencyCode: "EUR",
-    sku: "AGLI-RIS-750",
-    alcohol: "14.5% vol.",
-    format: "750 ml",
-    image: "/images/aglianico-cilento.jpg",
-    badge: "DOC Riserva",
-    appellation: "Cilento DOC Aglianico",
-    details: AGLIANICO_DETAILS,
-  },
-  {
-    id: "prod_rosso",
-    title: "Cilento DOC Rosso - Paestum IGT",
-    handle: "cilento-doc-rosso-paestum-igt",
-    description:
-      "Autentico gioiello della viticoltura salernitana. Blend armonico di Aglianico e Piedirosso con vibranti note balsamiche di macchia cilentana, prugna selvatica, pepe rosa e tannini setosi e persistenti.",
-    category: "Vini Rossi",
-    categoryHandle: "vini-rossi",
-    price: 21.0,
-    currencyCode: "EUR",
-    sku: "CIL-ROSSO-750",
-    alcohol: "14.0% vol.",
-    format: "750 ml",
+    format: "Bottiglia 75 cl",
     image: "/images/cilento-rosso.jpg",
-    badge: "Cilento DOC",
-    appellation: "Cilento DOC Rosso",
-    details: ROSSO_DETAILS,
+    images: [
+      "/images/cilento-rosso.jpg",
+      "/images/products/chiai-rosso.png",
+      "/images/Rosso.jpeg",
+      "/images/raccolta.jpeg",
+    ],
+    badge: "Il Nostro Rosso",
+    appellation: "Vino Rosso · Annata 2023",
+    left: 24,
+    details: CHIAI_ROSSO_DETAILS,
+  },
+  {
+    id: "v2",
+    title: "Rosso Vecchio",
+    handle: "rosso-vecchio",
+    description:
+      "È rimasto in botte più a lungo, per chi ha pazienza. Più corposo, da bere con un buon secondo. Ideale con i piatti robusti della cucina cilentana.",
+    category: "Vini",
+    categoryHandle: "vini",
+    price: 15.0,
+    currencyCode: "EUR",
+    sku: "ROSSO-VECCHIO-750",
+    alcohol: "14.5% vol.",
+    format: "Bottiglia 75 cl",
+    image: "/images/aglianico-cilento.jpg",
+    images: [
+      "/images/aglianico-cilento.jpg",
+      "/images/products/rosso-vecchio.png",
+      "/images/VecchiaBottiglia.jpeg",
+      "/images/prodotto.jpeg",
+    ],
+    badge: "Invecchiato in Botte",
+    appellation: "Vino Rosso · Annata 2021",
+    left: 10,
+    details: ROSSO_VECCHIO_DETAILS,
+  },
+  {
+    id: "v3",
+    title: "Chiai Bianco",
+    handle: "chiai-bianco",
+    description:
+      "Secco e leggero, come piace a noi in questa zona. Perfetto per l'estate, l'aperitivo o il pesce fresco della costa cilentana.",
+    category: "Vini",
+    categoryHandle: "vini",
+    price: 8.0,
+    currencyCode: "EUR",
+    sku: "CHIAI-BIANCO-750",
+    alcohol: "12.5% vol.",
+    format: "Bottiglia 75 cl",
+    image: "/images/fiano-cilento.jpg",
+    images: [
+      "/images/fiano-cilento.jpg",
+      "/images/products/chiai-bianco.png",
+      "/images/Bianco.jpeg",
+      "/images/lavorazione.jpeg",
+    ],
+    badge: "Fresco & Secco",
+    appellation: "Vino Bianco · Annata 2024",
+    left: 18,
+    details: CHIAI_BIANCO_DETAILS,
+  },
+  {
+    id: "v4",
+    title: "Bianco Dolce",
+    handle: "bianco-dolce",
+    description:
+      "Il nostro bianco più morbido, quello che piace a chi non ama i vini troppo secchi. Profumato e vellutato.",
+    category: "Vini",
+    categoryHandle: "vini",
+    price: 10.0,
+    currencyCode: "EUR",
+    sku: "BIANCO-DOLCE-750",
+    alcohol: "12.0% vol.",
+    format: "Bottiglia 75 cl",
+    image: "/images/fiano-cilento.jpg",
+    images: [
+      "/images/fiano-cilento.jpg",
+      "/images/products/bianco-dolce.png",
+      "/images/Bianco.jpeg",
+    ],
+    badge: "Morbido & Fruttato",
+    appellation: "Vino Bianco Dolce · Annata 2024",
+    left: 12,
+    details: CHIAI_BIANCO_DETAILS,
+  },
+
+  // --- INSACCATI ---
+  {
+    id: "i1",
+    title: "Salsiccia Dolce",
+    handle: "salsiccia-dolce",
+    description:
+      "Fatta in casa con la ricetta di sempre, senza piccante. Buona anche appena tagliata. Salume artigianale cilentano stagionato lentamente.",
+    category: "Insaccati",
+    categoryHandle: "insaccati",
+    price: 7.0,
+    unitPrice: "17,50 €/kg",
+    currencyCode: "EUR",
+    sku: "SALS-DOLCE-400",
+    format: "Pezzo ~ 400 g",
+    image: "/images/insaccati-cilento.jpg",
+    images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-dolce.png"],
+    badge: "Ricetta Tradizionale",
+    appellation: "Salumeria Artigianale",
+    left: 8,
+  },
+  {
+    id: "i2",
+    title: "Salsiccia Piccante",
+    handle: "salsiccia-piccante",
+    description:
+      "Stessa lavorazione della dolce, ma con un po' di peperoncino in più per chi lo ama forte. Tagliata a fette spesse col nostro pane casereccio.",
+    category: "Insaccati",
+    categoryHandle: "insaccati",
+    price: 7.0,
+    unitPrice: "17,50 €/kg",
+    currencyCode: "EUR",
+    sku: "SALS-PICC-400",
+    format: "Pezzo ~ 400 g",
+    image: "/images/insaccati-cilento.jpg",
+    images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-piccante.png"],
+    badge: "Al Peperoncino",
+    appellation: "Salumeria Artigianale",
+    left: 8,
+  },
+  {
+    id: "i3",
+    title: "Salsiccia di Cinghiale",
+    handle: "salsiccia-di-cinghiale",
+    description:
+      "Con carne di cinghiale nostrano dei boschi del Cilento, un sapore più deciso, rustico e selvatico. Da provare con Chiai Rosso.",
+    category: "Insaccati",
+    categoryHandle: "insaccati",
+    price: 10.0,
+    unitPrice: "25,00 €/kg",
+    currencyCode: "EUR",
+    sku: "SALS-CINGH-400",
+    format: "Pezzo ~ 400 g",
+    image: "/images/insaccati-cilento.jpg",
+    images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-cinghiale.png"],
+    badge: "Cinghiale Nostrano",
+    appellation: "Specialità Salumiera",
+    left: 6,
+  },
+  {
+    id: "i4",
+    title: "Soppressata Dolce",
+    handle: "soppressata-dolce",
+    description:
+      "Stagionata con calma in cantina, come facevano i nostri nonni. Dolce, compatta e delicata, con tagli magri scelti a mano.",
+    category: "Insaccati",
+    categoryHandle: "insaccati",
+    price: 11.0,
+    unitPrice: "22,00 €/kg",
+    currencyCode: "EUR",
+    sku: "SOPP-DOLCE-500",
+    format: "Pezzo ~ 500 g",
+    image: "/images/insaccati-cilento.jpg",
+    images: ["/images/insaccati-cilento.jpg", "/images/products/soppressata-dolce.png"],
+    badge: "Stagionata in Cantina",
+    appellation: "Salumeria Storica",
+    left: 6,
+  },
+  {
+    id: "i5",
+    title: "Soppressata di Cinghiale",
+    handle: "soppressata-di-cinghiale",
+    description:
+      "La stessa lavorazione antica della soppressata, ma con carne di cinghiale. Da tagliare fine a coltello e gustare con calma.",
+    category: "Insaccati",
+    categoryHandle: "insaccati",
+    price: 13.0,
+    unitPrice: "26,00 €/kg",
+    currencyCode: "EUR",
+    sku: "SOPP-CINGH-500",
+    format: "Pezzo ~ 500 g",
+    image: "/images/insaccati-cilento.jpg",
+    images: ["/images/insaccati-cilento.jpg", "/images/products/soppressata-cinghiale.png"],
+    badge: "Selezione Pregiata",
+    appellation: "Specialità Salumiera",
+    left: 5,
+  },
+
+  // --- CARNE FRESCA ---
+  {
+    id: "c1",
+    title: "Misto Cinghiale",
+    handle: "misto-cinghiale",
+    description:
+      "Un assortimento di tagli misti di cinghiale fresco, così puoi provarli e scegliere quello che ti piace di più. Fresco e pronto per la cottura.",
+    category: "Carne fresca",
+    categoryHandle: "carne",
+    price: 18.0,
+    unitPrice: "18,00 €/kg",
+    currencyCode: "EUR",
+    sku: "CARNE-MIST-1000",
+    format: "Confezione ~ 1 kg",
+    image: "/images/products/misto-cinghiale.png",
+    images: ["/images/products/misto-cinghiale.png"],
+    badge: "Carne Fresca",
+    appellation: "Su Ordinazione",
+    left: 5,
+  },
+  {
+    id: "c2",
+    title: "Salsicce di Cinghiale Fresche",
+    handle: "salsicce-di-cinghiale-fresche",
+    description:
+      "Fresche, da cuocere in padella o alla griglia. Il sapore autentico del cinghiale cilentano senza troppi fronzoli.",
+    category: "Carne fresca",
+    categoryHandle: "carne",
+    price: 8.0,
+    unitPrice: "16,00 €/kg",
+    currencyCode: "EUR",
+    sku: "CARNE-SALS-500",
+    format: "Confezione ~ 500 g",
+    image: "/images/products/salsicce-cinghiale.png",
+    images: ["/images/products/salsicce-cinghiale.png"],
+    badge: "Da Griglia o Padella",
+    appellation: "Su Ordinazione",
+    left: 6,
+  },
+  {
+    id: "c3",
+    title: "Bistecche di Cinghiale",
+    handle: "bistecche-di-cinghiale",
+    description:
+      "Tagliate come piace a noi, pronte per la griglia rovente. Bastano sale grosso e un filo del nostro olio extravergine.",
+    category: "Carne fresca",
+    categoryHandle: "carne",
+    price: 15.0,
+    unitPrice: "25,00 €/kg",
+    currencyCode: "EUR",
+    sku: "CARNE-BIST-600",
+    format: "Confezione ~ 600 g",
+    image: "/images/products/bistecche-cinghiale.png",
+    images: ["/images/products/bistecche-cinghiale.png"],
+    badge: "Pronte per la Griglia",
+    appellation: "Su Ordinazione",
+    left: 4,
+  },
+
+  // --- OLIO EXTRAVERGINE ---
+  {
+    id: "o1",
+    title: "Olio Extravergine 75 cl",
+    handle: "olio-extravergine-bottiglia",
+    description:
+      "Le nostre olive degli alberi di Abatemarco, spremute a freddo. Quello che usiamo ogni giorno in casa per condire e cucinare.",
+    category: "Olio EVO",
+    categoryHandle: "olio",
+    price: 12.0,
+    unitPrice: "16,00 €/l",
+    currencyCode: "EUR",
+    sku: "OLIO-EVO-750",
+    format: "Bottiglia 75 cl",
+    image: "/images/olio-cilento.jpg",
+    images: ["/images/olio-cilento.jpg", "/images/products/olio-bottiglia.png"],
+    badge: "Spremuto a Freddo",
+    appellation: "Olio Extravergine di Oliva",
+    left: 20,
+  },
+  {
+    id: "o2",
+    title: "Olio Extravergine Latta 3L",
+    handle: "olio-extravergine-latta-3l",
+    description:
+      "Stesso olio della bottiglia, spremuto a freddo, in formato più grande per chi ne consuma tanto in famiglia.",
+    category: "Olio EVO",
+    categoryHandle: "olio",
+    price: 34.0,
+    unitPrice: "11,33 €/l",
+    currencyCode: "EUR",
+    sku: "OLIO-EVO-3000",
+    format: "Latta da 3 Litri",
+    image: "/images/olio-cilento.jpg",
+    images: ["/images/olio-cilento.jpg", "/images/products/olio-latta.png"],
+    badge: "Scorta Famiglia",
+    appellation: "Olio Extravergine di Oliva",
+    left: 9,
   },
 ]
 
 function getWineMetadata(handle: string) {
   const normalized = handle.toLowerCase()
-  if (normalized.includes("fiano") || normalized.includes("bianco")) {
+  const exact = FALLBACK_PRODUCTS.find((p) => p.handle === normalized || p.handle.includes(normalized) || normalized.includes(p.handle))
+  if (exact) {
+    return {
+      title: exact.title,
+      handle: exact.handle,
+      description: exact.description,
+      image: exact.image,
+      images: exact.images || [exact.image],
+      badge: exact.badge,
+      alcohol: exact.alcohol,
+      format: exact.format,
+      appellation: exact.appellation,
+      category: exact.category,
+      categoryHandle: exact.categoryHandle,
+      unitPrice: exact.unitPrice,
+      left: exact.left,
+      details: exact.details,
+      sku: exact.sku,
+    }
+  }
+
+  if (normalized.includes("olio")) {
+    const isLatta = normalized.includes("latta") || normalized.includes("3l")
+    return {
+      image: "/images/olio-cilento.jpg",
+      images: [
+        "/images/olio-cilento.jpg",
+        isLatta
+          ? "/images/products/olio-latta.png"
+          : "/images/products/olio-bottiglia.png",
+      ],
+      badge: isLatta ? "Scorta Famiglia" : "Spremuto a Freddo",
+      format: isLatta ? "Latta da 3 Litri" : "Bottiglia 75 cl",
+      appellation: "Olio Extravergine di Oliva",
+      category: "Olio EVO",
+      categoryHandle: "olio",
+    }
+  }
+
+  if (
+    normalized.includes("carne") ||
+    normalized.includes("misto") ||
+    normalized.includes("bistecche") ||
+    normalized.includes("cinghiale-fresche")
+  ) {
+    let img = "/images/products/misto-cinghiale.png"
+    if (normalized.includes("bistecche")) img = "/images/products/bistecche-cinghiale.png"
+    if (normalized.includes("salsicce")) img = "/images/products/salsicce-cinghiale.png"
+    return {
+      image: img,
+      images: [img],
+      badge: "Carne Fresca",
+      format: "Confezione sottovuoto",
+      appellation: "Su Ordinazione",
+      category: "Carne fresca",
+      categoryHandle: "carne",
+    }
+  }
+
+  if (normalized.includes("salsiccia") || normalized.includes("soppressata")) {
+    let img = "/images/products/salsiccia-dolce.png"
+    if (normalized.includes("piccante")) img = "/images/products/salsiccia-piccante.png"
+    if (normalized.includes("soppressata") && normalized.includes("cinghiale"))
+      img = "/images/products/soppressata-cinghiale.png"
+    else if (normalized.includes("soppressata"))
+      img = "/images/products/soppressata-dolce.png"
+    else if (normalized.includes("cinghiale"))
+      img = "/images/products/salsiccia-cinghiale.png"
+
+    return {
+      image: "/images/insaccati-cilento.jpg",
+      images: ["/images/insaccati-cilento.jpg", img],
+      badge: "Fatta in Casa",
+      format: "Pezzo intero",
+      appellation: "Salumeria Artigianale",
+      category: "Insaccati",
+      categoryHandle: "insaccati",
+    }
+  }
+
+  if (normalized.includes("bianco")) {
+    const isDolce = normalized.includes("dolce")
     return {
       image: "/images/fiano-cilento.jpg",
-      badge: "Cilento DOC",
-      alcohol: "13.5% vol.",
-      format: "750 ml",
-      appellation: "Cilento DOC Fiano",
-      category: "Vini Bianchi",
-      categoryHandle: "vini-bianchi",
-      details: FIANO_DETAILS,
+      images: [
+        "/images/fiano-cilento.jpg",
+        isDolce
+          ? "/images/products/bianco-dolce.png"
+          : "/images/products/chiai-bianco.png",
+        "/images/Bianco.jpeg",
+      ],
+      badge: isDolce ? "Morbido & Fruttato" : "Fresco & Secco",
+      alcohol: isDolce ? "12.0% vol." : "12.5% vol.",
+      format: "75 cl",
+      appellation: isDolce ? "Vino Bianco Dolce · 2024" : "Vino Bianco · 2024",
+      category: "Vini",
+      categoryHandle: "vini",
+      details: CHIAI_BIANCO_DETAILS,
     }
   }
-  if (normalized.includes("aglianico") || normalized.includes("riserv")) {
+
+  if (normalized.includes("vecchio") || normalized.includes("riserv")) {
     return {
       image: "/images/aglianico-cilento.jpg",
-      badge: "DOC Riserva",
+      images: [
+        "/images/aglianico-cilento.jpg",
+        "/images/products/rosso-vecchio.png",
+        "/images/VecchiaBottiglia.jpeg",
+        "/images/prodotto.jpeg",
+      ],
+      badge: "Invecchiato in Botte",
       alcohol: "14.5% vol.",
-      format: "750 ml",
-      appellation: "Cilento DOC Aglianico",
-      category: "Riserve",
-      categoryHandle: "riserve",
-      details: AGLIANICO_DETAILS,
+      format: "75 cl",
+      appellation: "Vino Rosso · 2021",
+      category: "Vini",
+      categoryHandle: "vini",
+      details: ROSSO_VECCHIO_DETAILS,
     }
   }
+
   return {
     image: "/images/cilento-rosso.jpg",
-    badge: "Cilento DOC",
-    alcohol: "14.0% vol.",
-    format: "750 ml",
-    appellation: "Cilento DOC Rosso",
-    category: "Vini Rossi",
-    categoryHandle: "vini-rossi",
-    details: ROSSO_DETAILS,
+    images: [
+      "/images/cilento-rosso.jpg",
+      "/images/products/chiai-rosso.png",
+      "/images/Rosso.jpeg",
+      "/images/raccolta.jpeg",
+    ],
+    badge: "Il Nostro Rosso",
+    alcohol: "13.5% vol.",
+    format: "75 cl",
+    appellation: "Vino Rosso · 2023",
+    category: "Vini",
+    categoryHandle: "vini",
+    details: CHIAI_ROSSO_DETAILS,
   }
 }
 
@@ -260,15 +609,25 @@ export async function getProducts(categoryFilter?: string): Promise<WineProduct[
   const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
   const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
 
+  const LEGACY_OBSOLETE_HANDLES = new Set([
+    "fiano-del-cilento-doc",
+    "cilento-doc-rosso-paestum-igt",
+    "aglianico-del-cilento-doc-riserva",
+    "vermentino-di-gallura-docg-superiore",
+    "cannonau-di-sardegna-doc-riserva",
+    "cagnulari-isola-dei-nuraghi-igt",
+  ])
+
   try {
     const url = new URL(`${backendUrl}/store/products`)
-    url.searchParams.set("fields", "*variants,*categories,*variants.prices")
+    url.searchParams.set("fields", "*variants,*categories,*variants.prices,*images")
+    url.searchParams.set("limit", "100")
 
     const res = await fetch(url.toString(), {
       headers: {
         "x-publishable-api-key": publishableKey,
       },
-      next: { revalidate: 60 }, // ISR caching: revalidate every 60 seconds
+      next: { revalidate: 30 }, // ISR caching: revalidate every 30 seconds
     })
 
     if (!res.ok) {
@@ -277,11 +636,14 @@ export async function getProducts(categoryFilter?: string): Promise<WineProduct[
     }
 
     const data = await res.json()
-    if (!data.products || !Array.isArray(data.products) || data.products.length === 0) {
-      return filterProducts(FALLBACK_PRODUCTS, categoryFilter)
-    }
+    const rawProducts: MedusaRawProduct[] = data.products || []
 
-    const formattedProducts: WineProduct[] = (data.products as MedusaRawProduct[]).map((p) => {
+    // Filter out obsolete test/legacy products
+    const validMedusaProducts = rawProducts.filter(
+      (p) => !LEGACY_OBSOLETE_HANDLES.has(p.handle || "")
+    )
+
+    const formattedMedusa: WineProduct[] = validMedusaProducts.map((p) => {
       const meta = getWineMetadata(p.handle || "")
       const firstVariant = p.variants?.[0]
       const priceObj = firstVariant?.prices?.[0] || firstVariant?.calculated_price
@@ -290,24 +652,35 @@ export async function getProducts(categoryFilter?: string): Promise<WineProduct[
 
       return {
         id: p.id,
-        title: p.title,
-        handle: p.handle || "",
-        description: p.description || "",
+        title: p.title || meta.title || "Prodotto Cantina de Li Chiai",
+        handle: p.handle || meta.handle || "prodotto",
+        description: p.description || meta.description || "",
         category: p.categories?.[0]?.name || meta.category,
         categoryHandle: p.categories?.[0]?.handle || meta.categoryHandle,
         price: price,
+        unitPrice: meta.unitPrice,
         currencyCode: "EUR",
-        sku: firstVariant?.sku || "SKU-750",
+        sku: firstVariant?.sku || meta.sku || "SKU-750",
         alcohol: meta.alcohol,
         format: meta.format,
         image: p.thumbnail || meta.image,
+        images:
+          p.images && p.images.length > 0
+            ? p.images.map((img) => img.url)
+            : meta.images,
         badge: meta.badge,
         appellation: meta.appellation,
+        left: meta.left,
         details: meta.details,
       }
     })
 
-    return filterProducts(formattedProducts, categoryFilter)
+    // Merge: always ensure all 14 authentic DeLalla catalog items exist
+    const medusaHandles = new Set(formattedMedusa.map((p) => p.handle))
+    const missingFallback = FALLBACK_PRODUCTS.filter((fb) => !medusaHandles.has(fb.handle))
+    const combinedProducts = [...formattedMedusa, ...missingFallback]
+
+    return filterProducts(combinedProducts, categoryFilter)
   } catch (err) {
     console.warn("[Storefront] Could not connect to Medusa backend during fetch. Using fallback catalog.", err)
     return filterProducts(FALLBACK_PRODUCTS, categoryFilter)
@@ -325,7 +698,7 @@ export async function getProductByHandle(handle: string): Promise<WineProduct | 
   try {
     const url = new URL(`${backendUrl}/store/products`)
     url.searchParams.set("handle", handle)
-    url.searchParams.set("fields", "*variants,*categories,*variants.prices")
+    url.searchParams.set("fields", "*variants,*categories,*variants.prices,*images")
 
     const res = await fetch(url.toString(), {
       headers: {
@@ -346,19 +719,25 @@ export async function getProductByHandle(handle: string): Promise<WineProduct | 
 
         return {
           id: p.id,
-          title: p.title,
+          title: p.title || meta.title || "Prodotto Cantina de Li Chiai",
           handle: p.handle || handle,
-          description: p.description || "",
+          description: p.description || meta.description || "",
           category: p.categories?.[0]?.name || meta.category,
           categoryHandle: p.categories?.[0]?.handle || meta.categoryHandle,
           price: price,
+          unitPrice: meta.unitPrice,
           currencyCode: "EUR",
-          sku: firstVariant?.sku || "SKU-750",
+          sku: firstVariant?.sku || meta.sku || "SKU-750",
           alcohol: meta.alcohol,
           format: meta.format,
           image: p.thumbnail || meta.image,
+          images:
+            p.images && p.images.length > 0
+              ? p.images.map((img) => img.url)
+              : meta.images,
           badge: meta.badge,
           appellation: meta.appellation,
+          left: meta.left,
           details: meta.details,
         }
       }
@@ -394,20 +773,23 @@ export async function getCategories(): Promise<WineCategory[]> {
     })
 
     if (!res.ok) {
-      return FALLBACK_CATEGORIES
+      return DEFAULT_CATEGORIES
     }
 
     const data = await res.json()
-    if (data.product_categories && Array.isArray(data.product_categories)) {
-      return (data.product_categories as MedusaRawCategory[]).map((c) => ({
+    if (data.product_categories && Array.isArray(data.product_categories) && data.product_categories.length > 0) {
+      const medusaCats = (data.product_categories as MedusaRawCategory[]).map((c) => ({
         id: c.id,
         name: c.name,
         handle: c.handle || c.name.toLowerCase().replace(/\s+/g, "-"),
       }))
+      const handles = new Set(medusaCats.map((c) => c.handle))
+      const extraDefaults = DEFAULT_CATEGORIES.filter((c) => !handles.has(c.handle))
+      return [...medusaCats, ...extraDefaults]
     }
-    return FALLBACK_CATEGORIES
+    return DEFAULT_CATEGORIES
   } catch {
-    return FALLBACK_CATEGORIES
+    return DEFAULT_CATEGORIES
   }
 }
 

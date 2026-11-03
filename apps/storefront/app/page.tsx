@@ -4,8 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { WineCatalog } from "@/components/WineCatalog";
 import { PromoBanner } from "@/components/PromoBanner";
-import { FeaturesSection } from "@/components/FeaturesSection";
-import { StorySection } from "@/components/StorySection";
+import { MeetUsBanner } from "@/components/MeetUsBanner";
 import { SocialMosaic } from "@/components/SocialMosaic";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { Footer } from "@/components/Footer";
@@ -28,7 +27,7 @@ export default async function HomePage(props: {
   return (
     <div className="flex min-h-screen flex-col bg-white text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
       {/* 1. Floating Glass Island Header */}
-      <Navbar dict={dict} currentLocale={currentLocale} />
+      <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow">
         {/* 2. Full-Screen 100vh Hero with docked single-line TickerBar */}
@@ -41,14 +40,11 @@ export default async function HomePage(props: {
           dict={dict}
         />
 
-        {/* 5. Promotional Corporate & Gift Banner */}
+        {/* 4. Promotional Corporate & Gift Banner */}
         <PromoBanner dict={dict} />
 
-        {/* 6. Three Guarantee / Service Pillars */}
-        <FeaturesSection dict={dict} />
-
-        {/* 7. Story & Terroir Heritage */}
-        <StorySection dict={dict} />
+        {/* 5. Vieni a conoscerci Banner */}
+        <MeetUsBanner dict={dict} />
 
         {/* 8. Social Mosaic */}
         <SocialMosaic dict={dict} />

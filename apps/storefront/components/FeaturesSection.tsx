@@ -1,18 +1,20 @@
+import Link from "next/link";
 import { Truck, Wine, Award, ArrowRight } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
 
 interface FeaturesSectionProps {
   dict: ReturnType<typeof getDictionary>;
+  className?: string;
 }
 
-export function FeaturesSection({ dict }: FeaturesSectionProps) {
+export function FeaturesSection({ dict, className }: FeaturesSectionProps) {
   const pillarIcons = [Award, Wine, Truck];
 
   return (
     <section
-      id="terroir"
+      id="valori"
       aria-label="I Valori e Servizi di Cantina de Li Chiai"
-      className="py-16 bg-white border-b border-ivory-200"
+      className={className || "py-16 bg-white border-y border-ivory-200"}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -33,9 +35,10 @@ export function FeaturesSection({ dict }: FeaturesSectionProps) {
           {dict.features.items.map((item, index) => {
             const Icon = pillarIcons[index] || Award;
             return (
-              <div
+              <Link
                 key={index}
-                className="group p-8 rounded-2xl bg-ivory-50 border border-ivory-200 hover:border-wine-300 hover:shadow-lg transition-all duration-300 flex flex-col items-start"
+                href="/vini"
+                className="group p-8 rounded-2xl bg-ivory-50 border border-ivory-200 hover:border-wine-300 hover:shadow-lg transition-all duration-300 flex flex-col items-start block"
               >
                 <div className="w-12 h-12 rounded-xl bg-white border border-ivory-300 text-[#4a141b] flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-[#4a141b] group-hover:text-gold-200 transition-all duration-300 shadow-sm">
                   <Icon className="w-6 h-6" />
@@ -50,10 +53,10 @@ export function FeaturesSection({ dict }: FeaturesSectionProps) {
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-ivory-200 w-full flex items-center gap-1.5 text-xs font-bold text-terracotta-700 group-hover:text-[#4a141b] transition-colors">
-                  <span>Scopri di più</span>
+                  <span>{dict.estatePage.ctaExploreWines}</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

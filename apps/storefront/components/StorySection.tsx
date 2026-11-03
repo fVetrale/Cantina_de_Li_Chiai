@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Compass } from "lucide-react";
+import Link from "next/link";
+import { Compass, ArrowRight } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
 
 interface StorySectionProps {
@@ -72,14 +73,31 @@ export function StorySection({ dict }: StorySectionProps) {
                 </span>
               </div>
             </div>
+
+            {/* Link to Cellar Documentary Gallery or Catalog */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <a
+                href="#galleria"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4a141b]/80 hover:bg-[#5e1922] border border-gold-400/35 text-gold-200 text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+              >
+                <span>{dict.estatePage.gallery.viewAll}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-gold-300" />
+              </a>
+              <Link
+                href="/vini"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-ivory-200/20 text-ivory-100 text-xs font-semibold uppercase tracking-wider transition-all"
+              >
+                <span>{dict.estatePage.ctaExploreWines}</span>
+              </Link>
+            </div>
           </div>
 
           {/* Right Column: Visual Frame */}
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-2xl overflow-hidden border-2 border-gold-500/30 shadow-2xl">
               <Image
-                src="/images/hero-vineyard.jpg"
-                alt="Panoramica dei vigneti di Cantina de Li Chiai nel Parco Nazionale del Cilento"
+                src="/images/vigneto.jpeg"
+                alt="I vigneti sul Flysch di Cantina de Li Chiai verso il cielo del Cilento"
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover"
@@ -92,7 +110,7 @@ export function StorySection({ dict }: StorySectionProps) {
                   Denominazione d&apos;Origine
                 </span>
                 <p className="text-xs text-ivory-200/90">
-                  Parco Nazionale del Cilento • Salerno • Campania
+                  Contrada Pozzo 15, Abatemarco (SA) • Parco del Cilento
                 </p>
               </div>
             </div>

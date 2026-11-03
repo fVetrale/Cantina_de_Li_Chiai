@@ -31,7 +31,7 @@ export default function NotFound() {
 
           <div className="pt-2">
             <Link
-              href="/"
+              href="/vini"
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#4a141b] hover:bg-[#3d0f18] text-gold-100 font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95"
             >
               <ArrowLeft className="w-4 h-4 text-gold-300" />
