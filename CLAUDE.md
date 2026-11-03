@@ -51,11 +51,20 @@ The root `.env` holds the variables (see `.env.example`). Never read or print re
   jobs/subscribers. Migrations must be reversible and reviewed by the user before running. A new endpoint means
   a schema + auth check + test, all in the same task.
 
-### Known tooling issues (as of 2026-11-03)
-- `pnpm lint` fails in the backend: there's no ESLint config, and an old ESLint 6.4 gets resolved.
-- `pnpm test` fails in the backend: `jest` isn't installed (no jest devDependency or config).
-- `pnpm typecheck` passes in both apps. Storefront `eslint` passes.
-- So the root "Definition of done" command can't pass until the backend lint/test setup is fixed.
+### Lint & tests (ADR 024)
+- All `@medusajs/*` packages are pinned to **2.22.2** (backend + storefront `js-sdk`). Keep them aligned:
+  `@medusajs/test-utils` requires the exact same version.
+- Lint: ESLint 9 flat config in `apps/backend/eslint.config.mjs` (typescript-eslint recommended; `.js` = CommonJS).
+- Jest 29 + `@swc/jest`, with `jest.config.js` from the Medusa starter. `TEST_TYPE` selects the suite:
+  - `pnpm test` → `test:unit`: `src/**/__tests__/**/*.unit.spec.ts`. No infra needed. Part of the Definition of Done.
+  - `pnpm --filter @winery/backend test:integration:http`: `integration-tests/http/*.spec.ts` via
+    `medusaIntegrationTestRunner`. It creates and drops a temporary Postgres DB. It needs `infra/` up and
+    `DB_HOST`/`DB_USERNAME`/`DB_PASSWORD` (from `apps/backend/.env.test`, human-managed, or inline env vars).
+    `jest.config.js` forces `PORT=""` so tests never clash with a running `medusa develop`.
+  - The Knex "Connection ended unexpectedly" logs at teardown are harmless noise.
+- Run the HTTP integration tests before merging any backend endpoint work (the IDOR 403/404 tests live there).
+- `pnpm audit` has known high advisories that are transitive deps of the Medusa core (lodash, @graphql-tools/utils).
+  The `pnpm.overrides` decision is still pending.
 
 ## Storefront — `apps/storefront`
 
