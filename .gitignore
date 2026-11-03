@@ -49,3 +49,6 @@ uploads/
 
 # Infra secrets
 infra/secrets/
+
+CLAUDE.md
+MEMORY.md

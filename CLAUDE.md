@@ -51,6 +51,13 @@ The root `.env` holds the variables (see `.env.example`). Never read or print re
   jobs/subscribers. Migrations must be reversible and reviewed by the user before running. A new endpoint means
   a schema + auth check + test, all in the same task.
 
+### tsconfig (ADR 025)
+- `module`/`moduleResolution`: **`Node16`** (as in the Medusa starter). `medusa build` emits CommonJS into `dist/` (`outDir`).
+- No `baseUrl`/`paths`: they're deprecated in TS 6 and removed in TS 7. When `packages/shared` gets code, consume it as
+  `"@winery/shared": "workspace:*"`, not as a path alias.
+- `types: ["node", "jest"]`. `include`: `src`, `integration-tests`, `medusa-config.ts`, so test files are type-checked.
+- Type checking passes on TS 5.9 (pinned), 6 and 7.
+
 ### Lint & tests (ADR 024)
 - All `@medusajs/*` packages are pinned to **2.22.2** (backend + storefront `js-sdk`). Keep them aligned:
   `@medusajs/test-utils` requires the exact same version.
@@ -118,6 +125,14 @@ public/images/             real cellar/product photos
   links (profile, orders, addresses, cards, wishlist), but those pages don't exist.
 - **Checkout / orders / customer area**: not started. Stripe isn't configured on either side.
 - Newsletter: UI only.
+
+## Work log
+Dated session history, decisions and open questions live in **`MEMORY.md`** (newest first). Read it at the
+start of a session, and append a new entry at the end of each session.
+
+Last session: **2026-11-03, about 21:00–21:57 CET**. Backend tooling (ADR 024), `.env.test`, and the tsconfig
+Node16 alignment (ADR 025) were done and merged into `develop` (PR #9). The next task is point 2, the
+storefront data layer: region prices, `variantId`, and a "catalogo non disponibile" page when the backend is down.
 
 ## Roadmap (from TODO.md), what's left
 1. Backend: Stripe (`@medusajs/payment-stripe`), age-verification and shipping-rules modules
