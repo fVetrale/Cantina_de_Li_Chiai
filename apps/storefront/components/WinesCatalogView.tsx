@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, SlidersHorizontal, RotateCcw, Wine, ArrowUpDown } from "lucide-react";
+import { Search, SlidersHorizontal, RotateCcw, Wine, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { WineCard } from "./WineCard";
 import type { WineProduct, WineCategory } from "@/lib/data/products";
 import type { getDictionary } from "@/lib/i18n";
@@ -26,6 +26,9 @@ export function WinesCatalogView({
   const [activePrice, setActivePrice] = useState<PriceFilter>("all");
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
+  const itemsPerPage = 6;
 
   const t = dict.winesPage;
 
@@ -44,9 +47,10 @@ export function WinesCatalogView({
       );
     } else {
       list.push(
-        { id: "vini-bianchi", name: t.filterWhites, handle: "vini-bianchi" },
-        { id: "vini-rossi", name: t.filterReds, handle: "vini-rossi" },
-        { id: "riserve", name: t.filterReserves, handle: "riserve" }
+        { id: "cat_vini", name: t.filterWhites, handle: "vini" },
+        { id: "cat_insaccati", name: t.filterReds, handle: "insaccati" },
+        { id: "cat_carne", name: "Carne fresca", handle: "carne" },
+        { id: "cat_olio", name: "Olio EVO", handle: "olio" }
       );
     }
     return list;
@@ -76,10 +80,18 @@ export function WinesCatalogView({
         const handle = p.categoryHandle.toLowerCase();
         const cat = p.category.toLowerCase();
         const target = activeCategory.toLowerCase();
-        if (target === "riserve") {
-          return handle.includes("riserv") || p.badge.toLowerCase().includes("riserv");
-        }
-        return handle === target || cat.includes(target);
+        return (
+          handle === target ||
+          cat.includes(target) ||
+          (target === "vini" && (handle.includes("vino") || cat.includes("vino"))) ||
+          (target === "carne" && (handle.includes("carne") || cat.includes("carne"))) ||
+          (target === "olio" && (handle.includes("olio") || cat.includes("olio"))) ||
+          (target === "insaccati" &&
+            (handle.includes("insaccat") ||
+              cat.includes("insaccat") ||
+              handle.includes("salum") ||
+              cat.includes("salum")))
+        );
       });
     }
 
@@ -100,8 +112,8 @@ export function WinesCatalogView({
         break;
       case "alcohol":
         result.sort((a, b) => {
-          const alcA = parseFloat(a.alcohol) || 0;
-          const alcB = parseFloat(b.alcohol) || 0;
+          const alcA = parseFloat(a.alcohol || "0") || 0;
+          const alcB = parseFloat(b.alcohol || "0") || 0;
           return alcB - alcA;
         });
         break;
@@ -125,7 +137,15 @@ export function WinesCatalogView({
     setActivePrice("all");
     setSortBy("recommended");
     setSearchQuery("");
+    setCurrentPage(0);
   };
+
+  const totalPages = Math.ceil(processedProducts.length / itemsPerPage);
+
+  const paginatedProducts = useMemo(() => {
+    const start = currentPage * itemsPerPage;
+    return processedProducts.slice(start, start + itemsPerPage);
+  }, [processedProducts, currentPage, itemsPerPage]);
 
   return (
     <div className="space-y-10">
@@ -278,15 +298,62 @@ export function WinesCatalogView({
 
       {/* Products Grid */}
       {processedProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {processedProducts.map((wine, index) => (
-            <WineCard
-              key={wine.id}
-              product={wine}
-              dict={dict}
-              priority={index < 3}
-            />
-          ))}
+        <div className="space-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {paginatedProducts.map((wine, index) => (
+              <WineCard
+                key={wine.id}
+                product={wine}
+                dict={dict}
+                priority={index < 3}
+              />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-4 pt-6 border-t border-ivory-200">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+                disabled={currentPage === 0}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-ivory-300 bg-white text-xs font-semibold text-cellar-800 hover:border-wine-800 hover:text-wine-900 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span>Precedente</span>
+              </button>
+
+              <div className="flex items-center gap-2 overflow-x-auto py-1 max-w-full no-scrollbar">
+                {Array.from({ length: totalPages }).map((_, idx) => {
+                  const isCurrent = idx === currentPage;
+                  return (
+                    <button
+                      key={`page-${idx}`}
+                      type="button"
+                      onClick={() => setCurrentPage(idx)}
+                      className={`h-9 min-w-9 px-3 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-center border ${
+                        isCurrent
+                          ? "bg-[#4a141b] text-gold-200 border-[#4a141b] shadow-md scale-105"
+                          : "bg-white text-cellar-700 border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-sm"
+                      }`}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+                disabled={currentPage >= totalPages - 1}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-ivory-300 bg-white text-xs font-semibold text-cellar-800 hover:border-wine-800 hover:text-wine-900 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+              >
+                <span>Successiva</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         /* Empty State */

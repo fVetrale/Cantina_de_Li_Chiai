@@ -4,6 +4,7 @@ import { Sparkles, Mountain, ShieldCheck, Award, ArrowRight, Quote } from "lucid
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
+import { StorySection } from "@/components/StorySection";
 import { FeaturesSection } from "@/components/FeaturesSection";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
@@ -169,10 +170,10 @@ export default async function EstatePage(props: {
             <div className="pt-8 border-t border-ivory-200 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-center sm:text-left">
                 <span className="font-serif text-xl font-bold text-wine-900 block">
-                  Dalla Cantina al tuo Calice
+                  Dalla Terra al Ritiro in Cantina
                 </span>
                 <span className="text-xs text-cellar-600">
-                  Scopri la tiratura limitata di Fiano e Aglianico
+                  Scopri i prodotti di Antonio e Matteo e prenota il tuo ritiro ad Abatemarco
                 </span>
               </div>
               <Link
@@ -186,8 +187,13 @@ export default async function EstatePage(props: {
           </div>
         </article>
 
-        {/* 3. I Valori e il Terroir di Cantina de Li Chiai */}
+        {/* 3. La Storia di Famiglia (Antonio e Matteo a 'Li Chiai') */}
         <div className="mt-16 sm:mt-24">
+          <StorySection dict={dict} />
+        </div>
+
+        {/* 4. I Valori e il Terroir di Cantina de Li Chiai */}
+        <div className="mt-0">
           <FeaturesSection dict={dict} />
         </div>
       </main>

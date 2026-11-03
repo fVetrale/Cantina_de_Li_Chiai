@@ -53,7 +53,7 @@ export function FeaturesSection({ dict, className }: FeaturesSectionProps) {
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-ivory-200 w-full flex items-center gap-1.5 text-xs font-bold text-terracotta-700 group-hover:text-[#4a141b] transition-colors">
-                  <span>Scopri di più</span>
+                  <span>{dict.estatePage.ctaExploreWines}</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>

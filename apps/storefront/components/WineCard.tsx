@@ -41,11 +41,13 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
           <span className="text-xl sm:text-2xl font-bold font-serif text-[#4a141b]">
             € {formattedPrice}
           </span>
-          <span className="text-[10px] text-cellar-500 font-medium">IVA inclusa</span>
+          <span className="text-[10px] text-cellar-500 font-medium">
+            {product.unitPrice ? `${product.unitPrice} • IVA inc.` : "IVA inclusa"}
+          </span>
         </div>
       </div>
 
-      {/* Center Bottle Container (Tall, clean, centered bottle on white background) */}
+      {/* Center Image Container */}
       <Link
         href={productUrl}
         className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
@@ -63,15 +65,19 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
         </div>
       </Link>
 
-      {/* Information Block Below Bottle (Signorvino Style) */}
+      {/* Information Block Below Bottle */}
       <div className="p-5 sm:p-6 flex flex-col flex-grow border-t border-ivory-100 bg-white">
-        {/* Region | Vintage | Format Metadata */}
+        {/* Region | Format | Optional Alcohol */}
         <div className="flex items-center gap-1.5 text-[11px] text-cellar-500 uppercase tracking-widest font-semibold mb-1">
-          <span>Cilento (SA)</span>
+          <span>Abatemarco (SA)</span>
           <span>•</span>
           <span>{product.format}</span>
-          <span>•</span>
-          <span>{product.alcohol}</span>
+          {product.alcohol && (
+            <>
+              <span>•</span>
+              <span>{product.alcohol}</span>
+            </>
+          )}
         </div>
 
         {/* Brand / Denomination in bold uppercase */}
@@ -79,7 +85,7 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
           {product.appellation}
         </span>
 
-        {/* Wine Full Title */}
+        {/* Product Full Title */}
         <h3 className="font-serif text-lg sm:text-xl font-bold text-wine-950 mb-2 leading-snug group-hover:text-[#4a141b] transition-colors">
           <Link href={productUrl} className="hover:underline">
             {product.title}
@@ -91,10 +97,17 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
           {product.description}
         </p>
 
-        {/* In Stock status */}
-        <div className="flex items-center gap-1.5 text-[11px] font-medium text-olive-700 mb-4">
-          <span className="w-1.5 h-1.5 rounded-full bg-olive-600" />
-          <span>{dict.common.inStock}</span>
+        {/* In Stock status and available count */}
+        <div className="flex items-center justify-between text-[11px] font-medium text-olive-700 mb-4">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-olive-600" />
+            <span>{dict.common.inStock}</span>
+          </div>
+          {typeof product.left === "number" && (
+            <span className="text-cellar-500 text-[10px]">
+              Disponibili: <strong className="text-cellar-800">{product.left}</strong>
+            </span>
+          )}
         </div>
 
         {/* Signorvino-Style "Aggiungi" Button */}

@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { WineCatalog } from "@/components/WineCatalog";
 import { PromoBanner } from "@/components/PromoBanner";
-import { StorySection } from "@/components/StorySection";
+import { MeetUsBanner } from "@/components/MeetUsBanner";
 import { SocialMosaic } from "@/components/SocialMosaic";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { Footer } from "@/components/Footer";
@@ -40,11 +40,11 @@ export default async function HomePage(props: {
           dict={dict}
         />
 
-        {/* 5. Promotional Corporate & Gift Banner */}
+        {/* 4. Promotional Corporate & Gift Banner */}
         <PromoBanner dict={dict} />
 
-        {/* 6. Story & Terroir Heritage */}
-        <StorySection dict={dict} />
+        {/* 5. Vieni a conoscerci Banner */}
+        <MeetUsBanner dict={dict} />
 
         {/* 8. Social Mosaic */}
         <SocialMosaic dict={dict} />

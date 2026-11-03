@@ -21,9 +21,10 @@ import type { WineCategory } from "@/lib/data/products";
 import { AuthModal } from "./AuthModal";
 
 const DEFAULT_CATEGORIES: WineCategory[] = [
-  { id: "pcat_bianchi", name: "Vini Bianchi", handle: "vini-bianchi" },
-  { id: "pcat_rossi", name: "Vini Rossi", handle: "vini-rossi" },
-  { id: "pcat_riserve", name: "Riserve", handle: "riserve" },
+  { id: "cat_vini", name: "Vini", handle: "vini" },
+  { id: "cat_insaccati", name: "Insaccati", handle: "insaccati" },
+  { id: "cat_carne", name: "Carne fresca", handle: "carne" },
+  { id: "cat_olio", name: "Olio EVO", handle: "olio" },
 ];
 
 interface NavbarProps {

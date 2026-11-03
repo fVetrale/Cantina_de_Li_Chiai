@@ -150,9 +150,14 @@ export function ProductPurchaseSection({
         <span className="font-serif text-3xl sm:text-4xl font-bold text-wine-950">
           € {formattedTotalPrice}
         </span>
+        {product.unitPrice && (
+          <span className="text-xs text-cellar-600 font-medium bg-ivory-100 px-2.5 py-1 rounded-md border border-ivory-300">
+            {product.unitPrice} • IVA inc.
+          </span>
+        )}
         {quantity > 1 && (
           <span className="text-xs text-cellar-500 font-medium">
-            (€ {formattedUnitPrice} / bottiglia • {quantity} bt.)
+            (€ {formattedUnitPrice} / {product.category === "vini" ? "bottiglia" : "pz."} • {quantity} {product.category === "vini" ? "bt." : "pz."})
           </span>
         )}
       </div>
@@ -329,42 +334,46 @@ export function ProductPurchaseSection({
         </button>
       </div>
 
-      {/* 7. Structured Wine Specs with Icons (Exact Image 1 Vertical List) */}
+      {/* 7. Structured Product Specs with Icons */}
       <div className="space-y-3.5 pt-2 text-sm text-cellar-800">
-        {/* Annata */}
-        <div className="flex items-center gap-3">
-          <Calendar className="w-4 h-4 text-[#72182b] shrink-0" />
-          <span>
-            Annata:{" "}
-            <strong className="font-bold text-cellar-950 ml-1">
-              {product.details?.vintage || "2023"}
-            </strong>
-          </span>
-        </div>
+        {/* Annata (only if present) */}
+        {product.details?.vintage && (
+          <div className="flex items-center gap-3">
+            <Calendar className="w-4 h-4 text-[#72182b] shrink-0" />
+            <span>
+              Annata:{" "}
+              <strong className="font-bold text-cellar-950 ml-1">
+                {product.details.vintage}
+              </strong>
+            </span>
+          </div>
+        )}
 
-        {/* Formato */}
-        <div className="flex items-center gap-3">
-          <BottleIcon className="w-4 h-4 text-[#72182b] shrink-0" />
-          <span>
-            Formato:{" "}
-            <strong className="font-bold text-cellar-950 ml-1">
-              {product.format || "0,75 l"}
-            </strong>
-          </span>
-        </div>
+        {/* Formato / Peso */}
+        {product.format && (
+          <div className="flex items-center gap-3">
+            <BottleIcon className="w-4 h-4 text-[#72182b] shrink-0" />
+            <span>
+              Formato / Peso:{" "}
+              <strong className="font-bold text-cellar-950 ml-1">
+                {product.format}
+              </strong>
+            </span>
+          </div>
+        )}
 
-        {/* Tipologia */}
+        {/* Categoria */}
         <div className="flex items-center gap-3">
           <Wine className="w-4 h-4 text-[#72182b] shrink-0" />
           <span>
             Tipologia:{" "}
-            <strong className="font-bold text-cellar-950 ml-1">
+            <strong className="font-bold text-cellar-950 ml-1 capitalize">
               {product.category}
             </strong>
           </span>
         </div>
 
-        {/* Denominazione */}
+        {/* Denominazione / Origine */}
         <div className="flex items-center gap-3">
           <FileText className="w-4 h-4 text-[#72182b] shrink-0" />
           <span>
@@ -375,16 +384,31 @@ export function ProductPurchaseSection({
           </span>
         </div>
 
-        {/* Uve */}
-        <div className="flex items-center gap-3">
-          <Grape className="w-4 h-4 text-[#72182b] shrink-0" />
-          <span>
-            Uve:{" "}
-            <strong className="font-bold text-cellar-950 ml-1">
-              {product.details?.grapes || "Fiano 100%"}
-            </strong>
-          </span>
-        </div>
+        {/* Uve (only if present) */}
+        {product.details?.grapes && (
+          <div className="flex items-center gap-3">
+            <Grape className="w-4 h-4 text-[#72182b] shrink-0" />
+            <span>
+              Uve:{" "}
+              <strong className="font-bold text-cellar-950 ml-1">
+                {product.details.grapes}
+              </strong>
+            </span>
+          </div>
+        )}
+
+        {/* Gradazione alcolica (only if present) */}
+        {product.alcohol && (
+          <div className="flex items-center gap-3">
+            <Wine className="w-4 h-4 text-[#72182b] shrink-0" />
+            <span>
+              Gradazione:{" "}
+              <strong className="font-bold text-cellar-950 ml-1">
+                {product.alcohol}
+              </strong>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

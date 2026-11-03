@@ -230,30 +230,38 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                 <span className="text-cellar-600">{dict.pdp.technicalLabels.appellation}</span>
                 <span className="font-bold text-wine-950">{product.appellation}</span>
               </div>
-              <div className="py-3.5 flex items-center justify-between">
-                <span className="text-cellar-600">{dict.pdp.technicalLabels.grape}</span>
-                <span className="font-bold text-wine-950">
-                  {details?.grapes || "Vitigni autoctoni del Cilento"}
-                </span>
-              </div>
-              <div className="py-3.5 flex items-center justify-between">
-                <span className="text-cellar-600">{dict.pdp.vintageLabel}</span>
-                <span className="font-bold text-wine-950">{details?.vintage || "2022"}</span>
-              </div>
-              <div className="py-3.5 flex items-center justify-between">
-                <span className="text-cellar-600">{dict.pdp.alcoholLabel}</span>
-                <span className="font-bold text-wine-950">{product.alcohol}</span>
-              </div>
-              <div className="py-3.5 flex items-center justify-between">
-                <span className="text-cellar-600">{dict.pdp.formatLabel}</span>
-                <span className="font-bold text-wine-950">{product.format}</span>
-              </div>
-              <div className="py-3.5 flex items-center justify-between">
-                <span className="text-cellar-600">{dict.pdp.tempLabel}</span>
-                <span className="font-bold text-wine-950">
-                  {details?.technical.serviceTemp || "12 - 14 °C"}
-                </span>
-              </div>
+              {details?.grapes && (
+                <div className="py-3.5 flex items-center justify-between">
+                  <span className="text-cellar-600">{dict.pdp.technicalLabels.grape}</span>
+                  <span className="font-bold text-wine-950">{details.grapes}</span>
+                </div>
+              )}
+              {details?.vintage && (
+                <div className="py-3.5 flex items-center justify-between">
+                  <span className="text-cellar-600">{dict.pdp.vintageLabel}</span>
+                  <span className="font-bold text-wine-950">{details.vintage}</span>
+                </div>
+              )}
+              {product.alcohol && (
+                <div className="py-3.5 flex items-center justify-between">
+                  <span className="text-cellar-600">{dict.pdp.alcoholLabel}</span>
+                  <span className="font-bold text-wine-950">{product.alcohol}</span>
+                </div>
+              )}
+              {product.format && (
+                <div className="py-3.5 flex items-center justify-between">
+                  <span className="text-cellar-600">{dict.pdp.formatLabel}</span>
+                  <span className="font-bold text-wine-950">{product.format}</span>
+                </div>
+              )}
+              {details?.technical?.serviceTemp && (
+                <div className="py-3.5 flex items-center justify-between">
+                  <span className="text-cellar-600">{dict.pdp.tempLabel}</span>
+                  <span className="font-bold text-wine-950">
+                    {details.technical.serviceTemp}
+                  </span>
+                </div>
+              )}
               <div className="py-3.5 flex items-center justify-between">
                 <span className="text-cellar-600">{dict.pdp.technicalLabels.glass}</span>
                 <span className="font-bold text-wine-950">
