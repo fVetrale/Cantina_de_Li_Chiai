@@ -9,7 +9,9 @@ import {
   createTaxRegionsWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
+  updateRegionsWorkflow,
   updateStoresWorkflow,
+  updateTaxRegionsWorkflow,
 } from "@medusajs/medusa/core-flows"
 
 export default async function seedDemoData({ container }: ExecArgs) {
@@ -28,12 +30,19 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   // ── 1. Store Identity ─────────────────────────────────────────────────────
   const [store] = await storeModuleService.listStores()
-  if (store && store.name !== "Cantina de Li Chiai") {
-    logger.info(`Updating store name to 'Cantina de Li Chiai'...`)
+  if (store) {
+    // Idempotent. EUR prices are consumer prices, IVA included (ADR 027). Seed prices are
+    // currency prices (no region rule), so Medusa applies the EUR currency preference.
+    logger.info(`Setting store name and EUR (IVA included) as the only currency...`)
     await updateStoresWorkflow(container).run({
       input: {
         selector: { id: store.id },
-        update: { name: "Cantina de Li Chiai" },
+        update: {
+          name: "Cantina de Li Chiai",
+          supported_currencies: [
+            { currency_code: "eur", is_default: true, is_tax_inclusive: true },
+          ],
+        },
       },
     })
   }
@@ -56,6 +65,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   }
 
   // ── 3. Region (Italy / EUR) ───────────────────────────────────────────────
+  // Prices are entered IVA included (consumer prices), so the region is tax-inclusive (ADR 027).
   const existingRegions = await regionModuleService.listRegions({ name: "Italy" })
   let region = existingRegions[0]
 
@@ -69,14 +79,26 @@ export default async function seedDemoData({ container }: ExecArgs) {
             currency_code: "eur",
             countries: ["it"],
             payment_providers: ["pp_system_default"],
+            is_tax_inclusive: true,
           },
         ],
       },
     })
     region = regionResult[0]
+  } else {
+    // Idempotent: also fixes databases seeded before ADR 027.
+    await updateRegionsWorkflow(container).run({
+      input: {
+        selector: { id: region.id },
+        update: { is_tax_inclusive: true },
+      },
+    })
   }
 
   // ── 4. Tax Region (Italy 22% IVA) ─────────────────────────────────────────
+  // A tax region needs a tax provider, otherwise Medusa cannot compute taxes and every
+  // price/cart request with a country fails ("tax provider with id: null"). ADR 027.
+  const TAX_PROVIDER_ID = "tp_system"
   const existingTaxRegions = await taxModuleService.listTaxRegions({ country_code: "it" })
   if (existingTaxRegions.length === 0) {
     logger.info("Creating Tax Region for Italy with default 22% IVA...")
@@ -84,6 +106,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       input: [
         {
           country_code: "it",
+          provider_id: TAX_PROVIDER_ID,
           default_tax_rate: {
             rate: 22,
             name: "IVA 22%",
@@ -92,6 +115,14 @@ export default async function seedDemoData({ container }: ExecArgs) {
         },
       ],
     })
+  } else {
+    const missingProvider = existingTaxRegions.filter((tr) => tr.provider_id !== TAX_PROVIDER_ID)
+    if (missingProvider.length > 0) {
+      logger.info(`Setting tax provider '${TAX_PROVIDER_ID}' on the Italy tax region...`)
+      await updateTaxRegionsWorkflow(container).run({
+        input: missingProvider.map((tr) => ({ id: tr.id, provider_id: TAX_PROVIDER_ID })),
+      })
+    }
   }
 
   // ── 5. Stock Location ─────────────────────────────────────────────────────

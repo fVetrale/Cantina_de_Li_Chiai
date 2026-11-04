@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Wine, ArrowLeft } from "lucide-react";
-import { getDictionary, defaultLocale } from "@/lib/i18n";
+import { getDictionary, defaultLocale, pickNavbarDictionary } from "@/lib/i18n";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -9,7 +9,8 @@ export default function NotFound() {
 
   return (
     <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900">
-      <Navbar dict={dict} currentLocale={defaultLocale} />
+      {/* The root 404 boundary is serialized into every page: pass only the Navbar slices. */}
+      <Navbar dict={pickNavbarDictionary(dict)} currentLocale={defaultLocale} />
 
       <main className="flex-grow flex items-center justify-center pt-28 pb-20 px-4">
         <div className="max-w-md w-full text-center space-y-6 bg-white p-8 sm:p-12 rounded-3xl border border-ivory-200 shadow-xl">

@@ -1,3 +1,5 @@
+import { z } from "zod"
+
 export interface WineDetails {
   vintage: string
   grapes: string
@@ -28,7 +30,10 @@ export interface WineProduct {
   description: string
   category: string
   categoryHandle: string
+  /** Final price for the Italy region, IVA included, in major units (EUR). */
   price: number
+  /** Medusa variant id: needed to add the product to a cart. */
+  variantId: string
   unitPrice?: string
   currencyCode: string
   sku: string
@@ -48,20 +53,67 @@ export interface WineCategory {
   handle: string
 }
 
-interface MedusaRawProduct {
-  id: string
-  title: string
-  handle?: string
-  description?: string
-  thumbnail?: string
-  images?: Array<{ url: string; id?: string }>
-  categories?: Array<{ id: string; name: string; handle: string }>
-  variants?: Array<{
-    sku?: string
-    prices?: Array<{ amount?: number }>
-    calculated_price?: { amount?: number }
-  }>
-}
+/**
+ * Result of a catalog read. "unavailable" means the Medusa backend could not be
+ * reached or answered with an error: pages must show the "catalog unavailable"
+ * state instead of inventing products or prices.
+ */
+export type CatalogResult =
+  | { status: "ok"; products: WineProduct[] }
+  | { status: "unavailable" }
+
+export type ProductResult =
+  | { status: "ok"; product: WineProduct }
+  | { status: "not_found" }
+  | { status: "unavailable" }
+
+// The storefront sells to Italy only (EUR, 22% IVA). The Medusa region is looked up
+// by country at runtime because its id is generated and changes with every DB reset.
+const STORE_COUNTRY_CODE = "it"
+
+// ─── Medusa Store API response schemas (validated at the boundary) ───────────
+// Medusa v2 stores and returns amounts in major units (9 = €9), never in cents.
+const calculatedPriceSchema = z.object({
+  calculated_amount: z.number().nullish(),
+  calculated_amount_with_tax: z.number().nullish(),
+  is_calculated_price_tax_inclusive: z.boolean().nullish(),
+  currency_code: z.string().nullish(),
+})
+
+const rawVariantSchema = z.object({
+  id: z.string(),
+  sku: z.string().nullish(),
+  calculated_price: calculatedPriceSchema.nullish(),
+})
+
+const rawProductSchema = z.object({
+  id: z.string(),
+  title: z.string().nullish(),
+  handle: z.string().nullish(),
+  description: z.string().nullish(),
+  thumbnail: z.string().nullish(),
+  images: z.array(z.object({ url: z.string() })).nullish(),
+  categories: z
+    .array(z.object({ id: z.string(), name: z.string(), handle: z.string().nullish() }))
+    .nullish(),
+  variants: z.array(rawVariantSchema).nullish(),
+})
+
+const productListResponseSchema = z.object({
+  products: z.array(rawProductSchema),
+})
+
+const regionListResponseSchema = z.object({
+  regions: z.array(
+    z.object({
+      id: z.string(),
+      countries: z.array(z.object({ iso_2: z.string().nullish() })).nullish(),
+    })
+  ),
+})
+
+type MedusaRawProduct = z.infer<typeof rawProductSchema>
+type MedusaRawVariant = z.infer<typeof rawVariantSchema>
 
 interface MedusaRawCategory {
   id: string
@@ -166,7 +218,10 @@ export const DEFAULT_CATEGORIES: WineCategory[] = [
   { id: "cat_olio", name: "Olio EVO", handle: "olio" },
 ]
 
-export const FALLBACK_PRODUCTS: WineProduct[] = [
+// Local editorial metadata (tasting notes, terroir, images, badges) keyed by handle.
+// It enriches real Medusa products via getWineMetadata(); it is never shown as a
+// product on its own, and its `price`/`id` values are not used.
+export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
   // --- VINI ---
   {
     id: "v1",
@@ -605,159 +660,214 @@ function getWineMetadata(handle: string) {
   }
 }
 
-export async function getProducts(categoryFilter?: string): Promise<WineProduct[]> {
+// Sardinian template leftovers that may still exist in an old database.
+const LEGACY_OBSOLETE_HANDLES = new Set([
+  "fiano-del-cilento-doc",
+  "cilento-doc-rosso-paestum-igt",
+  "aglianico-del-cilento-doc-riserva",
+  "vermentino-di-gallura-docg-superiore",
+  "cannonau-di-sardegna-doc-riserva",
+  "cagnulari-isola-dei-nuraghi-igt",
+])
+
+// `*variants.calculated_price` makes Medusa price each variant for the given
+// region_id + country_code (price lists, promotions and taxes included).
+const PRODUCT_FIELDS = "*variants,*variants.calculated_price,*categories,*images"
+
+/**
+ * GET a Store API path and validate the JSON body with `schema`.
+ * Returns null on network errors, non-2xx statuses or an unexpected shape,
+ * so callers can report the catalog as unavailable.
+ */
+async function fetchStore<T>(
+  path: string,
+  params: Record<string, string>,
+  revalidate: number,
+  schema: z.ZodType<T>
+): Promise<T | null> {
   const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
   const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
 
-  const LEGACY_OBSOLETE_HANDLES = new Set([
-    "fiano-del-cilento-doc",
-    "cilento-doc-rosso-paestum-igt",
-    "aglianico-del-cilento-doc-riserva",
-    "vermentino-di-gallura-docg-superiore",
-    "cannonau-di-sardegna-doc-riserva",
-    "cagnulari-isola-dei-nuraghi-igt",
-  ])
-
   try {
-    const url = new URL(`${backendUrl}/store/products`)
-    url.searchParams.set("fields", "*variants,*categories,*variants.prices,*images")
-    url.searchParams.set("limit", "100")
+    const url = new URL(`${backendUrl}${path}`)
+    for (const [key, value] of Object.entries(params)) {
+      url.searchParams.set(key, value)
+    }
 
     const res = await fetch(url.toString(), {
       headers: {
         "x-publishable-api-key": publishableKey,
       },
-      next: { revalidate: 30 }, // ISR caching: revalidate every 30 seconds
+      next: { revalidate }, // ISR caching
     })
 
     if (!res.ok) {
-      console.warn(`[Storefront] Medusa API returned status ${res.status}. Using fallback wine catalog.`)
-      return filterProducts(FALLBACK_PRODUCTS, categoryFilter)
+      console.warn(`[Storefront] Medusa ${path} returned status ${res.status}.`)
+      return null
     }
 
-    const data = await res.json()
-    const rawProducts: MedusaRawProduct[] = data.products || []
-
-    // Filter out obsolete test/legacy products
-    const validMedusaProducts = rawProducts.filter(
-      (p) => !LEGACY_OBSOLETE_HANDLES.has(p.handle || "")
-    )
-
-    const formattedMedusa: WineProduct[] = validMedusaProducts.map((p) => {
-      const meta = getWineMetadata(p.handle || "")
-      const firstVariant = p.variants?.[0]
-      const priceObj = firstVariant?.prices?.[0] || firstVariant?.calculated_price
-      const rawPrice = priceObj?.amount ? Number(priceObj.amount) : 20.0
-      const price = rawPrice > 100 ? rawPrice / 100 : rawPrice
-
-      return {
-        id: p.id,
-        title: p.title || meta.title || "Prodotto Cantina de Li Chiai",
-        handle: p.handle || meta.handle || "prodotto",
-        description: p.description || meta.description || "",
-        category: p.categories?.[0]?.name || meta.category,
-        categoryHandle: p.categories?.[0]?.handle || meta.categoryHandle,
-        price: price,
-        unitPrice: meta.unitPrice,
-        currencyCode: "EUR",
-        sku: firstVariant?.sku || meta.sku || "SKU-750",
-        alcohol: meta.alcohol,
-        format: meta.format,
-        image: p.thumbnail || meta.image,
-        images:
-          p.images && p.images.length > 0
-            ? p.images.map((img) => img.url)
-            : meta.images,
-        badge: meta.badge,
-        appellation: meta.appellation,
-        left: meta.left,
-        details: meta.details,
-      }
-    })
-
-    // Merge: always ensure all 14 authentic DeLalla catalog items exist
-    const medusaHandles = new Set(formattedMedusa.map((p) => p.handle))
-    const missingFallback = FALLBACK_PRODUCTS.filter((fb) => !medusaHandles.has(fb.handle))
-    const combinedProducts = [...formattedMedusa, ...missingFallback]
-
-    return filterProducts(combinedProducts, categoryFilter)
+    const parsed = schema.safeParse(await res.json())
+    if (!parsed.success) {
+      console.warn(`[Storefront] Unexpected Medusa ${path} response shape:\n${z.prettifyError(parsed.error)}`)
+      return null
+    }
+    return parsed.data
   } catch (err) {
-    console.warn("[Storefront] Could not connect to Medusa backend during fetch. Using fallback catalog.", err)
-    return filterProducts(FALLBACK_PRODUCTS, categoryFilter)
+    console.warn(`[Storefront] Could not reach the Medusa backend (${path}).`, err)
+    return null
   }
 }
 
-export async function getProductByHandle(handle: string): Promise<WineProduct | null> {
-  if (!handle || typeof handle !== "string") {
+/** Id of the Medusa region that sells to STORE_COUNTRY_CODE, or null if unavailable. */
+async function getStoreRegionId(): Promise<string | null> {
+  const data = await fetchStore(
+    "/store/regions",
+    { fields: "id,*countries", limit: "50" },
+    3600, // regions almost never change
+    regionListResponseSchema
+  )
+  if (!data) {
     return null
   }
 
-  const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
-  const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
+  const region = data.regions.find((r) =>
+    r.countries?.some((c) => c.iso_2?.toLowerCase() === STORE_COUNTRY_CODE)
+  )
+  if (!region) {
+    console.warn(`[Storefront] No Medusa region contains country "${STORE_COUNTRY_CODE}".`)
+    return null
+  }
+  return region.id
+}
 
-  try {
-    const url = new URL(`${backendUrl}/store/products`)
-    url.searchParams.set("handle", handle)
-    url.searchParams.set("fields", "*variants,*categories,*variants.prices,*images")
-
-    const res = await fetch(url.toString(), {
-      headers: {
-        "x-publishable-api-key": publishableKey,
-      },
-      next: { revalidate: 60 }, // ISR caching: revalidate every 60s
-    })
-
-    if (res.ok) {
-      const data = await res.json()
-      if (data.products && Array.isArray(data.products) && data.products.length > 0) {
-        const p: MedusaRawProduct = data.products[0]
-        const meta = getWineMetadata(p.handle || handle)
-        const firstVariant = p.variants?.[0]
-        const priceObj = firstVariant?.prices?.[0] || firstVariant?.calculated_price
-        const rawPrice = priceObj?.amount ? Number(priceObj.amount) : 20.0
-        const price = rawPrice > 100 ? rawPrice / 100 : rawPrice
-
-        return {
-          id: p.id,
-          title: p.title || meta.title || "Prodotto Cantina de Li Chiai",
-          handle: p.handle || handle,
-          description: p.description || meta.description || "",
-          category: p.categories?.[0]?.name || meta.category,
-          categoryHandle: p.categories?.[0]?.handle || meta.categoryHandle,
-          price: price,
-          unitPrice: meta.unitPrice,
-          currencyCode: "EUR",
-          sku: firstVariant?.sku || meta.sku || "SKU-750",
-          alcohol: meta.alcohol,
-          format: meta.format,
-          image: p.thumbnail || meta.image,
-          images:
-            p.images && p.images.length > 0
-              ? p.images.map((img) => img.url)
-              : meta.images,
-          badge: meta.badge,
-          appellation: meta.appellation,
-          left: meta.left,
-          details: meta.details,
-        }
-      }
-    }
-  } catch {
-    // Backend unreachable, fallback below
+/**
+ * Final consumer price of a variant (IVA included), or null when the variant has
+ * no usable price for the region. Never guesses: no cents heuristic, no default.
+ */
+function getFinalPrice(
+  variant: MedusaRawVariant | undefined
+): { amount: number; currencyCode: string } | null {
+  const calculated = variant?.calculated_price
+  if (!calculated) {
+    return null
   }
 
-  // Fallback lookup
-  const normalized = handle.toLowerCase()
-  const fallback =
-    FALLBACK_PRODUCTS.find((p) => p.handle === normalized) ||
-    FALLBACK_PRODUCTS.find((p) => p.handle.includes(normalized) || normalized.includes(p.handle))
+  const amount =
+    calculated.calculated_amount_with_tax ??
+    (calculated.is_calculated_price_tax_inclusive ? calculated.calculated_amount : null)
 
-  return fallback || null
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
+    return null
+  }
+  return { amount, currencyCode: (calculated.currency_code || "eur").toUpperCase() }
+}
+
+/** Maps a Medusa product to a WineProduct, or null when it cannot be sold in the region. */
+function toWineProduct(p: MedusaRawProduct): WineProduct | null {
+  const variant = p.variants?.[0]
+  const price = getFinalPrice(variant)
+
+  if (!variant || !price) {
+    console.warn(
+      `[Storefront] Product "${p.handle || p.id}" has no price for country "${STORE_COUNTRY_CODE}": hidden from the catalog.`
+    )
+    return null
+  }
+
+  const meta = getWineMetadata(p.handle || "")
+
+  return {
+    id: p.id,
+    title: p.title || meta.title || "Prodotto Cantina de Li Chiai",
+    handle: p.handle || meta.handle || "prodotto",
+    description: p.description || meta.description || "",
+    category: p.categories?.[0]?.name || meta.category,
+    categoryHandle: p.categories?.[0]?.handle || meta.categoryHandle,
+    price: price.amount,
+    variantId: variant.id,
+    unitPrice: meta.unitPrice,
+    currencyCode: price.currencyCode,
+    sku: variant.sku || meta.sku || "SKU-750",
+    alcohol: meta.alcohol,
+    format: meta.format,
+    image: p.thumbnail || meta.image,
+    images:
+      p.images && p.images.length > 0
+        ? p.images.map((img) => img.url)
+        : meta.images,
+    badge: meta.badge,
+    appellation: meta.appellation,
+    left: meta.left,
+    details: meta.details,
+  }
+}
+
+export async function getProducts(categoryFilter?: string): Promise<CatalogResult> {
+  const regionId = await getStoreRegionId()
+  if (!regionId) {
+    return { status: "unavailable" }
+  }
+
+  const data = await fetchStore(
+    "/store/products",
+    {
+      fields: PRODUCT_FIELDS,
+      region_id: regionId,
+      country_code: STORE_COUNTRY_CODE,
+      limit: "100",
+    },
+    30, // ISR: revalidate every 30 seconds
+    productListResponseSchema
+  )
+  if (!data) {
+    return { status: "unavailable" }
+  }
+
+  const products = data.products
+    .filter((p) => !LEGACY_OBSOLETE_HANDLES.has(p.handle || ""))
+    .map(toWineProduct)
+    .filter((p): p is WineProduct => p !== null)
+
+  return { status: "ok", products: filterProducts(products, categoryFilter) }
+}
+
+export async function getProductByHandle(handle: string): Promise<ProductResult> {
+  if (!handle || typeof handle !== "string") {
+    return { status: "not_found" }
+  }
+
+  const regionId = await getStoreRegionId()
+  if (!regionId) {
+    return { status: "unavailable" }
+  }
+
+  const data = await fetchStore(
+    "/store/products",
+    {
+      handle,
+      fields: PRODUCT_FIELDS,
+      region_id: regionId,
+      country_code: STORE_COUNTRY_CODE,
+      limit: "1",
+    },
+    60, // ISR: revalidate every 60 seconds
+    productListResponseSchema
+  )
+  if (!data) {
+    return { status: "unavailable" }
+  }
+
+  const raw = data.products[0]
+  const product = raw ? toWineProduct(raw) : null
+  return product ? { status: "ok", product } : { status: "not_found" }
 }
 
 export async function getRelatedProducts(currentHandle: string): Promise<WineProduct[]> {
-  const all = await getProducts()
-  return all.filter((p) => p.handle !== currentHandle).slice(0, 3)
+  const result = await getProducts()
+  if (result.status !== "ok") {
+    return []
+  }
+  return result.products.filter((p) => p.handle !== currentHandle).slice(0, 3)
 }
 
 export async function getCategories(): Promise<WineCategory[]> {

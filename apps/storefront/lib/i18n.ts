@@ -217,6 +217,14 @@ export const dictionaries = {
       notFoundTitle: "Prodotto non trovato",
       notFoundDesc: "L'articolo selezionato non è al momento disponibile in cantina.",
     },
+    catalogUnavailable: {
+      eyebrow: "Catalogo momentaneamente non disponibile",
+      title: "Stiamo aggiornando la cantina",
+      description:
+        "In questo momento non riusciamo a mostrarti i prodotti e i prezzi aggiornati. Riprova tra qualche minuto: se il problema continua, scrivici o passa a trovarci in cantina.",
+      retry: "Riprova",
+      backHome: "Torna alla Home",
+    },
     winesPage: {
       metaTitle: "I Nostri Prodotti della Cantina & Salumeria | Cantina de Li Chiai",
       metaDesc:
@@ -724,6 +732,14 @@ export const dictionaries = {
       notFoundTitle: "Product not found",
       notFoundDesc: "The selected item is currently unavailable in cellar.",
     },
+    catalogUnavailable: {
+      eyebrow: "Catalog temporarily unavailable",
+      title: "We are updating our cellar",
+      description:
+        "We can't show you our products and up-to-date prices right now. Please try again in a few minutes: if the problem persists, write to us or visit us at the cellar.",
+      retry: "Try again",
+      backHome: "Back to Home",
+    },
     winesPage: {
       metaTitle: "Our Farm & Cellar Products | Cantina de Li Chiai",
       metaDesc:
@@ -1021,4 +1037,24 @@ export const dictionaries = {
 
 export function getDictionary(locale: Locale = defaultLocale) {
   return dictionaries[locale] || dictionaries.it;
+}
+
+export type Dictionary = ReturnType<typeof getDictionary>;
+
+/**
+ * Dictionary slices the Navbar (and its AuthModal) actually reads. Props of client
+ * components are serialized into the page payload, so pages without a matching
+ * locale (the root 404 boundary is embedded in every page) pass only these slices.
+ */
+export type NavbarDictionary = Pick<Dictionary, "nav" | "common" | "accountModal"> & {
+  winesPage: Pick<Dictionary["winesPage"], "filterAll">;
+};
+
+export function pickNavbarDictionary(dict: Dictionary): NavbarDictionary {
+  return {
+    nav: dict.nav,
+    common: dict.common,
+    accountModal: dict.accountModal,
+    winesPage: { filterAll: dict.winesPage.filterAll },
+  };
 }

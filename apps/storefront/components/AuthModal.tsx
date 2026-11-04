@@ -12,13 +12,13 @@ import {
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
-import type { getDictionary, Locale } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: "login" | "register";
-  dict: ReturnType<typeof getDictionary>;
+  dict: Pick<Dictionary, "accountModal">;
   currentLocale: Locale;
 }
 

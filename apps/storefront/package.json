@@ -2,13 +2,14 @@
   "name": "@winery/storefront",
   "version": "0.0.1",
   "private": true,
-  "description": "Winery e-commerce storefront — Next.js App Router",
+  "description": "Winery e-commerce storefront \u2014 Next.js App Router",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@medusajs/js-sdk": "2.22.2",
@@ -28,7 +29,8 @@
     "eslint-config-next": "16.4.3",
     "postcss": "^8.5.32",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "4.1.12"
   },
   "packageManager": "pnpm@9.15.0"
 }
