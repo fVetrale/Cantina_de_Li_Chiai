@@ -11,7 +11,7 @@
 - [x] tsconfig backend allineato allo starter Medusa (Node16, niente `baseUrl`) (ADR 025)
 - [x] Unit test dello storefront con Vitest (ADR 028)
 - [x] CI su GitHub Actions: lint, typecheck e test su ogni PR (ADR 030)
-- [ ] Override delle vulnerabilità segnalate da `pnpm audit` (branch dedicato + ADR, prima di Stripe)
+- [x] Override delle vulnerabilità segnalate da `pnpm audit` (ADR 032) — rivedere glob/minimatch dall'11/11
 
 ## 🟡 Fase 2: Sviluppo Backend Core
 - [x] Creazione utente Admin Medusa (tramite CLI)
@@ -19,8 +19,8 @@
 - [x] Seed del database con il catalogo reale (14 prodotti in 4 categorie)
 - [x] Test di avvio del backend (`pnpm run dev`) e accesso API
 - [x] Regione fiscale Italia con provider `tp_system` e prezzi IVA inclusa (ADR 027)
-- [ ] Spedizioni nel seed: zona Italia, "Spedizione standard" e "Ritiro in cantina" (+ profilo separato per la carne se solo ritiro) + ADR
-- [ ] Decisione sul magazzino (`manage_inventory` / scorte reali) + ADR, prima del carrello
+- [x] Spedizioni nel seed: "Spedizione standard" €9,90 (gratis da €90), "Ritiro in cantina", carne fresca solo ritiro (ADR 033, valori provvisori)
+- [x] Magazzino reale in Medusa: scorte per variante, niente vendite oltre la disponibilità (ADR 034, quantità provvisorie)
 
 ## 🟠 Fase 3: Moduli Custom & Sicurezza Backend
 - [ ] Setup integrazione Stripe (provider `@medusajs/payment-stripe`, già incluso in Medusa) + webhook + ADR
@@ -41,6 +41,7 @@
 - [x] Creazione UI: Sezione Accedi / Registrati con menu a tendina e popup modal in-place e fallback `/account` con validazione Zod
 - [x] Form di accesso e registrazione disattivati finché non c'è l'autenticazione vera (ADR 031)
 - [ ] Carrello: carrello Medusa via `@medusajs/js-sdk`, id in cookie httpOnly, contatore nella Navbar + ADR
+- [ ] Disponibilità reale nello storefront: "solo X rimasti" ed "esaurito" dalle scorte Medusa (oggi il badge è finto)
 - [ ] Checkout senza pagamento reale (email, indirizzo Italia, spedizione, riepilogo IVA) con `pp_system_default`
 - [ ] Checkout con Stripe Elements (Payment Element), conferma e pagina ordine completato
 - [ ] Autenticazione cliente reale (Medusa emailpass, sessione in cookie httpOnly) e riattivazione dei form
@@ -54,6 +55,8 @@
 
 ## 🔴 Prima della produzione
 - [ ] Conferma dal cliente: i prezzi del seed sono IVA inclusa? (ADR 027)
+- [ ] Conferma dal cliente: tariffe di spedizione, soglia gratuita, orari di ritiro, carne solo ritiro (ADR 033)
+- [ ] Conferma dal cliente: quantità reali a magazzino e se il negozio fisico condivide le scorte del sito (ADR 034)
 - [ ] Decisione del cliente sulla vendita fuori dall'Italia: paesi, carne fresca, commercialista per OSS/accise, corrieri (ADR 029)
 - [ ] Su GitHub: rendere obbligatorio il check della CI su `develop` e `main` (Settings → Branches)
 - [ ] Decisione sul pagamento: metodi oltre alla carta (PayPal, Apple Pay, Google Pay, Klarna)
