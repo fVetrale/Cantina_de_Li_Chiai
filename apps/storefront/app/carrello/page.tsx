@@ -143,19 +143,13 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
                   )}
                 </ul>
 
-                {/* Checkout arrives with task 3 */}
-                <button
-                  type="button"
-                  disabled
-                  aria-describedby="checkout-soon-note"
-                  className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-wine-900 px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 opacity-60 cursor-not-allowed"
+                <Link
+                  href={`/checkout${langQuery}`}
+                  className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-wine-900 px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 transition-colors"
                 >
                   <Lock className="w-4 h-4" aria-hidden="true" />
-                  {t.checkoutSoon}
-                </button>
-                <p id="checkout-soon-note" className="mt-2 text-[11px] text-cellar-500 text-center">
-                  {t.checkoutSoonNote}
-                </p>
+                  {t.proceedToCheckout}
+                </Link>
 
                 <Link
                   href={`/vini${langQuery}`}

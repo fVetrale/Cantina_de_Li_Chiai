@@ -92,9 +92,10 @@ export type CartErrorCode = "out_of_stock" | "not_found" | "unavailable"
 
 export type CartResult = { ok: true; cart: MedusaCart } | { ok: false; error: CartErrorCode }
 
-type StoreResult<T> = { ok: true; data: T } | { ok: false; error: CartErrorCode }
+export type StoreResult<T> = { ok: true; data: T } | { ok: false; error: CartErrorCode }
 
-async function storeRequest<T>(
+/** Store API request with the publishable key, never cached, response validated by `schema`. */
+export async function storeRequest<T>(
   path: string,
   init: { method: "GET" | "POST" | "DELETE"; body?: unknown },
   schema: z.ZodType<T>
