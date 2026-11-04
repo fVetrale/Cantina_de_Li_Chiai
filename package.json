@@ -15,5 +15,13 @@
     "typecheck": "pnpm -r run typecheck",
     "test": "pnpm -r run test",
     "clean": "pnpm -r run clean"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash@<4.18.1": "4.18.1",
+      "ajv@>=7.0.0-alpha.0 <8.18.0": "8.18.0",
+      "uuid@<11.1.1": "11.1.1",
+      "@graphql-tools/utils@<12.0.2": "12.1.0"
+    }
   }
 }
