@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
@@ -82,16 +82,7 @@ export default async function AccountPage(props: {
 
           {/* Interactive Luxury Auth Card */}
           <AccountAuthCard dict={dict} currentLocale={currentLocale} />
-
-          {/* Trust Footnote */}
-          <div className="flex items-center justify-center gap-2 text-xs text-cellar-500 pt-6">
-            <ShieldCheck className="w-4 h-4 text-gold-600" />
-            <span>
-              {currentLocale === "it"
-                ? "Connessione cifrata TLS 1.3 con token di sessione autenticati Medusa v2"
-                : "TLS 1.3 encrypted connection with Medusa v2 authenticated customer sessions"}
-            </span>
-          </div>
+          {/* No security claims here until real customer auth exists (ADR 031). */}
         </div>
       </main>
 

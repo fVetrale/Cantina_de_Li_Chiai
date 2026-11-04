@@ -516,6 +516,11 @@ export const dictionaries = {
       lastNameLabel: "*Cognome",
       ageCheckbox: "Dichiaro di avere almeno 18 anni (richiesto per l'acquisto di alcolici)",
       registerSubmitBtn: "Crea il tuo Account",
+      // Customer auth is not live yet (ADR 031): forms are disabled and show this notice.
+      unavailableTitle: "Area clienti in arrivo",
+      unavailableDesc:
+        "Accesso e registrazione non sono ancora attivi: stiamo preparando l'area clienti. Nel frattempo puoi sfogliare il catalogo e, per ordini o informazioni, contattarci direttamente.",
+      unavailableContact: "Vai ai contatti",
     },
   },
   en: {
@@ -1031,6 +1036,11 @@ export const dictionaries = {
       lastNameLabel: "*Last Name",
       ageCheckbox: "I declare that I am at least 18 years old (required for wine purchase)",
       registerSubmitBtn: "Create your Account",
+      // Customer auth is not live yet (ADR 031): forms are disabled and show this notice.
+      unavailableTitle: "Customer area coming soon",
+      unavailableDesc:
+        "Sign-in and registration are not active yet: we are preparing the customer area. Meanwhile you can browse the catalog and contact us directly for orders or information.",
+      unavailableContact: "See our contacts",
     },
   },
 } as const;
