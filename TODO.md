@@ -40,8 +40,10 @@
 - [x] Creazione UI: Navbar con menu a tendina dinamico (sincronizzato con le categorie Medusa) e rimozione ridondanza Terroir
 - [x] Creazione UI: Sezione Accedi / Registrati con menu a tendina e popup modal in-place e fallback `/account` con validazione Zod
 - [x] Form di accesso e registrazione disattivati finché non c'è l'autenticazione vera (ADR 031)
-- [ ] Carrello: carrello Medusa via `@medusajs/js-sdk`, id in cookie httpOnly, contatore nella Navbar + ADR
-- [ ] Disponibilità reale nello storefront: "solo X rimasti" ed "esaurito" dalle scorte Medusa (oggi il badge è finto)
+- [x] Carrello (2a): "Aggiungi al carrello" reale via Server Actions, id in cookie httpOnly (ADR 035)
+- [x] Disponibilità reale nello storefront: "X disponibili" sempre visibile ed "Esaurito" dalle scorte Medusa (ADR 035)
+- [ ] Carrello (2b): pagina `/carrello` (quantità, rimozione, totali) e contatore nella Navbar
+- [ ] Carrello: pannello laterale interattivo che si nasconde se il carrello è vuoto (dopo la pagina)
 - [ ] Checkout senza pagamento reale (email, indirizzo Italia, spedizione, riepilogo IVA) con `pp_system_default`
 - [ ] Checkout con Stripe Elements (Payment Element), conferma e pagina ordine completato
 - [ ] Autenticazione cliente reale (Medusa emailpass, sessione in cookie httpOnly) e riattivazione dei form

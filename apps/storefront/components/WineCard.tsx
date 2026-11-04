@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Plus } from "lucide-react";
 import type { WineProduct } from "@/lib/data/products";
+import { addToCart, type AddToCartError } from "@/lib/actions/cart";
 import type { getDictionary } from "@/lib/i18n";
 
 interface WineCardProps {
@@ -15,13 +16,35 @@ interface WineCardProps {
 
 export function WineCard({ product, dict, priority = false }: WineCardProps) {
   const [isAdded, setIsAdded] = useState(false);
+  const [addError, setAddError] = useState<AddToCartError | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  // Real stock from Medusa (ADR 034/035). null = not limited.
+  const available = product.availableQuantity;
+  const isSoldOut = available === 0;
 
   const handleAddToCart = () => {
-    setIsAdded(true);
-    setTimeout(() => {
-      setIsAdded(false);
-    }, 2000);
+    if (isSoldOut || isPending) return;
+    setAddError(null);
+    startTransition(async () => {
+      const result = await addToCart({ variantId: product.variantId, quantity: 1 });
+      if (!result.ok) {
+        setAddError(result.error);
+        return;
+      }
+      setIsAdded(true);
+      setTimeout(() => {
+        setIsAdded(false);
+      }, 2000);
+    });
   };
+
+  const errorMessage =
+    addError === "out_of_stock"
+      ? dict.cart.errorOutOfStock
+      : addError
+        ? dict.cart.errorUnavailable
+        : null;
 
   const formattedPrice = Number(product.price).toLocaleString("it-IT", {
     minimumFractionDigits: 2,
@@ -98,14 +121,18 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
         </p>
 
         {/* In Stock status and available count */}
-        <div className="flex items-center justify-between text-[11px] font-medium text-olive-700 mb-4">
+        <div
+          className={`flex items-center justify-between text-[11px] font-medium mb-4 ${
+            isSoldOut ? "text-rose-700" : "text-olive-700"
+          }`}
+        >
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-olive-600" />
-            <span>{dict.common.inStock}</span>
+            <span className={`w-1.5 h-1.5 rounded-full ${isSoldOut ? "bg-rose-600" : "bg-olive-600"}`} />
+            <span>{isSoldOut ? dict.cart.soldOut : dict.common.inStock}</span>
           </div>
-          {typeof product.left === "number" && (
+          {available !== null && !isSoldOut && (
             <span className="text-cellar-500 text-[10px]">
-              Disponibili: <strong className="text-cellar-800">{product.left}</strong>
+              <strong className="text-cellar-800">{available}</strong> {dict.cart.available}
             </span>
           )}
         </div>
@@ -114,14 +141,20 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
         <button
           type="button"
           onClick={handleAddToCart}
-          className={`w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-sm active:scale-95 ${
+          disabled={isSoldOut || isPending}
+          aria-busy={isPending}
+          className={`w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-sm active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 ${
             isAdded
               ? "bg-olive-700 text-white shadow-olive-700/20"
               : "bg-[#4a141b] hover:bg-[#3d0f18] text-gold-100 hover:text-white border border-gold-500/20"
           }`}
           aria-label={`${dict.common.addToCart}: ${product.title}`}
         >
-          {isAdded ? (
+          {isSoldOut ? (
+            <span>{dict.cart.soldOut}</span>
+          ) : isPending ? (
+            <span>{dict.cart.adding}</span>
+          ) : isAdded ? (
             <>
               <Check className="w-4 h-4 text-emerald-300" />
               <span>{dict.common.addedToCart}</span>
@@ -133,6 +166,12 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
             </>
           )}
         </button>
+
+        {errorMessage && (
+          <p role="alert" className="mt-2 text-[11px] leading-snug text-rose-700">
+            {errorMessage}
+          </p>
+        )}
       </div>
     </article>
   );
