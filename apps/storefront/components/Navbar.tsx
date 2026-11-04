@@ -19,6 +19,7 @@ import {
 import type { NavbarDictionary, Locale } from "@/lib/i18n";
 import type { WineCategory } from "@/lib/data/products";
 import { AuthModal } from "./AuthModal";
+import { useCartCounter } from "./CartProvider";
 
 const DEFAULT_CATEGORIES: WineCategory[] = [
   { id: "cat_vini", name: "Vini", handle: "vini" },
@@ -31,21 +32,20 @@ interface NavbarProps {
   dict: NavbarDictionary;
   currentLocale: Locale;
   categories?: WineCategory[];
-  cartCount?: number;
-  cartTotal?: number;
 }
 
 export function Navbar({
   dict,
   currentLocale,
   categories,
-  cartCount = 0,
-  cartTotal = 0,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"login" | "register">("login");
+  // Real cart from the root layout (ADR 036).
+  const { itemCount: cartCount, itemTotal: cartTotal } = useCartCounter();
+  const cartHref = currentLocale === "en" ? "/carrello?lang=en" : "/carrello";
 
   const dynamicCategories =
     categories && categories.length > 0 ? categories : DEFAULT_CATEGORIES;
@@ -317,9 +317,9 @@ export function Navbar({
 
           {/* Cart Icon Button (Simbolo Carrello compatto con badge) */}
           <Link
-            href="/#catalog"
+            href={cartHref}
             className="relative flex items-center justify-center p-2 rounded-full text-gold-300 hover:text-white hover:bg-white/10 transition-colors shrink-0 active:scale-95 group"
-            aria-label={`${dict.nav.cart} (€ ${formattedTotal})`}
+            aria-label={`${dict.nav.cart}: ${cartCount} (€ ${formattedTotal})`}
             title={`${dict.nav.cart} (€ ${formattedTotal})`}
           >
             <ShoppingCart className="w-4.5 h-4.5 text-gold-300 group-hover:scale-110 transition-transform" />

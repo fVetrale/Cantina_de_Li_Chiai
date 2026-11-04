@@ -22,7 +22,7 @@ import {
 // ── Shipping & inventory settings (ADR 033) ──────────────────────────────────
 // PROVISIONAL values: to be confirmed with the client. Amounts are EUR, IVA included (ADR 027).
 const STANDARD_SHIPPING_EUR = 9.9
-const FREE_SHIPPING_FROM_EUR = 90
+const FREE_SHIPPING_FROM_EUR = 90 // also FREE_SHIPPING_THRESHOLD_EUR in apps/storefront/lib/data/cart.ts (ADR 036)
 const FULFILLMENT_PROVIDER_ID = "manual_manual"
 const FRESH_MEAT_PROFILE_NAME = "Carne fresca (solo ritiro)"
 const SHIPPING_FULFILLMENT_SET_NAME = "Spedizioni Italia"

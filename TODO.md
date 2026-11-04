@@ -42,7 +42,7 @@
 - [x] Form di accesso e registrazione disattivati finché non c'è l'autenticazione vera (ADR 031)
 - [x] Carrello (2a): "Aggiungi al carrello" reale via Server Actions, id in cookie httpOnly (ADR 035)
 - [x] Disponibilità reale nello storefront: "X disponibili" sempre visibile ed "Esaurito" dalle scorte Medusa (ADR 035)
-- [ ] Carrello (2b): pagina `/carrello` (quantità, rimozione, totali) e contatore nella Navbar
+- [x] Carrello (2b): pagina `/carrello` (quantità, rimozione, totali, barra spedizione gratuita, avviso carne) e contatore reale nella Navbar (ADR 036)
 - [ ] Carrello: pannello laterale interattivo che si nasconde se il carrello è vuoto (dopo la pagina)
 - [ ] Checkout senza pagamento reale (email, indirizzo Italia, spedizione, riepilogo IVA) con `pp_system_default`
 - [ ] Checkout con Stripe Elements (Payment Element), conferma e pagina ordine completato
