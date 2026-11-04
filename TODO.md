@@ -44,7 +44,8 @@
 - [x] Disponibilità reale nello storefront: "X disponibili" sempre visibile ed "Esaurito" dalle scorte Medusa (ADR 035)
 - [x] Carrello (2b): pagina `/carrello` (quantità, rimozione, totali, barra spedizione gratuita, avviso carne) e contatore reale nella Navbar (ADR 036)
 - [ ] Carrello: pannello laterale interattivo che si nasconde se il carrello è vuoto (dopo la pagina)
-- [ ] Checkout senza pagamento reale (email, indirizzo Italia, spedizione, riepilogo IVA) con `pp_system_default`
+- [x] Checkout (3a): contatti, indirizzi (solo Italia), spedizione per gruppo di prodotti, riepilogo con totali Medusa (ADR 037)
+- [ ] Checkout (3b): verifica dell'età (design), conferma ordine con `pp_system_default`, pagina "Ordine ricevuto" protetta da cookie (ADR 038)
 - [ ] Checkout con Stripe Elements (Payment Element), conferma e pagina ordine completato
 - [ ] Autenticazione cliente reale (Medusa emailpass, sessione in cookie httpOnly) e riattivazione dei form
 - [ ] Area riservata: profilo, indirizzi, storico ordini (controlli di proprietà + test 403/404)
@@ -56,6 +57,9 @@
 - [ ] Test di carico e verifica resilienza del server e del database
 
 ## 🔴 Prima della produzione
+- [ ] **NON pubblicare il sito prima dei task Stripe (4–5)**: fino ad allora il checkout crea ordini senza pagamento reale (ADR 037)
+- [ ] Footer: i metodi di pagamento elencati (Visa/Mastercard, PayPal, bonifico, contanti al ritiro) devono corrispondere a quelli davvero attivi
+- [ ] Chiedere al cliente se serve il campo "Richiedi fattura" (codice fiscale / P.IVA) nel checkout
 - [ ] Conferma dal cliente: i prezzi del seed sono IVA inclusa? (ADR 027)
 - [ ] Conferma dal cliente: tariffe di spedizione, soglia gratuita, orari di ritiro, carne solo ritiro (ADR 033)
 - [ ] Conferma dal cliente: quantità reali a magazzino e se il negozio fisico condivide le scorte del sito (ADR 034)
