@@ -11,7 +11,10 @@ vi.mock("next/headers", () => ({
   }),
 }));
 
-import { addToCart } from "@/lib/actions/cart";
+const refreshMock = vi.fn();
+vi.mock("next/cache", () => ({ refresh: () => refreshMock() }));
+
+import { addToCart, removeCartItem, updateCartItem } from "@/lib/actions/cart";
 
 const REGION_ID = "reg_italy";
 const VARIANT_ID = "variant_01ROSSO";
@@ -20,6 +23,7 @@ interface BackendState {
   carts: Map<string, { id: string; completed_at: string | null; items: { id: string; variant_id: string; quantity: number }[] }>;
   stock: number;
   nextCartId: number;
+  nextLineId: number;
   down: boolean;
 }
 
@@ -66,8 +70,26 @@ function installBackend() {
       if (already + body.quantity > state.stock) {
         return json({ type: "not_allowed", message: "Some variant does not have the required inventory" }, 400);
       }
-      cart.items.push({ id: `item_${cart.items.length}`, variant_id: body.variant_id, quantity: body.quantity });
+      cart.items.push({ id: `cali_${String(state.nextLineId++).padStart(4, "0")}`, variant_id: body.variant_id, quantity: body.quantity });
       return json(cartBody(cart.id));
+    }
+    // Medusa only finds a line inside the cart of the URL: another cart's line is a 404.
+    const line = url.pathname.match(/^\/store\/carts\/([^/]+)\/line-items\/([^/]+)$/);
+    if (line) {
+      const cart = state.carts.get(line[1]);
+      const item = cart?.items.find((i) => i.id === line[2]);
+      if (!cart || !item) return json({ message: "Line item not found" }, 404);
+      if (method === "DELETE") {
+        cart.items = cart.items.filter((i) => i.id !== item.id);
+        return json({ id: item.id, object: "line-item", deleted: true, parent: cartBody(cart.id).cart });
+      }
+      if (method === "POST") {
+        if (body.quantity > state.stock) {
+          return json({ type: "not_allowed", message: "Some variant does not have the required inventory" }, 400);
+        }
+        item.quantity = body.quantity;
+        return json(cartBody(cart.id));
+      }
     }
     const single = url.pathname.match(/^\/store\/carts\/([^/]+)$/);
     if (single && method === "GET") {
@@ -84,7 +106,8 @@ function cartRequests() {
 
 beforeEach(() => {
   cookieJar.clear();
-  state = { carts: new Map(), stock: 60, nextCartId: 1, down: false };
+  state = { carts: new Map(), stock: 60, nextCartId: 1, nextLineId: 1, down: false };
+  refreshMock.mockClear();
   installBackend();
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
@@ -104,7 +127,7 @@ describe("addToCart", () => {
     expect(cookie?.options).toMatchObject({ httpOnly: true, sameSite: "lax", path: "/" });
     expect(cookie?.options?.maxAge).toBe(60 * 60 * 24 * 30);
     expect(state.carts.get("cart_0001")?.items).toEqual([
-      { id: "item_0", variant_id: VARIANT_ID, quantity: 2 },
+      { id: "cali_0001", variant_id: VARIANT_ID, quantity: 2 },
     ]);
   });
 
@@ -197,5 +220,111 @@ describe("addToCart", () => {
 
     expect(result).toEqual({ ok: false, error: "unavailable" });
     expect(cookieJar.get("cantina_cart_id")?.value).toBe("cart_0001");
+  });
+});
+
+describe("addToCart refresh", () => {
+  it("refreshes the page (Navbar counter) after a successful add, not after a failure", async () => {
+    await addToCart({ variantId: VARIANT_ID, quantity: 1 });
+    expect(refreshMock).toHaveBeenCalledTimes(1);
+
+    state.stock = 1;
+    await addToCart({ variantId: VARIANT_ID, quantity: 1 });
+    expect(refreshMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("updateCartItem", () => {
+  async function cartWithOneLine(quantity = 2) {
+    await addToCart({ variantId: VARIANT_ID, quantity });
+    refreshMock.mockClear();
+    fetchMock.mockClear();
+    return "cali_0001";
+  }
+
+  it("sets the line quantity in the cookie's cart and refreshes", async () => {
+    const lineItemId = await cartWithOneLine();
+
+    const result = await updateCartItem({ lineItemId, quantity: 5 });
+
+    expect(result).toEqual({ ok: true, itemCount: 5 });
+    expect(state.carts.get("cart_0001")?.items[0].quantity).toBe(5);
+    expect(cartRequests()).toEqual(["POST /store/carts/cart_0001/line-items/cali_0001"]);
+    expect(refreshMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports out_of_stock above the available quantity", async () => {
+    const lineItemId = await cartWithOneLine();
+    state.stock = 3;
+
+    expect(await updateCartItem({ lineItemId, quantity: 4 })).toEqual({ ok: false, error: "out_of_stock" });
+    expect(refreshMock).not.toHaveBeenCalled();
+  });
+
+  it("cannot touch a line of another visitor's cart (Medusa 404 → not_found)", async () => {
+    await cartWithOneLine();
+    state.carts.set("cart_OTHER", { id: "cart_OTHER", completed_at: null, items: [{ id: "cali_OTHER", variant_id: VARIANT_ID, quantity: 1 }] });
+
+    const result = await updateCartItem({ lineItemId: "cali_OTHER", quantity: 9 });
+
+    expect(result).toEqual({ ok: false, error: "not_found" });
+    expect(state.carts.get("cart_OTHER")?.items[0].quantity).toBe(1);
+    // The request targeted the visitor's own cart, never the other one.
+    expect(cartRequests()).toEqual(["POST /store/carts/cart_0001/line-items/cali_OTHER"]);
+  });
+
+  it("returns not_found without calling Medusa when there is no cart cookie", async () => {
+    const result = await updateCartItem({ lineItemId: "cali_0001", quantity: 2 });
+
+    expect(result).toEqual({ ok: false, error: "not_found" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [{ lineItemId: "cali_0001", quantity: 0 }],
+    [{ lineItemId: "cali_0001", quantity: 121 }],
+    [{ lineItemId: "item_0001", quantity: 1 }],
+    [{ lineItemId: "cali_01/../x", quantity: 1 }],
+    [{ lineItemId: "cali_0001", quantity: 1, cartId: "cart_OTHER" }],
+  ])("rejects invalid input %j", async (input) => {
+    await cartWithOneLine();
+
+    const result = await updateCartItem(input);
+
+    if ("cartId" in (input as object)) {
+      // Extra keys are ignored: the cart still comes from the cookie only.
+      expect(result.ok).toBe(true);
+      expect(cartRequests()).toEqual(["POST /store/carts/cart_0001/line-items/cali_0001"]);
+    } else {
+      expect(result).toEqual({ ok: false, error: "invalid_input" });
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+  });
+});
+
+describe("removeCartItem", () => {
+  it("removes the line from the cookie's cart and refreshes", async () => {
+    await addToCart({ variantId: VARIANT_ID, quantity: 2 });
+    await addToCart({ variantId: "variant_01BIANCO", quantity: 1 });
+    refreshMock.mockClear();
+
+    const result = await removeCartItem({ lineItemId: "cali_0001" });
+
+    expect(result).toEqual({ ok: true, itemCount: 1 });
+    expect(state.carts.get("cart_0001")?.items.map((i) => i.id)).toEqual(["cali_0002"]);
+    expect(refreshMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("cannot remove a line of another cart", async () => {
+    await addToCart({ variantId: VARIANT_ID, quantity: 1 });
+    state.carts.set("cart_OTHER", { id: "cart_OTHER", completed_at: null, items: [{ id: "cali_OTHER", variant_id: VARIANT_ID, quantity: 1 }] });
+
+    expect(await removeCartItem({ lineItemId: "cali_OTHER" })).toEqual({ ok: false, error: "not_found" });
+    expect(state.carts.get("cart_OTHER")?.items).toHaveLength(1);
+  });
+
+  it("rejects an invalid line id without calling Medusa", async () => {
+    expect(await removeCartItem({ lineItemId: "../../admin" })).toEqual({ ok: false, error: "invalid_input" });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

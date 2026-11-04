@@ -513,6 +513,11 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuanti
   },
 ]
 
+/** Local product photo for a handle (Medusa products have no thumbnails yet). */
+export function getLocalProductImage(handle: string): string {
+  return getWineMetadata(handle).image
+}
+
 function getWineMetadata(handle: string) {
   const normalized = handle.toLowerCase()
   const exact = FALLBACK_PRODUCTS.find((p) => p.handle === normalized || p.handle.includes(normalized) || normalized.includes(p.handle))

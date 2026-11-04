@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/components/CartProvider";
+import { getCurrentCartSummary } from "@/lib/data/cart-session";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -50,18 +52,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Navbar cart counter (ADR 036). Null when there is no cart or the backend is unreachable.
+  const cart = await getCurrentCartSummary();
+
   return (
     <html
       lang="it"
       className={`${cormorant.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-700 selection:text-gold-100">
-        {children}
+        <CartProvider
+          counter={cart ? { itemCount: cart.itemCount, itemTotal: cart.itemTotal } : null}
+        >
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
