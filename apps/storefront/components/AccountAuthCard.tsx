@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { z } from "zod";
 import {
   User,
@@ -11,7 +12,8 @@ import {
   ShieldCheck,
   PackageCheck,
   Wine,
-  CheckCircle2,
+  Info,
+  Clock,
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
@@ -38,13 +40,13 @@ const registerSchema = z.object({
   }),
 });
 
-export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
+export function AccountAuthCard({ dict }: AccountAuthCardProps) {
   const t = dict.accountPage;
+  const notice = dict.accountModal;
   const [activeTab, setActiveTab] = useState<"signin" | "register">("signin");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
+    type: "info" | "error";
     message: string;
   } | null>(null);
 
@@ -62,7 +64,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
   // Errors state
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
     setFormErrors({});
@@ -82,31 +84,11 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      // Handshake con Medusa v2 Store API /auth/customer/emailpass
-      await new Promise((res) => setTimeout(res, 900));
-      setFeedback({
-        type: "success",
-        message:
-          currentLocale === "it"
-            ? "Accesso effettuato con successo. Connessione all'account Medusa v2 attiva."
-            : "Sign-in successful. Connected to Medusa v2 customer session.",
-      });
-    } catch {
-      setFeedback({
-        type: "error",
-        message:
-          currentLocale === "it"
-            ? "Errore durante l'accesso. Verifica le credenziali inserite."
-            : "Authentication failed. Please verify your credentials.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // Customer auth is not live yet (ADR 031): never simulate a successful sign-in.
+    setFeedback({ type: "info", message: notice.unavailableDesc });
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
     setFormErrors({});
@@ -128,34 +110,8 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      // Inoltro registrazione a Medusa v2 customer identity endpoint
-      await new Promise((res) => setTimeout(res, 1100));
-      setFeedback({
-        type: "success",
-        message:
-          currentLocale === "it"
-            ? "Account creato con successo! Il tuo profilo cliente Medusa v2 è ora attivo."
-            : "Account created successfully! Your Medusa v2 customer profile is now active.",
-      });
-      // Reset form
-      setRegFirstName("");
-      setRegLastName("");
-      setRegEmail("");
-      setRegPassword("");
-      setRegAgeCheck(false);
-    } catch {
-      setFeedback({
-        type: "error",
-        message:
-          currentLocale === "it"
-            ? "Impossibile completare la registrazione. Riprova più tardi."
-            : "Registration could not be completed. Please try again later.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // Customer auth is not live yet (ADR 031): never simulate a registration.
+    setFeedback({ type: "info", message: notice.unavailableDesc });
   };
 
   return (
@@ -196,17 +152,37 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
           </button>
         </div>
 
+        {/* Customer area not live yet (ADR 031) */}
+        <div
+          role="note"
+          className="mb-6 p-4 rounded-2xl bg-ivory-100 border border-gold-400/40 text-cellar-800"
+        >
+          <p className="flex items-center gap-2 text-sm font-bold text-[#72182b]">
+            <Clock className="w-4 h-4 shrink-0" aria-hidden="true" />
+            {notice.unavailableTitle}
+          </p>
+          <p id="account-unavailable-desc" className="mt-1 text-xs sm:text-sm leading-relaxed">
+            {notice.unavailableDesc}
+          </p>
+          <Link
+            href="/#footer"
+            className="mt-2 inline-block text-xs font-semibold text-[#72182b] underline hover:text-[#581321]"
+          >
+            {notice.unavailableContact}
+          </Link>
+        </div>
+
         {/* Feedback Banner */}
         {feedback && (
           <div
             className={`mb-6 p-4 rounded-2xl flex items-center gap-3 text-xs sm:text-sm font-medium ${
-              feedback.type === "success"
-                ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+              feedback.type === "info"
+                ? "bg-ivory-100 border border-ivory-300 text-cellar-800"
                 : "bg-rose-50 border border-rose-200 text-rose-800"
             }`}
           >
-            {feedback.type === "success" ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            {feedback.type === "info" ? (
+              <Info className="w-5 h-5 text-gold-700 shrink-0" />
             ) : (
               <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
             )}
@@ -217,235 +193,239 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
         {/* TAB 1: ACCEDI */}
         {activeTab === "signin" && (
           <form onSubmit={handleSignIn} className="space-y-5">
-            <div>
-              <label
-                htmlFor="signin-email"
-                className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
-              >
-                {t.emailLabel} *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
-                <input
-                  id="signin-email"
-                  type="email"
-                  required
-                  value={signInEmail}
-                  onChange={(e) => setSignInEmail(e.target.value)}
-                  placeholder="nome@dominio.it"
-                  className="w-full pl-10 pr-4 py-3 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
-                />
-              </div>
-              {formErrors.email && (
-                <p className="text-rose-600 text-xs mt-1.5">{formErrors.email}</p>
-              )}
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label
-                  htmlFor="signin-password"
-                  className="block text-xs uppercase tracking-wider font-semibold text-cellar-800"
-                >
-                  {t.passwordLabel} *
-                </label>
-                <button
-                  type="button"
-                  className="text-xs text-gold-700 hover:text-wine-900 hover:underline transition-colors font-medium"
-                >
-                  {t.forgotPassword}
-                </button>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
-                <input
-                  id="signin-password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={signInPassword}
-                  onChange={(e) => setSignInPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-11 py-3 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cellar-400 hover:text-cellar-700 transition-colors"
-                  aria-label="Mostra o nascondi password"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {formErrors.password && (
-                <p className="text-rose-600 text-xs mt-1.5">{formErrors.password}</p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2 pt-1">
-              <input
-                id="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-ivory-400 text-[#72182b] focus:ring-[#72182b]"
-              />
-              <label htmlFor="remember-me" className="text-xs text-cellar-700 cursor-pointer">
-                {t.rememberMe}
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-6 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            {/* Disabled until real customer auth exists (ADR 031) */}
+            <fieldset
+              disabled
+              aria-describedby="account-unavailable-desc"
+              className="m-0 min-w-0 border-0 p-0 space-y-5 opacity-60"
             >
-              {isLoading ? (
-                <span className="inline-block animate-spin mr-2">✦</span>
-              ) : (
+              <div>
+                <label
+                  htmlFor="signin-email"
+                  className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
+                >
+                  {t.emailLabel} *
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
+                  <input
+                    id="signin-email"
+                    type="email"
+                    required
+                    value={signInEmail}
+                    onChange={(e) => setSignInEmail(e.target.value)}
+                    placeholder="nome@dominio.it"
+                    className="w-full pl-10 pr-4 py-3 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
+                  />
+                </div>
+                {formErrors.email && (
+                  <p className="text-rose-600 text-xs mt-1.5">{formErrors.email}</p>
+                )}
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label
+                    htmlFor="signin-password"
+                    className="block text-xs uppercase tracking-wider font-semibold text-cellar-800"
+                  >
+                    {t.passwordLabel} *
+                  </label>
+                  <button
+                    type="button"
+                    className="text-xs text-gold-700 hover:text-wine-900 hover:underline transition-colors font-medium"
+                  >
+                    {t.forgotPassword}
+                  </button>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
+                  <input
+                    id="signin-password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={signInPassword}
+                    onChange={(e) => setSignInPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-11 py-3 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cellar-400 hover:text-cellar-700 transition-colors"
+                    aria-label="Mostra o nascondi password"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {formErrors.password && (
+                  <p className="text-rose-600 text-xs mt-1.5">{formErrors.password}</p>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-ivory-400 text-[#72182b] focus:ring-[#72182b]"
+                />
+                <label htmlFor="remember-me" className="text-xs text-cellar-700 cursor-pointer">
+                  {t.rememberMe}
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full mt-6 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+              >
                 <ArrowRight className="w-4 h-4 text-gold-300" />
-              )}
-              <span>{isLoading ? "Autenticazione in corso..." : t.signInBtn}</span>
-            </button>
+                <span>{t.signInBtn}</span>
+              </button>
+            </fieldset>
           </form>
         )}
 
         {/* TAB 2: CREA ACCOUNT */}
         {activeTab === "register" && (
           <form onSubmit={handleRegister} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="reg-firstname"
-                  className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
-                >
-                  {t.firstNameLabel} *
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
+            {/* Disabled until real customer auth exists (ADR 031) */}
+            <fieldset
+              disabled
+              aria-describedby="account-unavailable-desc"
+              className="m-0 min-w-0 border-0 p-0 space-y-4 opacity-60"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="reg-firstname"
+                    className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
+                  >
+                    {t.firstNameLabel} *
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
+                    <input
+                      id="reg-firstname"
+                      type="text"
+                      required
+                      value={regFirstName}
+                      onChange={(e) => setRegFirstName(e.target.value)}
+                      placeholder="Giuseppe"
+                      className="w-full pl-10 pr-4 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
+                    />
+                  </div>
+                  {formErrors.firstName && (
+                    <p className="text-rose-600 text-xs mt-1">{formErrors.firstName}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="reg-lastname"
+                    className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
+                  >
+                    {t.lastNameLabel} *
+                  </label>
                   <input
-                    id="reg-firstname"
+                    id="reg-lastname"
                     type="text"
                     required
-                    value={regFirstName}
-                    onChange={(e) => setRegFirstName(e.target.value)}
-                    placeholder="Giuseppe"
+                    value={regLastName}
+                    onChange={(e) => setRegLastName(e.target.value)}
+                    placeholder="Esposito"
+                    className="w-full px-4 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
+                  />
+                  {formErrors.lastName && (
+                    <p className="text-rose-600 text-xs mt-1">{formErrors.lastName}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="reg-email"
+                  className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
+                >
+                  {t.emailLabel} *
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
+                  <input
+                    id="reg-email"
+                    type="email"
+                    required
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    placeholder="giuseppe.esposito@email.it"
                     className="w-full pl-10 pr-4 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
                   />
                 </div>
-                {formErrors.firstName && (
-                  <p className="text-rose-600 text-xs mt-1">{formErrors.firstName}</p>
+                {formErrors.email && (
+                  <p className="text-rose-600 text-xs mt-1">{formErrors.email}</p>
                 )}
               </div>
 
               <div>
                 <label
-                  htmlFor="reg-lastname"
+                  htmlFor="reg-password"
                   className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
                 >
-                  {t.lastNameLabel} *
+                  {t.passwordLabel} (minimo 8 caratteri) *
                 </label>
-                <input
-                  id="reg-lastname"
-                  type="text"
-                  required
-                  value={regLastName}
-                  onChange={(e) => setRegLastName(e.target.value)}
-                  placeholder="Esposito"
-                  className="w-full px-4 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
-                />
-                {formErrors.lastName && (
-                  <p className="text-rose-600 text-xs mt-1">{formErrors.lastName}</p>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
+                  <input
+                    id="reg-password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-11 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cellar-400 hover:text-cellar-700 transition-colors"
+                    aria-label="Mostra o nascondi password"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {formErrors.password && (
+                  <p className="text-rose-600 text-xs mt-1">{formErrors.password}</p>
                 )}
               </div>
-            </div>
 
-            <div>
-              <label
-                htmlFor="reg-email"
-                className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
-              >
-                {t.emailLabel} *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
-                <input
-                  id="reg-email"
-                  type="email"
-                  required
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  placeholder="giuseppe.esposito@email.it"
-                  className="w-full pl-10 pr-4 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
-                />
+              {/* Checkbox Maggiorenne */}
+              <div className="pt-2">
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={regAgeCheck}
+                    onChange={(e) => setRegAgeCheck(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-[#72182b] focus:ring-[#72182b]"
+                  />
+                  <span className="text-xs text-cellar-700 leading-relaxed">
+                    {t.ageCheck} (conforme alla legislazione vigente per l&apos;acquisto di vino).
+                  </span>
+                </label>
+                {formErrors.ageCheck && (
+                  <p className="text-rose-600 text-xs mt-1">{formErrors.ageCheck}</p>
+                )}
               </div>
-              {formErrors.email && (
-                <p className="text-rose-600 text-xs mt-1">{formErrors.email}</p>
-              )}
-            </div>
 
-            <div>
-              <label
-                htmlFor="reg-password"
-                className="block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5"
+              <button
+                type="submit"
+                className="w-full mt-6 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
               >
-                {t.passwordLabel} (minimo 8 caratteri) *
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-400" />
-                <input
-                  id="reg-password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 bg-ivory-50/70 border border-ivory-300 rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:border-[#72182b] focus:ring-1 focus:ring-[#72182b] transition-colors"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cellar-400 hover:text-cellar-700 transition-colors"
-                  aria-label="Mostra o nascondi password"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {formErrors.password && (
-                <p className="text-rose-600 text-xs mt-1">{formErrors.password}</p>
-              )}
-            </div>
-
-            {/* Checkbox Maggiorenne */}
-            <div className="pt-2">
-              <label className="flex items-start gap-2.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  required
-                  checked={regAgeCheck}
-                  onChange={(e) => setRegAgeCheck(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-[#72182b] focus:ring-[#72182b]"
-                />
-                <span className="text-xs text-cellar-700 leading-relaxed">
-                  {t.ageCheck} (conforme alla legislazione vigente per l&apos;acquisto di vino).
-                </span>
-              </label>
-              {formErrors.ageCheck && (
-                <p className="text-rose-600 text-xs mt-1">{formErrors.ageCheck}</p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-6 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              {isLoading ? (
-                <span className="inline-block animate-spin mr-2">✦</span>
-              ) : (
                 <ArrowRight className="w-4 h-4 text-gold-300" />
-              )}
-              <span>{isLoading ? "Creazione in corso..." : t.registerBtn}</span>
-            </button>
+                <span>{t.registerBtn}</span>
+              </button>
+            </fieldset>
           </form>
         )}
       </div>
@@ -475,18 +455,6 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
           </ul>
         </div>
 
-        <div className="p-6 rounded-2xl bg-ivory-100/70 border border-ivory-200 text-xs text-cellar-600 leading-relaxed">
-          <p className="font-semibold text-wine-900 mb-1">
-            {currentLocale === "it"
-              ? "Autenticazione Protetta Medusa v2"
-              : "Protected Medusa v2 Authentication"}
-          </p>
-          <p>
-            {currentLocale === "it"
-              ? "I tuoi dati anagrafici e gli indirizzi di spedizione sono protetti secondo i più elevati standard GDPR e crittografia end-to-end con token di sessione sicuri."
-              : "Your customer details and delivery addresses are safeguarded according to high GDPR standards with end-to-end encryption and secure session tokens."}
-          </p>
-        </div>
       </div>
     </div>
   );
