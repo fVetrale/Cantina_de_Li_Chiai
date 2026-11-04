@@ -9,7 +9,18 @@ interface PriceInput {
   taxInclusive?: boolean;
 }
 
-function rawProduct(handle: string, price: PriceInput | null, extra: Record<string, unknown> = {}) {
+interface StockInput {
+  manage?: boolean;
+  qty?: number | null;
+  backorder?: boolean;
+}
+
+function rawProduct(
+  handle: string,
+  price: PriceInput | null,
+  extra: Record<string, unknown> = {},
+  stock: StockInput = { manage: true, qty: 60 }
+) {
   return {
     id: `prod_${handle}`,
     title: `Title ${handle}`,
@@ -22,6 +33,9 @@ function rawProduct(handle: string, price: PriceInput | null, extra: Record<stri
       {
         id: `variant_${handle}`,
         sku: `SKU-${handle}`,
+        manage_inventory: stock.manage ?? true,
+        allow_backorder: stock.backorder ?? false,
+        inventory_quantity: stock.qty,
         calculated_price: price
           ? {
               calculated_amount: price.amount,
@@ -97,6 +111,7 @@ describe("getProducts", () => {
     expect(url.searchParams.get("region_id")).toBe(REGION_ID);
     expect(url.searchParams.get("country_code")).toBe("it");
     expect(url.searchParams.get("fields")).toContain("*variants.calculated_price");
+    expect(url.searchParams.get("fields")).toContain("+variants.inventory_quantity");
   });
 
   it("returns the IVA-included price and the variant id", async () => {
@@ -211,6 +226,35 @@ describe("getProducts", () => {
 
     expect(await getProducts()).toEqual({ status: "unavailable" });
     expect(fetchMock.mock.calls.some(([input]) => String(input).includes("/store/products"))).toBe(false);
+  });
+});
+
+describe("availableQuantity (real Medusa stock)", () => {
+  async function availabilityFor(stock: StockInput) {
+    mockBackend({ products: { products: [rawProduct("chiai-rosso", { amount: 9 }, {}, stock)] } });
+    const result = await getProducts();
+    if (result.status !== "ok") throw new Error("expected ok");
+    return result.products[0].availableQuantity;
+  }
+
+  it("is the Medusa inventory quantity when stock is managed", async () => {
+    expect(await availabilityFor({ manage: true, qty: 37 })).toBe(37);
+  });
+
+  it("is 0 (sold out) when managed stock is empty, missing or negative", async () => {
+    expect(await availabilityFor({ manage: true, qty: 0 })).toBe(0);
+    expect(await availabilityFor({ manage: true, qty: null })).toBe(0);
+    expect(await availabilityFor({ manage: true, qty: -3 })).toBe(0);
+  });
+
+  it("is null (no limit) when stock is not managed or backorders are allowed", async () => {
+    expect(await availabilityFor({ manage: false, qty: 5 })).toBeNull();
+    expect(await availabilityFor({ manage: true, qty: 5, backorder: true })).toBeNull();
+  });
+
+  it("never comes from the local editorial metadata", async () => {
+    // chiai-rosso has local metadata; the stock must still be Medusa's value.
+    expect(await availabilityFor({ manage: true, qty: 2 })).toBe(2);
   });
 });
 

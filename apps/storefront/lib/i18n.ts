@@ -217,6 +217,18 @@ export const dictionaries = {
       notFoundTitle: "Prodotto non trovato",
       notFoundDesc: "L'articolo selezionato non è al momento disponibile in cantina.",
     },
+    cart: {
+      addToCart: "Aggiungi al carrello",
+      available: "disponibili",
+      adding: "Aggiunta in corso…",
+      added: "Aggiunto al carrello",
+      soldOut: "Esaurito",
+      quantityExceedsStock: "Quantità superiore alla disponibilità",
+      errorOutOfStock:
+        "Quantità non disponibile a magazzino (considera anche quanto hai già nel carrello). Riduci la quantità e riprova.",
+      errorUnavailable: "Non è stato possibile aggiungere il prodotto. Riprova tra qualche minuto.",
+      errorInvalid: "Quantità non valida.",
+    },
     catalogUnavailable: {
       eyebrow: "Catalogo momentaneamente non disponibile",
       title: "Stiamo aggiornando la cantina",
@@ -736,6 +748,18 @@ export const dictionaries = {
       backToCatalog: "Back to all products",
       notFoundTitle: "Product not found",
       notFoundDesc: "The selected item is currently unavailable in cellar.",
+    },
+    cart: {
+      addToCart: "Add to cart",
+      available: "available",
+      adding: "Adding…",
+      added: "Added to cart",
+      soldOut: "Sold out",
+      quantityExceedsStock: "Quantity exceeds availability",
+      errorOutOfStock:
+        "Not enough stock for this quantity (including what is already in your cart). Reduce the quantity and try again.",
+      errorUnavailable: "The product could not be added. Please try again in a few minutes.",
+      errorInvalid: "Invalid quantity.",
     },
     catalogUnavailable: {
       eyebrow: "Catalog temporarily unavailable",

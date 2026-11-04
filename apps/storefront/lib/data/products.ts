@@ -43,7 +43,11 @@ export interface WineProduct {
   images?: string[]
   badge: string
   appellation: string
-  left?: number
+  /**
+   * Units that can be ordered right now (Medusa stock, ADR 034).
+   * null = stock not managed or backorders allowed (no limit shown).
+   */
+  availableQuantity: number | null
   details?: WineDetails
 }
 
@@ -83,6 +87,9 @@ const calculatedPriceSchema = z.object({
 const rawVariantSchema = z.object({
   id: z.string(),
   sku: z.string().nullish(),
+  manage_inventory: z.boolean().nullish(),
+  allow_backorder: z.boolean().nullish(),
+  inventory_quantity: z.number().nullish(),
   calculated_price: calculatedPriceSchema.nullish(),
 })
 
@@ -221,7 +228,7 @@ export const DEFAULT_CATEGORIES: WineCategory[] = [
 // Local editorial metadata (tasting notes, terroir, images, badges) keyed by handle.
 // It enriches real Medusa products via getWineMetadata(); it is never shown as a
 // product on its own, and its `price`/`id` values are not used.
-export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
+export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuantity">[] = [
   // --- VINI ---
   {
     id: "v1",
@@ -245,7 +252,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     ],
     badge: "Il Nostro Rosso",
     appellation: "Vino Rosso · Annata 2023",
-    left: 24,
     details: CHIAI_ROSSO_DETAILS,
   },
   {
@@ -270,7 +276,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     ],
     badge: "Invecchiato in Botte",
     appellation: "Vino Rosso · Annata 2021",
-    left: 10,
     details: ROSSO_VECCHIO_DETAILS,
   },
   {
@@ -295,7 +300,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     ],
     badge: "Fresco & Secco",
     appellation: "Vino Bianco · Annata 2024",
-    left: 18,
     details: CHIAI_BIANCO_DETAILS,
   },
   {
@@ -319,7 +323,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     ],
     badge: "Morbido & Fruttato",
     appellation: "Vino Bianco Dolce · Annata 2024",
-    left: 12,
     details: CHIAI_BIANCO_DETAILS,
   },
 
@@ -341,7 +344,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-dolce.png"],
     badge: "Ricetta Tradizionale",
     appellation: "Salumeria Artigianale",
-    left: 8,
   },
   {
     id: "i2",
@@ -360,7 +362,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-piccante.png"],
     badge: "Al Peperoncino",
     appellation: "Salumeria Artigianale",
-    left: 8,
   },
   {
     id: "i3",
@@ -379,7 +380,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-cinghiale.png"],
     badge: "Cinghiale Nostrano",
     appellation: "Specialità Salumiera",
-    left: 6,
   },
   {
     id: "i4",
@@ -398,7 +398,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/insaccati-cilento.jpg", "/images/products/soppressata-dolce.png"],
     badge: "Stagionata in Cantina",
     appellation: "Salumeria Storica",
-    left: 6,
   },
   {
     id: "i5",
@@ -417,7 +416,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/insaccati-cilento.jpg", "/images/products/soppressata-cinghiale.png"],
     badge: "Selezione Pregiata",
     appellation: "Specialità Salumiera",
-    left: 5,
   },
 
   // --- CARNE FRESCA ---
@@ -438,7 +436,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/products/misto-cinghiale.png"],
     badge: "Carne Fresca",
     appellation: "Su Ordinazione",
-    left: 5,
   },
   {
     id: "c2",
@@ -457,7 +454,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/products/salsicce-cinghiale.png"],
     badge: "Da Griglia o Padella",
     appellation: "Su Ordinazione",
-    left: 6,
   },
   {
     id: "c3",
@@ -476,7 +472,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/products/bistecche-cinghiale.png"],
     badge: "Pronte per la Griglia",
     appellation: "Su Ordinazione",
-    left: 4,
   },
 
   // --- OLIO EXTRAVERGINE ---
@@ -497,7 +492,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/olio-cilento.jpg", "/images/products/olio-bottiglia.png"],
     badge: "Spremuto a Freddo",
     appellation: "Olio Extravergine di Oliva",
-    left: 20,
   },
   {
     id: "o2",
@@ -516,7 +510,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId">[] = [
     images: ["/images/olio-cilento.jpg", "/images/products/olio-latta.png"],
     badge: "Scorta Famiglia",
     appellation: "Olio Extravergine di Oliva",
-    left: 9,
   },
 ]
 
@@ -537,7 +530,6 @@ function getWineMetadata(handle: string) {
       category: exact.category,
       categoryHandle: exact.categoryHandle,
       unitPrice: exact.unitPrice,
-      left: exact.left,
       details: exact.details,
       sku: exact.sku,
     }
@@ -672,7 +664,8 @@ const LEGACY_OBSOLETE_HANDLES = new Set([
 
 // `*variants.calculated_price` makes Medusa price each variant for the given
 // region_id + country_code (price lists, promotions and taxes included).
-const PRODUCT_FIELDS = "*variants,*variants.calculated_price,*categories,*images"
+const PRODUCT_FIELDS =
+  "*variants,*variants.calculated_price,+variants.inventory_quantity,*categories,*images"
 
 /**
  * GET a Store API path and validate the JSON body with `schema`.
@@ -719,7 +712,7 @@ async function fetchStore<T>(
 }
 
 /** Id of the Medusa region that sells to STORE_COUNTRY_CODE, or null if unavailable. */
-async function getStoreRegionId(): Promise<string | null> {
+export async function getStoreRegionId(): Promise<string | null> {
   const data = await fetchStore(
     "/store/regions",
     { fields: "id,*countries", limit: "50" },
@@ -762,6 +755,19 @@ function getFinalPrice(
   return { amount, currencyCode: (calculated.currency_code || "eur").toUpperCase() }
 }
 
+/**
+ * Units of a variant that can be ordered now, from Medusa stock (ADR 034).
+ * `inventory_quantity` is computed by Medusa for the sales channel of the publishable key.
+ * null = no limit to show (stock not managed, or backorders allowed).
+ */
+function getAvailableQuantity(variant: MedusaRawVariant): number | null {
+  if (!variant.manage_inventory || variant.allow_backorder) {
+    return null
+  }
+  const qty = variant.inventory_quantity
+  return typeof qty === "number" && Number.isFinite(qty) ? Math.max(0, Math.floor(qty)) : 0
+}
+
 /** Maps a Medusa product to a WineProduct, or null when it cannot be sold in the region. */
 function toWineProduct(p: MedusaRawProduct): WineProduct | null {
   const variant = p.variants?.[0]
@@ -797,7 +803,7 @@ function toWineProduct(p: MedusaRawProduct): WineProduct | null {
         : meta.images,
     badge: meta.badge,
     appellation: meta.appellation,
-    left: meta.left,
+    availableQuantity: getAvailableQuantity(variant),
     details: meta.details,
   }
 }

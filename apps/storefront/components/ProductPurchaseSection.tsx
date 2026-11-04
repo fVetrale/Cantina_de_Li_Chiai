@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useTransition } from "react";
 import {
   ShoppingBag,
   Check,
@@ -12,8 +12,10 @@ import {
   FileText,
   Grape,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import type { WineProduct } from "@/lib/data/products";
+import { addToCart, type AddToCartError } from "@/lib/actions/cart";
 import type { getDictionary } from "@/lib/i18n";
 
 interface ProductPurchaseSectionProps {
@@ -41,6 +43,8 @@ function BottleIcon({ className = "w-3.5 h-4.5" }: { className?: string }) {
 }
 
 const QUANTITY_PRESETS = [1, 2, 3, 4, 6, 9, 12, 18];
+// Same bound as MAX_ADD_QUANTITY in lib/data/cart.ts (validated again on the server).
+const MAX_QUANTITY = 120;
 
 export function ProductPurchaseSection({
   product,
@@ -48,6 +52,15 @@ export function ProductPurchaseSection({
 }: ProductPurchaseSectionProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [addError, setAddError] = useState<AddToCartError | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const t = dict.cart;
+
+  // Real stock from Medusa (ADR 034/035). null = not limited.
+  const available = product.availableQuantity;
+  const isSoldOut = available === 0;
+  const maxQuantity = available === null ? MAX_QUANTITY : Math.min(available, MAX_QUANTITY);
+  const exceedsStock = quantity > maxQuantity;
   const [isFavorite, setIsFavorite] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isCustomQtyMode, setIsCustomQtyMode] = useState(false);
@@ -102,6 +115,7 @@ export function ProductPurchaseSection({
 
   const handleSelectQuantity = (qty: number) => {
     setQuantity(qty);
+    setAddError(null);
     setIsPopoverOpen(false);
     setIsCustomQtyMode(false);
   };
@@ -109,8 +123,9 @@ export function ProductPurchaseSection({
   const handleApplyCustomQty = (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = parseInt(customQtyInput, 10);
-    if (!isNaN(parsed) && parsed > 0 && parsed <= 120) {
+    if (!isNaN(parsed) && parsed > 0 && parsed <= maxQuantity) {
       setQuantity(parsed);
+      setAddError(null);
       setIsPopoverOpen(false);
       setIsCustomQtyMode(false);
       setCustomQtyInput("");
@@ -118,11 +133,29 @@ export function ProductPurchaseSection({
   };
 
   const handleAddToCart = () => {
-    setIsAdded(true);
-    setTimeout(() => {
-      setIsAdded(false);
-    }, 2500);
+    if (isSoldOut || exceedsStock || isPending) return;
+    setAddError(null);
+    startTransition(async () => {
+      const result = await addToCart({ variantId: product.variantId, quantity });
+      if (!result.ok) {
+        setAddError(result.error);
+        return;
+      }
+      setIsAdded(true);
+      setTimeout(() => {
+        setIsAdded(false);
+      }, 2500);
+    });
   };
+
+  const errorMessage =
+    addError === "out_of_stock"
+      ? t.errorOutOfStock
+      : addError === "invalid_input"
+        ? t.errorInvalid
+        : addError === "unavailable"
+          ? t.errorUnavailable
+          : null;
 
   return (
     <div className="space-y-5 text-cellar-900">
@@ -190,25 +223,58 @@ export function ProductPurchaseSection({
           <button
             type="button"
             onClick={handleAddToCart}
-            className={`h-12 flex-1 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase flex items-center justify-center gap-2.5 transition-all duration-300 shadow-md active:scale-98 ${
+            disabled={isSoldOut || exceedsStock || isPending}
+            aria-busy={isPending}
+            className={`h-12 flex-1 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase flex items-center justify-center gap-2.5 transition-all duration-300 shadow-md active:scale-98 disabled:cursor-not-allowed disabled:opacity-60 ${
               isAdded
                 ? "bg-emerald-700 text-white shadow-emerald-700/30"
                 : "bg-[#72182b] hover:bg-[#581321] text-white hover:shadow-lg"
             }`}
           >
-            {isAdded ? (
+            {isSoldOut ? (
+              <span>{t.soldOut}</span>
+            ) : isPending ? (
+              <span>{t.adding}</span>
+            ) : isAdded ? (
               <>
                 <Check className="w-4 h-4 text-emerald-200" />
-                <span>Aggiunto al carrello ({quantity})</span>
+                <span>
+                  {t.added} ({quantity})
+                </span>
               </>
             ) : (
               <>
                 <ShoppingBag className="w-4 h-4 text-gold-300" />
-                <span>Aggiungi al carrello</span>
+                <span>{t.addToCart}</span>
               </>
             )}
           </button>
         </div>
+
+        {/* Real availability from Medusa stock (ADR 035): always shown when stock is managed */}
+        {available !== null && (
+          <p
+            className={`mt-2 text-xs font-medium ${isSoldOut ? "text-rose-700" : "text-olive-700"}`}
+          >
+            {isSoldOut ? (
+              t.soldOut
+            ) : (
+              <>
+                <strong className="font-bold">{available}</strong> {t.available}
+              </>
+            )}
+            {exceedsStock && !isSoldOut && (
+              <span className="ml-2 text-rose-700">• {t.quantityExceedsStock}</span>
+            )}
+          </p>
+        )}
+
+        {errorMessage && (
+          <p role="alert" className="mt-2 flex items-start gap-1.5 text-xs text-rose-700">
+            <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" />
+            <span>{errorMessage}</span>
+          </p>
+        )}
 
         {/* 4. Popover Menu a Tendina Selezione Bottiglia (Exact Replica Image 2) */}
         {isPopoverOpen && (
@@ -234,7 +300,8 @@ export function ProductPurchaseSection({
                   key={preset}
                   type="button"
                   onClick={() => handleSelectQuantity(preset)}
-                  className={`flex items-center justify-center gap-1.5 py-2.5 px-1.5 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
+                  disabled={preset > maxQuantity}
+                  className={`disabled:cursor-not-allowed disabled:opacity-35 flex items-center justify-center gap-1.5 py-2.5 px-1.5 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
                     quantity === preset
                       ? "border-2 border-[#72182b] text-[#72182b] bg-[#72182b]/5 shadow-sm font-bold"
                       : "border-ivory-300 hover:border-wine-300 text-cellar-700 hover:bg-ivory-50"
@@ -264,7 +331,7 @@ export function ProductPurchaseSection({
                 <input
                   type="number"
                   min="1"
-                  max="120"
+                  max={maxQuantity}
                   value={customQtyInput}
                   onChange={(e) => setCustomQtyInput(e.target.value)}
                   placeholder="Es. 24"
