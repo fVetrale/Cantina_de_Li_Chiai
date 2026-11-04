@@ -25,9 +25,9 @@ The rules in `AGENT.md` and `.agent/rules/*.md` are binding. The short version:
 ```
 apps/backend      @winery/backend     Medusa v2 (TS), Postgres + Redis
 apps/storefront   @winery/storefront  Next.js 16.4 App Router, React 19.3, Tailwind v4
-packages/shared   (empty: only .gitkeep; path alias @winery/shared/* exists in backend tsconfig)
+packages/shared   (empty: only .gitkeep; no path alias, see ADR 025)
 infra/            docker-compose.yml: postgres:16 + redis:7 bound to 127.0.0.1
-docs/adr/         001–023 ADRs (tooling, setup, catalog, UI, auth UI, media, footer…)
+docs/adr/         001–025 ADRs (tooling, setup, catalog, UI, auth UI, media, footer, backend tooling, tsconfig…)
 .agent/rules/     backend.md, storefront.md, security.md, documentation.md
 TODO.md           roadmap (phases 1–5) in Italian
 ```
@@ -51,11 +51,27 @@ The root `.env` holds the variables (see `.env.example`). Never read or print re
   jobs/subscribers. Migrations must be reversible and reviewed by the user before running. A new endpoint means
   a schema + auth check + test, all in the same task.
 
-### Known tooling issues (as of 2026-11-03)
-- `pnpm lint` fails in the backend: there's no ESLint config, and an old ESLint 6.4 gets resolved.
-- `pnpm test` fails in the backend: `jest` isn't installed (no jest devDependency or config).
-- `pnpm typecheck` passes in both apps. Storefront `eslint` passes.
-- So the root "Definition of done" command can't pass until the backend lint/test setup is fixed.
+### tsconfig (ADR 025)
+- `module`/`moduleResolution`: **`Node16`** (as in the Medusa starter). `medusa build` emits CommonJS into `dist/` (`outDir`).
+- No `baseUrl`/`paths`: they're deprecated in TS 6 and removed in TS 7. When `packages/shared` gets code, consume it as
+  `"@winery/shared": "workspace:*"`, not as a path alias.
+- `types: ["node", "jest"]`. `include`: `src`, `integration-tests`, `medusa-config.ts`, so test files are type-checked.
+- Type checking passes on TS 5.9 (pinned), 6 and 7.
+
+### Lint & tests (ADR 024)
+- All `@medusajs/*` packages are pinned to **2.22.2** (backend + storefront `js-sdk`). Keep them aligned:
+  `@medusajs/test-utils` requires the exact same version.
+- Lint: ESLint 9 flat config in `apps/backend/eslint.config.mjs` (typescript-eslint recommended; `.js` = CommonJS).
+- Jest 29 + `@swc/jest`, with `jest.config.js` from the Medusa starter. `TEST_TYPE` selects the suite:
+  - `pnpm test` → `test:unit`: `src/**/__tests__/**/*.unit.spec.ts`. No infra needed. Part of the Definition of Done.
+  - `pnpm --filter @winery/backend test:integration:http`: `integration-tests/http/*.spec.ts` via
+    `medusaIntegrationTestRunner`. It creates and drops a temporary Postgres DB. It needs `infra/` up and
+    `DB_HOST`/`DB_USERNAME`/`DB_PASSWORD` (from `apps/backend/.env.test`, human-managed, or inline env vars).
+    `jest.config.js` forces `PORT=""` so tests never clash with a running `medusa develop`.
+  - The Knex "Connection ended unexpectedly" logs at teardown are harmless noise.
+- Run the HTTP integration tests before merging any backend endpoint work (the IDOR 403/404 tests live there).
+- `pnpm audit` has known high advisories that are transitive deps of the Medusa core (lodash, @graphql-tools/utils).
+  The `pnpm.overrides` decision is still pending.
 
 ## Storefront — `apps/storefront`
 
@@ -109,6 +125,14 @@ public/images/             real cellar/product photos
   links (profile, orders, addresses, cards, wishlist), but those pages don't exist.
 - **Checkout / orders / customer area**: not started. Stripe isn't configured on either side.
 - Newsletter: UI only.
+
+## Work log
+Dated session history, decisions and open questions live in **`MEMORY.md`** (newest first). Read it at the
+start of a session, and append a new entry at the end of each session.
+
+Last session: **2026-11-03, about 21:00–21:57 CET**. Backend tooling (ADR 024), `.env.test`, and the tsconfig
+Node16 alignment (ADR 025) were done and merged into `develop` (PR #9). The next task is point 2, the
+storefront data layer: region prices, `variantId`, and a "catalogo non disponibile" page when the backend is down.
 
 ## Roadmap (from TODO.md), what's left
 1. Backend: Stripe (`@medusajs/payment-stripe`), age-verification and shipping-rules modules
