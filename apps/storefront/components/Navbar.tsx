@@ -16,7 +16,7 @@ import {
   CreditCard,
   Heart,
 } from "lucide-react";
-import type { getDictionary, Locale } from "@/lib/i18n";
+import type { NavbarDictionary, Locale } from "@/lib/i18n";
 import type { WineCategory } from "@/lib/data/products";
 import { AuthModal } from "./AuthModal";
 
@@ -28,7 +28,7 @@ const DEFAULT_CATEGORIES: WineCategory[] = [
 ];
 
 interface NavbarProps {
-  dict: ReturnType<typeof getDictionary>;
+  dict: NavbarDictionary;
   currentLocale: Locale;
   categories?: WineCategory[];
   cartCount?: number;

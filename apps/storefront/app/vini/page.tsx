@@ -4,6 +4,7 @@ import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getProducts, getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
 import { WinesCatalogView } from "@/components/WinesCatalogView";
+import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 import { PromoBanner } from "@/components/PromoBanner";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
@@ -37,12 +38,13 @@ export default async function WinesPage(props: {
   const t = dict.winesPage;
 
   // Concurrent fetch of products and categories on the server
-  const [products, categories] = await Promise.all([
+  const [catalog, categories] = await Promise.all([
     getProducts(),
     getCategories(),
   ]);
 
   const initialCategory = searchParams.categoria || "all";
+  const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
   return (
     <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
@@ -75,12 +77,20 @@ export default async function WinesPage(props: {
           </div>
 
           {/* 3. Interactive Catalog Filter & Products Grid */}
-          <WinesCatalogView
-            products={products}
-            categories={categories}
-            dict={dict}
-            initialCategory={initialCategory}
-          />
+          {catalog.status === "ok" ? (
+            <WinesCatalogView
+              products={catalog.products}
+              categories={categories}
+              dict={dict}
+              initialCategory={initialCategory}
+            />
+          ) : (
+            <CatalogUnavailable
+              dict={dict}
+              retryHref={`/vini${langQuery}`}
+              homeHref={`/${langQuery}`}
+            />
+          )}
         </div>
       </main>
 

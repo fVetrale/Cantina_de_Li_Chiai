@@ -11,6 +11,7 @@ import { WineBottleGallery } from "@/components/WineBottleGallery";
 import { ProductPurchaseSection } from "@/components/ProductPurchaseSection";
 import { ProductTabs } from "@/components/ProductTabs";
 import { AgeGateModal } from "@/components/AgeGateModal";
+import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 
 interface ProductPageProps {
   params: Promise<{ handle: string }>;
@@ -18,8 +19,12 @@ interface ProductPageProps {
 }
 
 export async function generateStaticParams() {
-  const products = await getProducts();
-  return products.map((p) => ({
+  const catalog = await getProducts();
+  // Backend down at build time: render every product page on demand instead.
+  if (catalog.status !== "ok") {
+    return [];
+  }
+  return catalog.products.map((p) => ({
     handle: p.handle,
   }));
 }
@@ -29,17 +34,24 @@ export async function generateMetadata({
   searchParams,
 }: ProductPageProps): Promise<Metadata> {
   const { handle } = await params;
-  const product = await getProductByHandle(handle);
+  const sParams = searchParams ? await searchParams : {};
+  const currentLocale: Locale = sParams.lang === "en" ? "en" : defaultLocale;
+  const dict = getDictionary(currentLocale);
+  const result = await getProductByHandle(handle);
 
-  if (!product) {
+  if (result.status === "unavailable") {
+    return {
+      title: `${dict.catalogUnavailable.title} | ${dict.common.brand}`,
+    };
+  }
+
+  if (result.status === "not_found") {
     return {
       title: "Vino non trovato | Cantina de Li Chiai",
     };
   }
 
-  const sParams = searchParams ? await searchParams : {};
-  const currentLocale: Locale = sParams.lang === "en" ? "en" : defaultLocale;
-  const dict = getDictionary(currentLocale);
+  const { product } = result;
 
   return {
     title: `${product.title} | ${dict.common.brand}`,
@@ -70,11 +82,34 @@ export default async function ProductDetailPage({
   const currentLocale: Locale = sParams.lang === "en" ? "en" : defaultLocale;
   const dict = getDictionary(currentLocale);
 
-  const product = await getProductByHandle(handle);
+  const result = await getProductByHandle(handle);
 
-  if (!product) {
+  if (result.status === "not_found") {
     notFound();
   }
+
+  if (result.status === "unavailable") {
+    const langQuery = currentLocale === "en" ? "?lang=en" : "";
+    const categories = await getCategories();
+
+    return (
+      <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+        <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
+        <main className="flex-grow pt-24 sm:pt-28 pb-12">
+          <CatalogUnavailable
+            dict={dict}
+            headingLevel="h1"
+            retryHref={`/prodotti/${encodeURIComponent(handle)}${langQuery}`}
+            homeHref={`/${langQuery}`}
+          />
+        </main>
+        <Footer dict={dict} />
+        <AgeGateModal dict={dict} />
+      </div>
+    );
+  }
+
+  const { product } = result;
 
   const [relatedProducts, categories] = await Promise.all([
     getRelatedProducts(product.handle),
