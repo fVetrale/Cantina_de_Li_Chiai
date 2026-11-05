@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { getCurrentCheckoutView } from "@/lib/data/checkout";
+import { getAuthToken, getCurrentCustomer } from "@/lib/data/auth-session";
+import { listAddresses, type SavedAddress } from "@/lib/data/account";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
@@ -36,7 +38,19 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
   const t = dict.checkout;
   const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
-  const [view, categories] = await Promise.all([getCurrentCheckoutView(), getCategories()]);
+  const [view, categories, customer, token] = await Promise.all([
+    getCurrentCheckoutView(),
+    getCategories(),
+    getCurrentCustomer(),
+    getAuthToken(),
+  ]);
+  // Logged-in customer (ADR 041): prefill the email and offer the saved addresses.
+  let savedAddresses: SavedAddress[] = [];
+  if (customer && token) {
+    const addresses = await listAddresses(token);
+    savedAddresses = addresses.ok ? addresses.data : [];
+  }
+  const defaultAddress = savedAddresses.find((a) => a.isDefault) ?? savedAddresses[0];
 
   if (view.status === "empty") {
     redirect(`/carrello${langQuery}`);
@@ -81,11 +95,13 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
                   <CheckoutDetailsForm
                     t={t}
                     initial={{
-                      email: view.checkout.email,
-                      shipping: view.checkout.shippingAddress,
+                      email: view.checkout.email || customer?.email || "",
+                      shipping: view.checkout.shippingAddress ?? defaultAddress ?? null,
                       billing: view.checkout.billingAddress,
                       billingSameAsShipping: view.checkout.billingSameAsShipping,
+                      phone: customer?.phone ?? "",
                     }}
+                    savedAddresses={savedAddresses}
                   />
                 </section>
 

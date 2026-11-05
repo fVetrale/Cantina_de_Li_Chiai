@@ -5,7 +5,6 @@ import {
   ShoppingBag,
   Check,
   Truck,
-  Heart,
   Store,
   Calendar,
   Wine,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import type { WineProduct } from "@/lib/data/products";
 import { addToCart, type AddToCartError } from "@/lib/actions/cart";
+import { WishlistButton } from "./WishlistButton";
 import type { getDictionary } from "@/lib/i18n";
 
 interface ProductPurchaseSectionProps {
@@ -61,7 +61,6 @@ export function ProductPurchaseSection({
   const isSoldOut = available === 0;
   const maxQuantity = available === null ? MAX_QUANTITY : Math.min(available, MAX_QUANTITY);
   const exceedsStock = quantity > maxQuantity;
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isCustomQtyMode, setIsCustomQtyMode] = useState(false);
   const [customQtyInput, setCustomQtyInput] = useState("");
@@ -383,22 +382,14 @@ export function ProductPurchaseSection({
           <span className="underline">Disponibile in Cantina</span>
         </button>
 
-        <button
-          type="button"
-          onClick={() => setIsFavorite(!isFavorite)}
-          className="inline-flex items-center gap-2 hover:text-[#72182b] transition-colors group"
-        >
-          <Heart
-            className={`w-4 h-4 transition-colors ${
-              isFavorite
-                ? "fill-[#72182b] text-[#72182b]"
-                : "text-cellar-500 group-hover:text-[#72182b]"
-            }`}
-          />
-          <span className="underline">
-            {isFavorite ? "Salvato nei preferiti" : "Aggiungi ai miei preferiti"}
-          </span>
-        </button>
+        {/* Real wishlist (ADR 042) */}
+        <WishlistButton
+          productId={product.id}
+          productTitle={product.title}
+          t={dict.wishlist}
+          loginHref="/account"
+          variant="pdp"
+        />
       </div>
 
       {/* 7. Structured Product Specs with Icons */}

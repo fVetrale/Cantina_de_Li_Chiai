@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Check, AlertCircle } from "lucide-react";
 import { saveCheckoutDetails, type CheckoutActionError } from "@/lib/actions/checkout";
 import type { AddressView } from "@/lib/data/checkout";
+import type { SavedAddress } from "@/lib/data/account";
 import type { Dictionary } from "@/lib/i18n";
 
 type T = Dictionary["checkout"];
@@ -20,27 +21,38 @@ const EMPTY_ADDRESS: AddressFields = {
   province: "",
 };
 
+/** Only the address fields: no id, phone or "default" flag from a saved address. */
 function pickAddress(address: AddressView | null): AddressFields {
   if (!address) return EMPTY_ADDRESS;
-  const { phone: _phone, ...rest } = address;
-  void _phone;
-  return rest;
+  return {
+    firstName: address.firstName,
+    lastName: address.lastName,
+    address1: address.address1,
+    address2: address.address2,
+    postalCode: address.postalCode,
+    city: address.city,
+    province: address.province,
+  };
 }
 
 interface CheckoutDetailsFormProps {
   t: T;
+  /** The logged-in customer's own addresses (ADR 041); empty for guests. */
+  savedAddresses?: SavedAddress[];
   initial: {
     email: string;
     shipping: AddressView | null;
     billing: AddressView | null;
     billingSameAsShipping: boolean;
+    /** Fallback phone (the logged-in customer's profile), used when the address has none. */
+    phone?: string;
   };
 }
 
 /** Step 1: contact and addresses (ADR 037). Saved on the Medusa cart through a Server Action. */
-export function CheckoutDetailsForm({ t, initial }: CheckoutDetailsFormProps) {
+export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: CheckoutDetailsFormProps) {
   const [email, setEmail] = useState(initial.email);
-  const [phone, setPhone] = useState(initial.shipping?.phone ?? "");
+  const [phone, setPhone] = useState(initial.shipping?.phone || initial.phone || "");
   const [shipping, setShipping] = useState<AddressFields>(pickAddress(initial.shipping));
   const [billingSame, setBillingSame] = useState(initial.billingSameAsShipping);
   const [billing, setBilling] = useState<AddressFields>(pickAddress(initial.billing));
@@ -166,6 +178,34 @@ export function CheckoutDetailsForm({ t, initial }: CheckoutDetailsFormProps) {
         {field("email", t.email, email, setEmail, { autoComplete: "email", type: "email", inputMode: "email", maxLength: 254 })}
         {field("phone", t.phone, phone, setPhone, { autoComplete: "tel", type: "tel", inputMode: "tel", maxLength: 20 })}
       </div>
+
+      {savedAddresses.length > 0 && (
+        <div className="sm:max-w-md">
+          <label htmlFor="checkout-saved-address" className="block text-xs font-semibold text-cellar-700 mb-1">
+            {t.savedAddresses}
+          </label>
+          <select
+            id="checkout-saved-address"
+            defaultValue=""
+            onChange={(e) => {
+              const chosen = savedAddresses.find((a) => a.id === e.target.value);
+              if (!chosen) return;
+              setShipping(pickAddress(chosen));
+              if (chosen.phone) setPhone(chosen.phone);
+            }}
+            className="w-full rounded-xl border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
+          >
+            <option value="" disabled>
+              {t.savedAddressesPlaceholder}
+            </option>
+            {savedAddresses.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.firstName} {a.lastName} — {a.address1}, {a.postalCode} {a.city}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {addressFields("shipping", shipping, setShipping, "shipping")}
 

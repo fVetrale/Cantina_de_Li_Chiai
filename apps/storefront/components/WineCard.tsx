@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Check, Plus } from "lucide-react";
 import type { WineProduct } from "@/lib/data/products";
 import { addToCart, type AddToCartError } from "@/lib/actions/cart";
+import { WishlistButton } from "./WishlistButton";
 import type { getDictionary } from "@/lib/i18n";
 
 interface WineCardProps {
@@ -71,22 +72,32 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
       </div>
 
       {/* Center Image Container */}
-      <Link
-        href={productUrl}
-        className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
-        aria-label={`Visualizza scheda di ${product.title}`}
-      >
-        <div className="relative w-full h-full max-h-72 transition-transform duration-500 ease-out group-hover:scale-105">
-          <Image
-            src={product.image}
-            alt={`${product.title} - ${product.badge} di Cantina de Li Chiai`}
-            fill
-            priority={priority}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain drop-shadow-md"
-          />
-        </div>
-      </Link>
+      {/* Image link + wishlist heart side by side (a button cannot live inside a link). */}
+      <div className="relative">
+        <Link
+          href={productUrl}
+          className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
+          aria-label={`Visualizza scheda di ${product.title}`}
+        >
+          <div className="relative w-full h-full max-h-72 transition-transform duration-500 ease-out group-hover:scale-105">
+            <Image
+              src={product.image}
+              alt={`${product.title} - ${product.badge} di Cantina de Li Chiai`}
+              fill
+              priority={priority}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-contain drop-shadow-md"
+            />
+          </div>
+        </Link>
+        <WishlistButton
+          productId={product.id}
+          productTitle={product.title}
+          t={dict.wishlist}
+          loginHref="/account"
+          variant="card"
+        />
+      </div>
 
       {/* Information Block Below Bottle */}
       <div className="p-5 sm:p-6 flex flex-col flex-grow border-t border-ivory-100 bg-white">

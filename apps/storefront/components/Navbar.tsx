@@ -53,17 +53,16 @@ export function Navbar({
   // Logged-in customer (ADR 040): only the first name is known on the client.
   const customer = useCustomer();
   const router = useRouter();
-  const accountHref = currentLocale === "en" ? "/account?lang=en" : "/account";
   const accountLabel = customer
     ? dict.accountModal.greeting.replace("{name}", customer.firstName)
     : dict.nav.account;
 
-  /** Account menu entries: the account page when logged in, otherwise the login popup. */
-  const openAccountEntry = () => {
+  /** Account menu entries: the given reserved-area page when logged in, otherwise the login popup. */
+  const openAccountEntry = (section = "") => {
     setAccountMenuOpen(false);
     setMobileMenuOpen(false);
     if (customer) {
-      router.push(accountHref);
+      router.push(`/account${section}${currentLocale === "en" ? "?lang=en" : ""}`);
       return;
     }
     setAuthModalMode("login");
@@ -210,7 +209,7 @@ export function Navbar({
           >
             <button
               type="button"
-              onClick={openAccountEntry}
+              onClick={() => openAccountEntry()}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 border border-transparent hover:border-gold-400/30 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
               aria-label={accountLabel}
               title={accountLabel}
@@ -231,7 +230,7 @@ export function Navbar({
                   <div className="p-1.5">
                     <button
                       type="button"
-                      onClick={openAccountEntry}
+                      onClick={() => openAccountEntry()}
                       className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-[#72182b] hover:bg-ivory-50 transition-colors text-left cursor-pointer group"
                     >
                       <span className="underline group-hover:no-underline">
@@ -272,7 +271,7 @@ export function Navbar({
                   <div className="p-1.5 space-y-0.5">
                     <button
                       type="button"
-                      onClick={openAccountEntry}
+                      onClick={() => openAccountEntry("/profilo")}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <User className="w-4 h-4 text-cellar-400" />
@@ -281,7 +280,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={openAccountEntry}
+                      onClick={() => openAccountEntry("/ordini")}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <ClipboardList className="w-4 h-4 text-cellar-400" />
@@ -290,7 +289,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={openAccountEntry}
+                      onClick={() => openAccountEntry("/indirizzi")}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <MapPin className="w-4 h-4 text-cellar-400" />
@@ -299,7 +298,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={openAccountEntry}
+                      onClick={() => openAccountEntry()}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <CreditCard className="w-4 h-4 text-cellar-400" />
@@ -308,7 +307,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={openAccountEntry}
+                      onClick={() => openAccountEntry("/preferiti")}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <Heart className="w-4 h-4 text-cellar-400" />
@@ -407,7 +406,7 @@ export function Navbar({
             {/* Accedi / Registrati (Apre Popup Modal) */}
             <button
               type="button"
-              onClick={openAccountEntry}
+              onClick={() => openAccountEntry()}
               className="py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-gold-200 transition-colors flex items-center justify-between text-xs uppercase tracking-wider font-bold w-full cursor-pointer text-left"
             >
               <div className="flex items-center gap-2">
