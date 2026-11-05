@@ -124,14 +124,16 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 - [ ] ⚪ Il contatore del carrello non gestisce numeri sopra 99.
 - [ ] ⚪ Prodotti creati in futuro dall'admin senza foto locale mostrerebbero l'immagine del Chiai Rosso: servono le
       foto caricate in Medusa e la configurazione di Next per le immagini esterne.
-- [ ] ⚪ Avanzi del vecchio template sardo (chiave `sardinia`, immagini `cannonau.jpg`/`vermentino.jpg`).
+- [ ] ⚪ Avanzi del vecchio template sardo nel codice: chiave i18n `sardinia` e `LEGACY_OBSOLETE_HANDLES` (le immagini
+      sono già state tolte).
 - [ ] ⚪ Lo stato "catalogo non disponibile" risponde con codice 200 invece di 503 (ADR 026).
 - [x] Categorie dei vini sistemate: Vini Rossi, Vini Bianchi, Vini Dolci (ADR 043).
 - [x] Solo vino, branch 2: testi it/en riscritti, degustazione di vino offerta al ritiro al posto del tagliere,
       abbinamenti senza salumi e carne, SEO con i vini veri (ADR 044).
 - [ ] ⚪ Hashtag del mosaico social presi dal vecchio template (`#FianoDelCilento`, `#AglianicoRiserva`) e pagina La
       Cantina che dice "il prodotto non viaggia" anche se il sito spedisce: da rivedere nell'audit (ADR 044).
-- [ ] ⚪ **Solo vino, branch 3:** togliere le immagini di salumi, carne e olio da `public/images` (ADR 043).
+- [x] Solo vino, branch 3: tolte da `public/images` le 12 immagini di salumi, carne e olio e le 3 del vecchio template
+      sardo (`cagnulari.jpg`, `cannonau.jpg`, `vermentino.jpg`), tutte non più usate (ADR 043).
 - [ ] ⚪ I nomi delle categorie arrivano da Medusa e restano in italiano anche nella versione inglese (ADR 043).
 
 ## 7. Gestione operativa del negozio 🟠
