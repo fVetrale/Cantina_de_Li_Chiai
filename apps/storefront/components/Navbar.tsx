@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Wine,
   ShoppingCart,
@@ -15,11 +16,14 @@ import {
   MapPin,
   CreditCard,
   Heart,
+  LogOut,
 } from "lucide-react";
 import type { NavbarDictionary, Locale } from "@/lib/i18n";
 import type { WineCategory } from "@/lib/data/products";
 import { AuthModal } from "./AuthModal";
 import { useCartCounter } from "./CartProvider";
+import { useCustomer } from "./CustomerProvider";
+import { logout } from "@/lib/actions/auth";
 
 const DEFAULT_CATEGORIES: WineCategory[] = [
   { id: "cat_vini", name: "Vini", handle: "vini" },
@@ -46,6 +50,32 @@ export function Navbar({
   // Real cart from the root layout (ADR 036).
   const { itemCount: cartCount, itemTotal: cartTotal } = useCartCounter();
   const cartHref = currentLocale === "en" ? "/carrello?lang=en" : "/carrello";
+  // Logged-in customer (ADR 040): only the first name is known on the client.
+  const customer = useCustomer();
+  const router = useRouter();
+  const accountHref = currentLocale === "en" ? "/account?lang=en" : "/account";
+  const accountLabel = customer
+    ? dict.accountModal.greeting.replace("{name}", customer.firstName)
+    : dict.nav.account;
+
+  /** Account menu entries: the account page when logged in, otherwise the login popup. */
+  const openAccountEntry = () => {
+    setAccountMenuOpen(false);
+    setMobileMenuOpen(false);
+    if (customer) {
+      router.push(accountHref);
+      return;
+    }
+    setAuthModalMode("login");
+    setAuthModalOpen(true);
+  };
+
+  const handleLogout = async () => {
+    setAccountMenuOpen(false);
+    setMobileMenuOpen(false);
+    await logout();
+    router.push(currentLocale === "en" ? "/?lang=en" : "/");
+  };
 
   const dynamicCategories =
     categories && categories.length > 0 ? categories : DEFAULT_CATEGORIES;
@@ -180,18 +210,14 @@ export function Navbar({
           >
             <button
               type="button"
-              onClick={() => {
-                setAuthModalMode("login");
-                setAuthModalOpen(true);
-                setAccountMenuOpen(false);
-              }}
+              onClick={openAccountEntry}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 border border-transparent hover:border-gold-400/30 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
-              aria-label={dict.nav.account}
-              title={dict.nav.account}
+              aria-label={accountLabel}
+              title={accountLabel}
             >
               <User className="w-3.5 h-3.5 text-gold-300 shrink-0" />
               <span className="hidden xl:inline text-[11px] uppercase tracking-wider font-bold whitespace-nowrap">
-                {dict.nav.account}
+                {accountLabel}
               </span>
               <ChevronDown className="w-3 h-3 text-gold-400/70 shrink-0" />
             </button>
@@ -200,15 +226,12 @@ export function Navbar({
             {accountMenuOpen && (
               <div className="absolute right-0 top-full pt-2 z-50 w-72 animate-fadeIn pointer-events-auto">
                 <div className="rounded-2xl bg-white text-cellar-900 border border-ivory-200 shadow-2xl overflow-hidden py-2 divide-y divide-ivory-100">
+                  {!customer && (<>
                   {/* Riga 1: Accedi/Registrazione > */}
                   <div className="p-1.5">
                     <button
                       type="button"
-                      onClick={() => {
-                        setAuthModalMode("login");
-                        setAuthModalOpen(true);
-                        setAccountMenuOpen(false);
-                      }}
+                      onClick={openAccountEntry}
                       className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-[#72182b] hover:bg-ivory-50 transition-colors text-left cursor-pointer group"
                     >
                       <span className="underline group-hover:no-underline">
@@ -243,15 +266,13 @@ export function Navbar({
                     </button>
                   </div>
 
+                  </>)}
+
                   {/* Riga 3: Voci Profilo, Ordini, Indirizzi, Carte, Preferiti */}
                   <div className="p-1.5 space-y-0.5">
                     <button
                       type="button"
-                      onClick={() => {
-                        setAuthModalMode("login");
-                        setAuthModalOpen(true);
-                        setAccountMenuOpen(false);
-                      }}
+                      onClick={openAccountEntry}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <User className="w-4 h-4 text-cellar-400" />
@@ -260,11 +281,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setAuthModalMode("login");
-                        setAuthModalOpen(true);
-                        setAccountMenuOpen(false);
-                      }}
+                      onClick={openAccountEntry}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <ClipboardList className="w-4 h-4 text-cellar-400" />
@@ -273,11 +290,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setAuthModalMode("login");
-                        setAuthModalOpen(true);
-                        setAccountMenuOpen(false);
-                      }}
+                      onClick={openAccountEntry}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <MapPin className="w-4 h-4 text-cellar-400" />
@@ -286,11 +299,7 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setAuthModalMode("login");
-                        setAuthModalOpen(true);
-                        setAccountMenuOpen(false);
-                      }}
+                      onClick={openAccountEntry}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <CreditCard className="w-4 h-4 text-cellar-400" />
@@ -299,17 +308,26 @@ export function Navbar({
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setAuthModalMode("login");
-                        setAuthModalOpen(true);
-                        setAccountMenuOpen(false);
-                      }}
+                      onClick={openAccountEntry}
                       className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-cellar-700 hover:text-cellar-950 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                     >
                       <Heart className="w-4 h-4 text-cellar-400" />
                       <span>{dict.accountModal.wishlist}</span>
                     </button>
                   </div>
+
+                  {customer && (
+                    <div className="p-1.5">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#72182b] hover:bg-ivory-50 transition-colors text-left cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" aria-hidden="true" />
+                        <span>{dict.accountModal.logout}</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -389,19 +407,25 @@ export function Navbar({
             {/* Accedi / Registrati (Apre Popup Modal) */}
             <button
               type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setAuthModalMode("login");
-                setAuthModalOpen(true);
-              }}
+              onClick={openAccountEntry}
               className="py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-gold-200 transition-colors flex items-center justify-between text-xs uppercase tracking-wider font-bold w-full cursor-pointer text-left"
             >
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-gold-300" />
-                <span>{dict.nav.account}</span>
+                <span>{accountLabel}</span>
               </div>
               <span className="text-[10px] text-gold-400/60 font-serif">→</span>
             </button>
+            {customer && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="py-2.5 px-3 rounded-xl hover:bg-white/10 text-gold-200 transition-colors flex items-center gap-2 text-xs uppercase tracking-wider font-bold w-full cursor-pointer text-left"
+              >
+                <LogOut className="w-4 h-4 text-gold-300" aria-hidden="true" />
+                <span>{dict.accountModal.logout}</span>
+              </button>
+            )}
           </div>
 
           <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gold-300/80">

@@ -5,6 +5,8 @@ import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
 import { AccountAuthCard } from "@/components/AccountAuthCard";
+import { LogoutButton } from "@/components/auth/LogoutButton";
+import { getCurrentCustomer } from "@/lib/data/auth-session";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
 
@@ -37,7 +39,8 @@ export default async function AccountPage(props: {
   const dict = getDictionary(currentLocale);
   const t = dict.accountPage;
 
-  const categories = await getCategories();
+  const [categories, customer] = await Promise.all([getCategories(), getCurrentCustomer()]);
+  const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
   return (
     <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
@@ -80,9 +83,27 @@ export default async function AccountPage(props: {
             </p>
           </header>
 
-          {/* Interactive Luxury Auth Card */}
-          <AccountAuthCard dict={dict} currentLocale={currentLocale} />
-          {/* No security claims here until real customer auth exists (ADR 031). */}
+          {customer ? (
+            // Signed in (ADR 040). Profile, orders, addresses and wishlist come in part B/C.
+            <section
+              aria-labelledby="account-welcome"
+              className="max-w-2xl mx-auto bg-white rounded-3xl border border-ivory-200 shadow-xl p-6 sm:p-10 text-center space-y-5"
+            >
+              <h2 id="account-welcome" className="font-serif text-3xl font-bold text-wine-950">
+                {t.welcome.replace("{name}", customer.firstName)}
+              </h2>
+              <p className="text-sm text-cellar-600">
+                {t.signedInAs} <strong className="text-cellar-900 break-all">{customer.email}</strong>
+              </p>
+              <div className="rounded-2xl bg-ivory-50 border border-ivory-200 p-5">
+                <p className="text-sm font-semibold text-cellar-900">{t.areaSoonTitle}</p>
+                <p className="mt-1 text-xs text-cellar-600">{t.areaSoonDesc}</p>
+              </div>
+              <LogoutButton label={dict.accountModal.logout} homeHref={`/${langQuery}`} />
+            </section>
+          ) : (
+            <AccountAuthCard dict={dict} currentLocale={currentLocale} />
+          )}
         </div>
       </main>
 

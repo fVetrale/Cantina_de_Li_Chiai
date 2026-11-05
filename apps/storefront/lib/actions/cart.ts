@@ -16,6 +16,7 @@ import {
   type MedusaCart,
 } from "@/lib/data/cart"
 import { CART_COOKIE, CART_COOKIE_OPTIONS } from "@/lib/data/cart-session"
+import { getAuthToken } from "@/lib/data/auth-session"
 import { getStoreRegionId } from "@/lib/data/products"
 
 /**
@@ -77,7 +78,13 @@ async function getOrCreateCart(): Promise<MedusaCart | null> {
   if (!regionId) {
     return null
   }
-  const created = await createCart(regionId)
+  // Logged in: Medusa links the new cart to the customer, so the order lands in their history.
+  // An expired token must not break shopping: fall back to a guest cart.
+  const authToken = await getAuthToken()
+  let created = await createCart(regionId, authToken)
+  if (!created.ok && authToken) {
+    created = await createCart(regionId)
+  }
   if (!created.ok) {
     return null
   }

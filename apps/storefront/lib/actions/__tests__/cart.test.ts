@@ -25,6 +25,7 @@ interface BackendState {
   nextCartId: number;
   nextLineId: number;
   down: boolean;
+  lastCreateAuth?: string;
 }
 
 let state: BackendState;
@@ -58,6 +59,11 @@ function installBackend() {
     }
     if (url.pathname === "/store/carts" && method === "POST") {
       expect(body).toEqual({ region_id: REGION_ID });
+      const auth = (init?.headers as Record<string, string> | undefined)?.authorization;
+      if (auth === "Bearer eyJ.eyJ.expired") {
+        return json({ message: "Unauthorized" }, 401);
+      }
+      state.lastCreateAuth = auth;
       const id = `cart_${String(state.nextCartId++).padStart(4, "0")}`;
       state.carts.set(id, { id, completed_at: null, items: [] });
       return json(cartBody(id));
@@ -326,5 +332,23 @@ describe("removeCartItem", () => {
   it("rejects an invalid line id without calling Medusa", async () => {
     expect(await removeCartItem({ lineItemId: "../../admin" })).toEqual({ ok: false, error: "invalid_input" });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("addToCart for a logged-in customer (ADR 040)", () => {
+  const TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhY3Rvcl9pZCI6ImN1c18xIn0.c2lnbmF0dXJl";
+
+  it("creates the cart on behalf of the customer (Bearer token from the cookie)", async () => {
+    cookieJar.set("cantina_auth", { value: TOKEN });
+
+    expect((await addToCart({ variantId: VARIANT_ID, quantity: 1 })).ok).toBe(true);
+    expect(state.lastCreateAuth).toBe(`Bearer ${TOKEN}`);
+  });
+
+  it("falls back to a guest cart when the token has expired", async () => {
+    cookieJar.set("cantina_auth", { value: "eyJ.eyJ.expired" });
+
+    expect(await addToCart({ variantId: VARIANT_ID, quantity: 1 })).toEqual({ ok: true, itemCount: 1 });
+    expect(state.lastCreateAuth).toBeUndefined();
   });
 });
