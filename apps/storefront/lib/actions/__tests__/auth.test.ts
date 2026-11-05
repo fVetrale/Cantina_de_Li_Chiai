@@ -200,7 +200,7 @@ describe("getCurrentCustomer", () => {
 
   it("reads the customer with the token from the cookie", async () => {
     jar.set("cantina_auth", { value: LOGIN_TOKEN });
-    expect(await getCurrentCustomer()).toEqual({ id: "cus_1", email: "maria@example.it", firstName: "Maria", lastName: "Rossi", phone: "" });
+    expect(await getCurrentCustomer()).toEqual({ id: "cus_1", email: "maria@example.it", firstName: "Maria", lastName: "Rossi", phone: "", wishlist: [] });
     expect(calls()).toEqual([expect.objectContaining({ path: "/store/customers/me", auth: `Bearer ${LOGIN_TOKEN}` })]);
   });
 

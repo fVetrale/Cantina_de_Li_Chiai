@@ -67,7 +67,11 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 **Area riservata e account**
 - [x] Area riservata parte B: profilo, rubrica indirizzi, storico e dettaglio ordini, indirizzi salvati nel
       checkout, con test di proprietà (ADR 041).
-- [ ] 🟡 **Preferiti** (parte C): salvati nei metadata del cliente (ADR 040).
+- [x] Preferiti (parte C): salvati nei metadata del cliente, cuore su scheda prodotto e card, pagina
+      `/account/preferiti` (ADR 042).
+- [ ] 🟡 **Preferiti in un modulo dedicato** (al posto dei metadata) se servono statistiche ("prodotti più
+      desiderati"), condivisione della lista o più di 100 elementi (ADR 042).
+- [ ] ⚪ Il link "Accedi" del cuore porta a `/account` senza `?lang=en` nella versione inglese (ADR 042).
 - [ ] 🟡 **Storico ordini con paginazione:** oggi mostra i primi 20 ordini (ADR 041).
 - [ ] ⚪ Ordine di un altro cliente aperto da link: risponde 404 con la pagina generica "Prodotto non trovato";
       valutare una pagina 404 dedicata all'area riservata (ADR 041).
@@ -110,7 +114,7 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 - [ ] 🟡 **Audit completo** di responsive (telefono, tablet, desktop), pulsanti morti e testi ingannevoli — da fare dopo
       l'area riservata (deciso il 2026-11-05).
 - [ ] ⚪ Scheda prodotto: "consegna entro il …" con una data calcolata a caso, codice articolo di riserva finto,
-      pulsanti "Disponibile in Cantina" e "Aggiungi ai preferiti" senza funzione (i preferiti arrivano con la parte C).
+      pulsante "Disponibile in Cantina" senza funzione.
 - [ ] ⚪ Testi italiani fissi anche nella versione inglese (scheda prodotto, pagina 404, `<html lang="it">`).
 - [ ] ⚪ Prezzi in formato italiano ("€ 24,00") anche nella versione inglese.
 - [ ] ⚪ Il contatore del carrello non gestisce numeri sopra 99.

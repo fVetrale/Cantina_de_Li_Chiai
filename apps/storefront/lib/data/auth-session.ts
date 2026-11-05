@@ -1,6 +1,7 @@
 import { cache } from "react"
 import { cookies } from "next/headers"
 import { retrieveCustomer } from "@/lib/data/customer"
+import { parseWishlist } from "@/lib/data/wishlist"
 
 /**
  * The logged-in customer, as seen from the server (ADR 040, docs/sicurezza-sessioni-e-produzione.md).
@@ -29,6 +30,8 @@ export interface CurrentCustomer {
   firstName: string
   lastName: string
   phone: string
+  /** Product ids saved in the wishlist (ADR 042). */
+  wishlist: string[]
 }
 
 /**
@@ -50,5 +53,6 @@ export const getCurrentCustomer = cache(async (): Promise<CurrentCustomer | null
     firstName: result.customer.first_name ?? "",
     lastName: result.customer.last_name ?? "",
     phone: result.customer.phone ?? "",
+    wishlist: parseWishlist(result.customer.metadata),
   }
 })

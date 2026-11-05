@@ -9,7 +9,6 @@ export const dictionaries = {
     ticker:
       "Imballi isotermici anti-rottura in tutta Italia ed Europa • Spedizione gratuita da €90 • Direttamente dalla cantina nel Parco Nazionale del Cilento • Vendemmia 100% manuale",
     searchPlaceholder: "Cosa desideri degustare oggi? (es. Fiano, Aglianico, Cilento Rosso...)",
-    wishlist: "Preferiti",
     secondaryNav: {
       all: "Tutti i Prodotti",
       whites: "Vini di Famiglia",
@@ -404,6 +403,19 @@ export const dictionaries = {
       errorNotFound: "Elemento non trovato: ricarica la pagina.",
       errorUnavailable: "Servizio momentaneamente non disponibile. Riprova tra qualche minuto.",
     },
+    wishlist: {
+      add: "Aggiungi ai miei preferiti",
+      saved: "Salvato nei preferiti",
+      ariaAdd: "Aggiungi ai preferiti",
+      ariaRemove: "Rimuovi dai preferiti",
+      loginRequired: "Accedi per salvare i preferiti.",
+      loginLink: "Accedi o registrati",
+      limitReached: "Hai raggiunto il massimo di 100 preferiti.",
+      error: "Non è stato possibile aggiornare i preferiti. Riprova.",
+      pageTitle: "I tuoi preferiti",
+      empty: "Non hai ancora salvato prodotti nei preferiti. Tocca il cuore su un prodotto per salvarlo.",
+      browse: "Scopri i prodotti",
+    },
     catalogUnavailable: {
       eyebrow: "Catalogo momentaneamente non disponibile",
       title: "Stiamo aggiornando la cantina",
@@ -729,7 +741,6 @@ export const dictionaries = {
     ticker:
       "Insulated anti-breakage shipping across Europe • Free delivery for orders over €90 • Shipped direct from Cilento National Park • 100% hand harvested",
     searchPlaceholder: "What wine would you like to taste today? (e.g. Fiano, Aglianico, Cilento Rosso...)",
-    wishlist: "Wishlist",
     secondaryNav: {
       all: "All Products",
       whites: "Family Wines",
@@ -1119,6 +1130,19 @@ export const dictionaries = {
       errorUnauthenticated: "Your session has expired: please sign in again.",
       errorNotFound: "Item not found: please reload the page.",
       errorUnavailable: "Service temporarily unavailable. Please try again in a few minutes.",
+    },
+    wishlist: {
+      add: "Add to my wishlist",
+      saved: "Saved to wishlist",
+      ariaAdd: "Add to wishlist",
+      ariaRemove: "Remove from wishlist",
+      loginRequired: "Sign in to save your favourites.",
+      loginLink: "Sign in or register",
+      limitReached: "You have reached the maximum of 100 favourites.",
+      error: "The wishlist could not be updated. Please try again.",
+      pageTitle: "Your wishlist",
+      empty: "You have not saved any product yet. Tap the heart on a product to save it.",
+      browse: "Discover our products",
     },
     catalogUnavailable: {
       eyebrow: "Catalog temporarily unavailable",

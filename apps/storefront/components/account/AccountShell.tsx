@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
-export type AccountSection = "overview" | "profile" | "orders" | "addresses";
+export type AccountSection = "overview" | "profile" | "orders" | "addresses" | "wishlist";
 
 interface AccountShellProps {
   dict: ReturnType<typeof getDictionary>;
@@ -28,11 +28,9 @@ export function AccountShell({ dict, locale, categories, firstName, active, chil
     { key: "profile", href: `/account/profilo${lang}`, label: t.navProfile, icon: User },
     { key: "orders", href: `/account/ordini${lang}`, label: t.navOrders, icon: ClipboardList },
     { key: "addresses", href: `/account/indirizzi${lang}`, label: t.navAddresses, icon: MapPin },
+    { key: "wishlist", href: `/account/preferiti${lang}`, label: t.navWishlist, icon: Heart },
   ];
-  const comingSoon = [
-    { label: t.navWishlist, icon: Heart },
-    { label: t.navCards, icon: CreditCard },
-  ];
+  const comingSoon = [{ label: t.navCards, icon: CreditCard }];
 
   return (
     <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">

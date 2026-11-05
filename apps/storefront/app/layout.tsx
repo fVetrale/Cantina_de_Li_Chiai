@@ -68,8 +68,10 @@ export default async function RootLayout({
       className={`${cormorant.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-700 selection:text-gold-100">
-        {/* Only the first name reaches the browser (ADR 040). */}
-        <CustomerProvider customer={customer ? { firstName: customer.firstName } : null}>
+        {/* Only the first name and the wishlist product ids reach the browser (ADR 040, 042). */}
+        <CustomerProvider
+          customer={customer ? { firstName: customer.firstName, wishlist: customer.wishlist } : null}
+        >
           <CartProvider
             counter={cart ? { itemCount: cart.itemCount, itemTotal: cart.itemTotal } : null}
           >

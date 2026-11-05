@@ -18,6 +18,7 @@ const customerSchema = z.object({
   first_name: z.string().nullish(),
   last_name: z.string().nullish(),
   phone: z.string().nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 const customerResponseSchema = z.object({ customer: customerSchema })
 
@@ -94,7 +95,7 @@ export async function retrieveCustomer(token: string): Promise<CustomerResult> {
     return { ok: false, error: "unauthenticated" }
   }
   const result = await storeRequest(
-    "/store/customers/me?fields=id,email,first_name,last_name,phone",
+    "/store/customers/me?fields=id,email,first_name,last_name,phone,metadata",
     { method: "GET", authToken: token },
     customerResponseSchema
   )
