@@ -28,7 +28,7 @@ function rawProduct(
     description: "desc",
     thumbnail: null,
     images: [],
-    categories: [{ id: "pcat_vini", name: "Vini", handle: "vini" }],
+    categories: [{ id: "pcat_rossi", name: "Vini Rossi", handle: "vini-rossi" }],
     variants: [
       {
         id: `variant_${handle}`,
@@ -191,16 +191,16 @@ describe("getProducts", () => {
       products: {
         products: [
           rawProduct("chiai-rosso", { amount: 9 }),
-          rawProduct("soppressata", { amount: 11 }, {
-            categories: [{ id: "pcat_ins", name: "Insaccati", handle: "insaccati" }],
+          rawProduct("bianco-dolce", { amount: 10 }, {
+            categories: [{ id: "pcat_dolci", name: "Vini Dolci", handle: "vini-dolci" }],
           }),
         ],
       },
     });
 
-    const result = await getProducts("insaccati");
+    const result = await getProducts("vini-dolci");
 
-    expect(result.status === "ok" && result.products.map((p) => p.handle)).toEqual(["soppressata"]);
+    expect(result.status === "ok" && result.products.map((p) => p.handle)).toEqual(["bianco-dolce"]);
   });
 
   it("is unavailable when the backend cannot be reached", async () => {

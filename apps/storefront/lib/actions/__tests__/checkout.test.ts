@@ -14,12 +14,10 @@ import { groupShippingOptions, type MedusaShippingOption } from "@/lib/data/chec
 
 const CART_ID = "cart_0001";
 const GENERAL_PROFILE = "sp_DEFAULT";
-const MEAT_PROFILE = "sp_MEAT";
 
 const OPTIONS: MedusaShippingOption[] = [
   { id: "so_STANDARD", name: "Spedizione standard", amount: 9.9, shipping_profile_id: GENERAL_PROFILE, type: { code: "standard" } },
   { id: "so_PICKUP", name: "Ritiro in cantina", amount: 0, shipping_profile_id: GENERAL_PROFILE, type: { code: "pickup" } },
-  { id: "so_MEAT", name: "Ritiro in cantina (carne fresca)", amount: 0, shipping_profile_id: MEAT_PROFILE, type: { code: "pickup-fresh-meat" } },
 ];
 
 let fetchMock: ReturnType<typeof vi.fn>;
@@ -147,12 +145,12 @@ describe("saveCheckoutDetails", () => {
 });
 
 describe("selectShippingOptions", () => {
-  it("sets courier for general goods and pickup for fresh meat in one request", async () => {
-    const result = await selectShippingOptions({ optionIds: ["so_STANDARD", "so_MEAT"] });
+  it("sets the chosen method (pickup at the cellar)", async () => {
+    const result = await selectShippingOptions({ optionIds: ["so_PICKUP"] });
 
     expect(result).toEqual({ ok: true });
     expect(requests()).toEqual(["GET /store/shipping-options", `POST /store/carts/${CART_ID}/shipping-methods`]);
-    expect(lastBody).toEqual([{ option_id: "so_STANDARD" }, { option_id: "so_MEAT" }]);
+    expect(lastBody).toEqual([{ option_id: "so_PICKUP" }]);
     expect(refreshMock).toHaveBeenCalledTimes(1);
   });
 
@@ -180,12 +178,21 @@ describe("selectShippingOptions", () => {
 });
 
 describe("groupShippingOptions", () => {
-  it("returns only the groups the cart needs, general first", () => {
-    expect(groupShippingOptions(OPTIONS, { general: true, freshMeat: true }).map((g) => [g.key, g.options.map((o) => o.id)])).toEqual([
-      ["general", ["so_STANDARD", "so_PICKUP"]],
-      ["freshMeat", ["so_MEAT"]],
+  it("puts courier and pickup in one group for the wine-only catalog (ADR 043)", () => {
+    expect(groupShippingOptions(OPTIONS)).toEqual([
+      { profileId: GENERAL_PROFILE, options: [OPTIONS[0], OPTIONS[1]] },
     ]);
-    expect(groupShippingOptions(OPTIONS, { general: true, freshMeat: false }).map((g) => g.key)).toEqual(["general"]);
-    expect(groupShippingOptions(OPTIONS, { general: false, freshMeat: true }).map((g) => g.key)).toEqual(["freshMeat"]);
+  });
+
+  it("keeps one group per shipping profile if Medusa offers more than one", () => {
+    const other: MedusaShippingOption = { id: "so_OTHER", name: "Other", amount: 0, shipping_profile_id: "sp_OTHER", type: { code: "other" } };
+    expect(groupShippingOptions([...OPTIONS, other]).map((g) => [g.profileId, g.options.map((o) => o.id)])).toEqual([
+      [GENERAL_PROFILE, ["so_STANDARD", "so_PICKUP"]],
+      ["sp_OTHER", ["so_OTHER"]],
+    ]);
+  });
+
+  it("is empty when Medusa offers nothing", () => {
+    expect(groupShippingOptions([])).toEqual([]);
   });
 });

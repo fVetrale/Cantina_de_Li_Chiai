@@ -32,27 +32,18 @@ export function WinesCatalogView({
 
   const t = dict.winesPage;
 
-  // Dynamic filter options based on categories prop or i18n fallback
+  // Filter options: "all" plus the catalog categories
   const categoryFilters = useMemo(() => {
     const list: Array<{ id: string; name: string; handle: string }> = [
       { id: "all", name: t.filterAll, handle: "all" },
     ];
-    if (categories && categories.length > 0) {
-      list.push(
-        ...categories.map((cat) => ({
-          id: cat.id,
-          name: cat.name,
-          handle: cat.handle,
-        }))
-      );
-    } else {
-      list.push(
-        { id: "cat_vini", name: t.filterWhites, handle: "vini" },
-        { id: "cat_insaccati", name: t.filterReds, handle: "insaccati" },
-        { id: "cat_carne", name: "Carne fresca", handle: "carne" },
-        { id: "cat_olio", name: "Olio EVO", handle: "olio" }
-      );
-    }
+    list.push(
+      ...categories.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        handle: cat.handle,
+      }))
+    );
     return list;
   }, [t, categories]);
 
@@ -76,23 +67,7 @@ export function WinesCatalogView({
 
     // 2. Category Filter
     if (activeCategory !== "all") {
-      result = result.filter((p) => {
-        const handle = p.categoryHandle.toLowerCase();
-        const cat = p.category.toLowerCase();
-        const target = activeCategory.toLowerCase();
-        return (
-          handle === target ||
-          cat.includes(target) ||
-          (target === "vini" && (handle.includes("vino") || cat.includes("vino"))) ||
-          (target === "carne" && (handle.includes("carne") || cat.includes("carne"))) ||
-          (target === "olio" && (handle.includes("olio") || cat.includes("olio"))) ||
-          (target === "insaccati" &&
-            (handle.includes("insaccat") ||
-              cat.includes("insaccat") ||
-              handle.includes("salum") ||
-              cat.includes("salum")))
-        );
-      });
+      result = result.filter((p) => p.categoryHandle === activeCategory);
     }
 
     // 3. Price Filter

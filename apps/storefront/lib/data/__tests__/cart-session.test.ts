@@ -26,13 +26,13 @@ const wineLine = {
   unit_price: 9,
   quantity: 2,
 };
-const meatLine = {
+const whiteLine = {
   id: "cali_0002",
-  variant_id: "variant_BIST",
-  product_id: "prod_BIST",
-  product_handle: "bistecche-di-cinghiale",
-  product_title: "Bistecche di Cinghiale",
-  variant_title: "Confezione ~600g",
+  variant_id: "variant_BIANCO",
+  product_id: "prod_BIANCO",
+  product_handle: "chiai-bianco",
+  product_title: "Chiai Bianco",
+  variant_title: "Bottiglia 0,75 l",
   thumbnail: null,
   unit_price: 15,
   quantity: 1,
@@ -43,7 +43,7 @@ function installBackend(options: { cart?: unknown; cartStatus?: number; products
     if (options.down) throw new TypeError("fetch failed");
     const url = new URL(String(input));
     if (url.pathname === `/store/carts/${CART_ID}`) {
-      return json(options.cart ?? { cart: { id: CART_ID, currency_code: "eur", item_total: 33, items: [wineLine, meatLine] } }, options.cartStatus ?? 200);
+      return json(options.cart ?? { cart: { id: CART_ID, currency_code: "eur", item_total: 33, items: [wineLine, whiteLine] } }, options.cartStatus ?? 200);
     }
     if (url.pathname === "/store/products") {
       return json(
@@ -51,13 +51,11 @@ function installBackend(options: { cart?: unknown; cartStatus?: number; products
           products: [
             {
               id: "prod_ROSSO",
-              categories: [{ handle: "vini-rossi" }],
               variants: [{ id: "variant_ROSSO", manage_inventory: true, allow_backorder: false, inventory_quantity: 58 }],
             },
             {
-              id: "prod_BIST",
-              categories: [{ handle: "carne-fresca" }],
-              variants: [{ id: "variant_BIST", manage_inventory: true, allow_backorder: false, inventory_quantity: 9 }],
+              id: "prod_BIANCO",
+              variants: [{ id: "variant_BIANCO", manage_inventory: true, allow_backorder: false, inventory_quantity: 9 }],
             },
           ],
         }
@@ -104,7 +102,7 @@ describe("getCurrentCartSummary (Navbar counter)", () => {
 });
 
 describe("getCurrentCartView (/carrello)", () => {
-  it("maps lines with live stock, line totals, local images and the fresh-meat flag", async () => {
+  it("maps lines with live stock, line totals and local images", async () => {
     const fetchMock = installBackend();
 
     const view = await getCurrentCartView();
@@ -113,14 +111,14 @@ describe("getCurrentCartView (/carrello)", () => {
     if (view.status !== "ok") return;
     expect(view.cart).toMatchObject({ itemCount: 3, itemTotal: 33, currencyCode: "EUR" });
     expect(view.cart.lines).toEqual([
-      expect.objectContaining({ id: "cali_0001", handle: "chiai-rosso", quantity: 2, unitPrice: 9, lineTotal: 18, available: 58, isFreshMeat: false }),
-      expect.objectContaining({ id: "cali_0002", handle: "bistecche-di-cinghiale", lineTotal: 15, available: 9, isFreshMeat: true }),
+      expect.objectContaining({ id: "cali_0001", handle: "chiai-rosso", quantity: 2, unitPrice: 9, lineTotal: 18, available: 58 }),
+      expect.objectContaining({ id: "cali_0002", handle: "chiai-bianco", lineTotal: 15, available: 9 }),
     ]);
     expect(view.cart.lines[0].image).toMatch(/^\/images\//);
 
     const productsCall = fetchMock.mock.calls.find(([input]) => String(input).includes("/store/products"));
     const url = new URL(String(productsCall?.[0]));
-    expect(url.searchParams.getAll("id[]").sort()).toEqual(["prod_BIST", "prod_ROSSO"]);
+    expect(url.searchParams.getAll("id[]").sort()).toEqual(["prod_BIANCO", "prod_ROSSO"]);
     expect(url.searchParams.get("fields")).toContain("+variants.inventory_quantity");
   });
 
@@ -129,10 +127,7 @@ describe("getCurrentCartView (/carrello)", () => {
 
     const view = await getCurrentCartView();
 
-    expect(view.status === "ok" && view.cart.lines.map((l) => [l.available, l.isFreshMeat])).toEqual([
-      [null, false],
-      [null, false],
-    ]);
+    expect(view.status === "ok" && view.cart.lines.map((l) => l.available)).toEqual([null, null]);
   });
 
   it("is empty without a cookie, for a cart with no items, or for a cart Medusa no longer has", async () => {

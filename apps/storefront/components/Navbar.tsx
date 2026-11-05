@@ -25,11 +25,11 @@ import { useCartCounter } from "./CartProvider";
 import { useCustomer } from "./CustomerProvider";
 import { logout } from "@/lib/actions/auth";
 
+// Same wine categories as DEFAULT_CATEGORIES in lib/data/products.ts (ADR 043).
 const DEFAULT_CATEGORIES: WineCategory[] = [
-  { id: "cat_vini", name: "Vini", handle: "vini" },
-  { id: "cat_insaccati", name: "Insaccati", handle: "insaccati" },
-  { id: "cat_carne", name: "Carne fresca", handle: "carne" },
-  { id: "cat_olio", name: "Olio EVO", handle: "olio" },
+  { id: "cat_vini_rossi", name: "Vini Rossi", handle: "vini-rossi" },
+  { id: "cat_vini_bianchi", name: "Vini Bianchi", handle: "vini-bianchi" },
+  { id: "cat_vini_dolci", name: "Vini Dolci", handle: "vini-dolci" },
 ];
 
 interface NavbarProps {

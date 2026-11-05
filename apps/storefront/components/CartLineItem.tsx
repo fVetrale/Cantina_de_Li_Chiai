@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, Snowflake, AlertCircle } from "lucide-react";
+import { Minus, Plus, Trash2, AlertCircle } from "lucide-react";
 import { removeCartItem, updateCartItem, type CartItemError } from "@/lib/actions/cart";
 import type { CartLineView } from "@/lib/data/cart-session";
 import type { Dictionary } from "@/lib/i18n";
@@ -92,13 +92,6 @@ export function CartLineItem({ line, productHref, t, cartT }: CartLineItemProps)
             € {formatEuro(line.lineTotal)}
           </p>
         </div>
-
-        {line.isFreshMeat && (
-          <p className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-sky-50 border border-sky-200 px-2.5 py-1 text-[11px] font-medium text-sky-900">
-            <Snowflake className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-            {t.freshMeatPickupOnly}
-          </p>
-        )}
 
         <div className="mt-3 flex items-center gap-4">
           <div

@@ -218,11 +218,11 @@ const CHIAI_ROSSO_DETAILS: WineDetails = {
   ],
 }
 
+// Wine-only catalog (ADR 043): the same categories the backend seed creates.
 export const DEFAULT_CATEGORIES: WineCategory[] = [
-  { id: "cat_vini", name: "Vini", handle: "vini" },
-  { id: "cat_insaccati", name: "Insaccati", handle: "insaccati" },
-  { id: "cat_carne", name: "Carne fresca", handle: "carne" },
-  { id: "cat_olio", name: "Olio EVO", handle: "olio" },
+  { id: "cat_vini_rossi", name: "Vini Rossi", handle: "vini-rossi" },
+  { id: "cat_vini_bianchi", name: "Vini Bianchi", handle: "vini-bianchi" },
+  { id: "cat_vini_dolci", name: "Vini Dolci", handle: "vini-dolci" },
 ]
 
 // Local editorial metadata (tasting notes, terroir, images, badges) keyed by handle.
@@ -236,8 +236,8 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuanti
     handle: "chiai-rosso",
     description:
       "Il nostro rosso di tutti i giorni, quello che beviamo anche noi a cena. Va bene con tutto. Prodotto con le uve della nostra vigna di Abatemarco.",
-    category: "Vini",
-    categoryHandle: "vini",
+    category: "Vini Rossi",
+    categoryHandle: "vini-rossi",
     price: 9.0,
     currencyCode: "EUR",
     sku: "CHIAI-ROSSO-750",
@@ -260,8 +260,8 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuanti
     handle: "rosso-vecchio",
     description:
       "È rimasto in botte più a lungo, per chi ha pazienza. Più corposo, da bere con un buon secondo. Ideale con i piatti robusti della cucina cilentana.",
-    category: "Vini",
-    categoryHandle: "vini",
+    category: "Vini Rossi",
+    categoryHandle: "vini-rossi",
     price: 15.0,
     currencyCode: "EUR",
     sku: "ROSSO-VECCHIO-750",
@@ -284,8 +284,8 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuanti
     handle: "chiai-bianco",
     description:
       "Secco e leggero, come piace a noi in questa zona. Perfetto per l'estate, l'aperitivo o il pesce fresco della costa cilentana.",
-    category: "Vini",
-    categoryHandle: "vini",
+    category: "Vini Bianchi",
+    categoryHandle: "vini-bianchi",
     price: 8.0,
     currencyCode: "EUR",
     sku: "CHIAI-BIANCO-750",
@@ -308,8 +308,8 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuanti
     handle: "bianco-dolce",
     description:
       "Il nostro bianco più morbido, quello che piace a chi non ama i vini troppo secchi. Profumato e vellutato.",
-    category: "Vini",
-    categoryHandle: "vini",
+    category: "Vini Dolci",
+    categoryHandle: "vini-dolci",
     price: 10.0,
     currencyCode: "EUR",
     sku: "BIANCO-DOLCE-750",
@@ -324,192 +324,6 @@ export const FALLBACK_PRODUCTS: Omit<WineProduct, "variantId" | "availableQuanti
     badge: "Morbido & Fruttato",
     appellation: "Vino Bianco Dolce · Annata 2024",
     details: CHIAI_BIANCO_DETAILS,
-  },
-
-  // --- INSACCATI ---
-  {
-    id: "i1",
-    title: "Salsiccia Dolce",
-    handle: "salsiccia-dolce",
-    description:
-      "Fatta in casa con la ricetta di sempre, senza piccante. Buona anche appena tagliata. Salume artigianale cilentano stagionato lentamente.",
-    category: "Insaccati",
-    categoryHandle: "insaccati",
-    price: 7.0,
-    unitPrice: "17,50 €/kg",
-    currencyCode: "EUR",
-    sku: "SALS-DOLCE-400",
-    format: "Pezzo ~ 400 g",
-    image: "/images/insaccati-cilento.jpg",
-    images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-dolce.png"],
-    badge: "Ricetta Tradizionale",
-    appellation: "Salumeria Artigianale",
-  },
-  {
-    id: "i2",
-    title: "Salsiccia Piccante",
-    handle: "salsiccia-piccante",
-    description:
-      "Stessa lavorazione della dolce, ma con un po' di peperoncino in più per chi lo ama forte. Tagliata a fette spesse col nostro pane casereccio.",
-    category: "Insaccati",
-    categoryHandle: "insaccati",
-    price: 7.0,
-    unitPrice: "17,50 €/kg",
-    currencyCode: "EUR",
-    sku: "SALS-PICC-400",
-    format: "Pezzo ~ 400 g",
-    image: "/images/insaccati-cilento.jpg",
-    images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-piccante.png"],
-    badge: "Al Peperoncino",
-    appellation: "Salumeria Artigianale",
-  },
-  {
-    id: "i3",
-    title: "Salsiccia di Cinghiale",
-    handle: "salsiccia-di-cinghiale",
-    description:
-      "Con carne di cinghiale nostrano dei boschi del Cilento, un sapore più deciso, rustico e selvatico. Da provare con Chiai Rosso.",
-    category: "Insaccati",
-    categoryHandle: "insaccati",
-    price: 10.0,
-    unitPrice: "25,00 €/kg",
-    currencyCode: "EUR",
-    sku: "SALS-CINGH-400",
-    format: "Pezzo ~ 400 g",
-    image: "/images/insaccati-cilento.jpg",
-    images: ["/images/insaccati-cilento.jpg", "/images/products/salsiccia-cinghiale.png"],
-    badge: "Cinghiale Nostrano",
-    appellation: "Specialità Salumiera",
-  },
-  {
-    id: "i4",
-    title: "Soppressata Dolce",
-    handle: "soppressata-dolce",
-    description:
-      "Stagionata con calma in cantina, come facevano i nostri nonni. Dolce, compatta e delicata, con tagli magri scelti a mano.",
-    category: "Insaccati",
-    categoryHandle: "insaccati",
-    price: 11.0,
-    unitPrice: "22,00 €/kg",
-    currencyCode: "EUR",
-    sku: "SOPP-DOLCE-500",
-    format: "Pezzo ~ 500 g",
-    image: "/images/insaccati-cilento.jpg",
-    images: ["/images/insaccati-cilento.jpg", "/images/products/soppressata-dolce.png"],
-    badge: "Stagionata in Cantina",
-    appellation: "Salumeria Storica",
-  },
-  {
-    id: "i5",
-    title: "Soppressata di Cinghiale",
-    handle: "soppressata-di-cinghiale",
-    description:
-      "La stessa lavorazione antica della soppressata, ma con carne di cinghiale. Da tagliare fine a coltello e gustare con calma.",
-    category: "Insaccati",
-    categoryHandle: "insaccati",
-    price: 13.0,
-    unitPrice: "26,00 €/kg",
-    currencyCode: "EUR",
-    sku: "SOPP-CINGH-500",
-    format: "Pezzo ~ 500 g",
-    image: "/images/insaccati-cilento.jpg",
-    images: ["/images/insaccati-cilento.jpg", "/images/products/soppressata-cinghiale.png"],
-    badge: "Selezione Pregiata",
-    appellation: "Specialità Salumiera",
-  },
-
-  // --- CARNE FRESCA ---
-  {
-    id: "c1",
-    title: "Misto Cinghiale",
-    handle: "misto-cinghiale",
-    description:
-      "Un assortimento di tagli misti di cinghiale fresco, così puoi provarli e scegliere quello che ti piace di più. Fresco e pronto per la cottura.",
-    category: "Carne fresca",
-    categoryHandle: "carne",
-    price: 18.0,
-    unitPrice: "18,00 €/kg",
-    currencyCode: "EUR",
-    sku: "CARNE-MIST-1000",
-    format: "Confezione ~ 1 kg",
-    image: "/images/products/misto-cinghiale.png",
-    images: ["/images/products/misto-cinghiale.png"],
-    badge: "Carne Fresca",
-    appellation: "Su Ordinazione",
-  },
-  {
-    id: "c2",
-    title: "Salsicce di Cinghiale Fresche",
-    handle: "salsicce-di-cinghiale-fresche",
-    description:
-      "Fresche, da cuocere in padella o alla griglia. Il sapore autentico del cinghiale cilentano senza troppi fronzoli.",
-    category: "Carne fresca",
-    categoryHandle: "carne",
-    price: 8.0,
-    unitPrice: "16,00 €/kg",
-    currencyCode: "EUR",
-    sku: "CARNE-SALS-500",
-    format: "Confezione ~ 500 g",
-    image: "/images/products/salsicce-cinghiale.png",
-    images: ["/images/products/salsicce-cinghiale.png"],
-    badge: "Da Griglia o Padella",
-    appellation: "Su Ordinazione",
-  },
-  {
-    id: "c3",
-    title: "Bistecche di Cinghiale",
-    handle: "bistecche-di-cinghiale",
-    description:
-      "Tagliate come piace a noi, pronte per la griglia rovente. Bastano sale grosso e un filo del nostro olio extravergine.",
-    category: "Carne fresca",
-    categoryHandle: "carne",
-    price: 15.0,
-    unitPrice: "25,00 €/kg",
-    currencyCode: "EUR",
-    sku: "CARNE-BIST-600",
-    format: "Confezione ~ 600 g",
-    image: "/images/products/bistecche-cinghiale.png",
-    images: ["/images/products/bistecche-cinghiale.png"],
-    badge: "Pronte per la Griglia",
-    appellation: "Su Ordinazione",
-  },
-
-  // --- OLIO EXTRAVERGINE ---
-  {
-    id: "o1",
-    title: "Olio Extravergine 75 cl",
-    handle: "olio-extravergine-bottiglia",
-    description:
-      "Le nostre olive degli alberi di Abatemarco, spremute a freddo. Quello che usiamo ogni giorno in casa per condire e cucinare.",
-    category: "Olio EVO",
-    categoryHandle: "olio",
-    price: 12.0,
-    unitPrice: "16,00 €/l",
-    currencyCode: "EUR",
-    sku: "OLIO-EVO-750",
-    format: "Bottiglia 75 cl",
-    image: "/images/olio-cilento.jpg",
-    images: ["/images/olio-cilento.jpg", "/images/products/olio-bottiglia.png"],
-    badge: "Spremuto a Freddo",
-    appellation: "Olio Extravergine di Oliva",
-  },
-  {
-    id: "o2",
-    title: "Olio Extravergine Latta 3L",
-    handle: "olio-extravergine-latta-3l",
-    description:
-      "Stesso olio della bottiglia, spremuto a freddo, in formato più grande per chi ne consuma tanto in famiglia.",
-    category: "Olio EVO",
-    categoryHandle: "olio",
-    price: 34.0,
-    unitPrice: "11,33 €/l",
-    currencyCode: "EUR",
-    sku: "OLIO-EVO-3000",
-    format: "Latta da 3 Litri",
-    image: "/images/olio-cilento.jpg",
-    images: ["/images/olio-cilento.jpg", "/images/products/olio-latta.png"],
-    badge: "Scorta Famiglia",
-    appellation: "Olio Extravergine di Oliva",
   },
 ]
 
@@ -540,65 +354,6 @@ function getWineMetadata(handle: string) {
     }
   }
 
-  if (normalized.includes("olio")) {
-    const isLatta = normalized.includes("latta") || normalized.includes("3l")
-    return {
-      image: "/images/olio-cilento.jpg",
-      images: [
-        "/images/olio-cilento.jpg",
-        isLatta
-          ? "/images/products/olio-latta.png"
-          : "/images/products/olio-bottiglia.png",
-      ],
-      badge: isLatta ? "Scorta Famiglia" : "Spremuto a Freddo",
-      format: isLatta ? "Latta da 3 Litri" : "Bottiglia 75 cl",
-      appellation: "Olio Extravergine di Oliva",
-      category: "Olio EVO",
-      categoryHandle: "olio",
-    }
-  }
-
-  if (
-    normalized.includes("carne") ||
-    normalized.includes("misto") ||
-    normalized.includes("bistecche") ||
-    normalized.includes("cinghiale-fresche")
-  ) {
-    let img = "/images/products/misto-cinghiale.png"
-    if (normalized.includes("bistecche")) img = "/images/products/bistecche-cinghiale.png"
-    if (normalized.includes("salsicce")) img = "/images/products/salsicce-cinghiale.png"
-    return {
-      image: img,
-      images: [img],
-      badge: "Carne Fresca",
-      format: "Confezione sottovuoto",
-      appellation: "Su Ordinazione",
-      category: "Carne fresca",
-      categoryHandle: "carne",
-    }
-  }
-
-  if (normalized.includes("salsiccia") || normalized.includes("soppressata")) {
-    let img = "/images/products/salsiccia-dolce.png"
-    if (normalized.includes("piccante")) img = "/images/products/salsiccia-piccante.png"
-    if (normalized.includes("soppressata") && normalized.includes("cinghiale"))
-      img = "/images/products/soppressata-cinghiale.png"
-    else if (normalized.includes("soppressata"))
-      img = "/images/products/soppressata-dolce.png"
-    else if (normalized.includes("cinghiale"))
-      img = "/images/products/salsiccia-cinghiale.png"
-
-    return {
-      image: "/images/insaccati-cilento.jpg",
-      images: ["/images/insaccati-cilento.jpg", img],
-      badge: "Fatta in Casa",
-      format: "Pezzo intero",
-      appellation: "Salumeria Artigianale",
-      category: "Insaccati",
-      categoryHandle: "insaccati",
-    }
-  }
-
   if (normalized.includes("bianco")) {
     const isDolce = normalized.includes("dolce")
     return {
@@ -614,8 +369,8 @@ function getWineMetadata(handle: string) {
       alcohol: isDolce ? "12.0% vol." : "12.5% vol.",
       format: "75 cl",
       appellation: isDolce ? "Vino Bianco Dolce · 2024" : "Vino Bianco · 2024",
-      category: "Vini",
-      categoryHandle: "vini",
+      category: isDolce ? "Vini Dolci" : "Vini Bianchi",
+      categoryHandle: isDolce ? "vini-dolci" : "vini-bianchi",
       details: CHIAI_BIANCO_DETAILS,
     }
   }
@@ -633,8 +388,8 @@ function getWineMetadata(handle: string) {
       alcohol: "14.5% vol.",
       format: "75 cl",
       appellation: "Vino Rosso · 2021",
-      category: "Vini",
-      categoryHandle: "vini",
+      category: "Vini Rossi",
+      categoryHandle: "vini-rossi",
       details: ROSSO_VECCHIO_DETAILS,
     }
   }
@@ -651,8 +406,8 @@ function getWineMetadata(handle: string) {
     alcohol: "13.5% vol.",
     format: "75 cl",
     appellation: "Vino Rosso · 2023",
-    category: "Vini",
-    categoryHandle: "vini",
+    category: "Vini Rossi",
+    categoryHandle: "vini-rossi",
     details: CHIAI_ROSSO_DETAILS,
   }
 }

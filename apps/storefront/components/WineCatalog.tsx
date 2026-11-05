@@ -45,19 +45,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
     const counts: Record<string, number> = { all: products.length };
 
     products.forEach((p) => {
-      const handle = p.categoryHandle.toLowerCase();
-      const cat = p.category.toLowerCase();
-      let key = "vini";
-      if (handle.includes("insaccat") || cat.includes("insaccat") || handle.includes("salum") || cat.includes("salum")) {
-        key = "insaccati";
-      } else if (handle.includes("carne") || cat.includes("carne")) {
-        key = "carne";
-      } else if (handle.includes("olio") || cat.includes("olio")) {
-        key = "olio";
-      } else if (handle.includes("vino") || cat.includes("vino")) {
-        key = "vini";
-      }
-      counts[key] = (counts[key] || 0) + 1;
+      counts[p.categoryHandle] = (counts[p.categoryHandle] || 0) + 1;
     });
 
     const defaultOption = {
@@ -66,23 +54,13 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
       handle: "all",
     };
 
-    if (categories && categories.length > 0) {
-      return [
-        defaultOption,
-        ...categories.map((cat) => ({
-          id: cat.id,
-          name: `${cat.name} (${counts[cat.handle] || 0})`,
-          handle: cat.handle,
-        })),
-      ];
-    }
-
     return [
       defaultOption,
-      { id: "cat_vini", name: `${dict.catalog.filterWhite} (${counts.vini || 0})`, handle: "vini" },
-      { id: "cat_insaccati", name: `${dict.catalog.filterRed} (${counts.insaccati || 0})`, handle: "insaccati" },
-      { id: "cat_carne", name: `Carne fresca (${counts.carne || 0})`, handle: "carne" },
-      { id: "cat_olio", name: `Olio EVO (${counts.olio || 0})`, handle: "olio" },
+      ...categories.map((cat) => ({
+        id: cat.id,
+        name: `${cat.name} (${counts[cat.handle] || 0})`,
+        handle: cat.handle,
+      })),
     ];
   }, [dict, categories, products]);
 
@@ -91,23 +69,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
     if (activeCategory === "all") {
       return products;
     }
-    return products.filter((p) => {
-      const handle = p.categoryHandle.toLowerCase();
-      const cat = p.category.toLowerCase();
-      const target = activeCategory.toLowerCase();
-      return (
-        handle === target ||
-        cat.includes(target) ||
-        (target === "vini" && (handle.includes("vino") || cat.includes("vino"))) ||
-        (target === "carne" && (handle.includes("carne") || cat.includes("carne"))) ||
-        (target === "olio" && (handle.includes("olio") || cat.includes("olio"))) ||
-        (target === "insaccati" &&
-          (handle.includes("insaccat") ||
-            cat.includes("insaccat") ||
-            handle.includes("salum") ||
-            cat.includes("salum")))
-      );
-    });
+    return products.filter((p) => p.categoryHandle === activeCategory);
   }, [products, activeCategory]);
 
   // Reset to first page when changing category
