@@ -1,15 +1,24 @@
 "use server"
 
+import { cookies } from "next/headers"
 import { refresh } from "next/cache"
+import { redirect } from "next/navigation"
 import { z } from "zod"
-import { getCartIdFromCookie } from "@/lib/data/cart-session"
+import { checkAge, MINIMUM_AGE } from "@/lib/age"
+import { CART_COOKIE, getCartIdFromCookie } from "@/lib/data/cart-session"
 import {
   SHIPPING_OPTION_ID_PATTERN,
+  TEST_PAYMENT_PROVIDER_ID,
+  completeCart,
+  initiatePaymentSession,
   listCartShippingOptions,
+  retrieveCheckoutCart,
+  setAgeDeclaration,
   setCartShippingMethods,
   updateCheckoutCart,
   type MedusaAddressInput,
 } from "@/lib/data/checkout"
+import { ORDER_COOKIE, ORDER_COOKIE_OPTIONS } from "@/lib/data/order-session"
 
 /**
  * Checkout Server Actions (ADR 037). Like the cart actions (ADR 035/036): every input is
@@ -135,4 +144,92 @@ export async function selectShippingOptions(input: unknown): Promise<SelectShipp
   }
   refresh()
   return { ok: true }
+}
+
+// ─── Place order (ADR 038, 039) ──────────────────────────────────────────────
+
+const placeOrderInputSchema = z.object({
+  birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  declaredAdult: z.literal(true),
+  acceptTerms: z.literal(true),
+  locale: z.enum(["it", "en"]).default("it"),
+})
+
+export type PlaceOrderError =
+  | "invalid_input"
+  | "underage"
+  | "incomplete"
+  | "out_of_stock"
+  | "age_rejected"
+  | "payment_failed"
+  | "rejected"
+  | "not_found"
+  | "unavailable"
+
+export type PlaceOrderResult = { ok: false; error: PlaceOrderError }
+
+/**
+ * Places the order with Medusa's TEST payment provider (no real charge: Stripe comes in
+ * tasks 4–5, and the site must not go live before that).
+ *
+ * Privacy: the date of birth is only used here to check the age, then discarded. It is never
+ * sent to Medusa, stored, returned or logged. Medusa receives only a declaration without
+ * personal data, and its age-verification hook refuses completion without it (ADR 038).
+ *
+ * On success it redirects to /ordine/confermato (redirect() throws, so it never returns).
+ */
+export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
+  const parsed = placeOrderInputSchema.safeParse(input)
+  if (!parsed.success) {
+    return { ok: false, error: "invalid_input" }
+  }
+
+  const age = checkAge(parsed.data.birthDate, new Date())
+  if (age === "invalid") {
+    return { ok: false, error: "invalid_input" }
+  }
+  if (age === "underage") {
+    return { ok: false, error: "underage" }
+  }
+
+  const cartId = await getCartIdFromCookie()
+  if (!cartId) {
+    return { ok: false, error: "not_found" }
+  }
+
+  // Friendly pre-check: Medusa would refuse anyway, with a less helpful message.
+  const cart = await retrieveCheckoutCart(cartId)
+  if (!cart.ok) {
+    return { ok: false, error: cart.error === "not_found" ? "not_found" : "unavailable" }
+  }
+  if (!cart.data.email || !cart.data.shipping_address?.address_1 || !cart.data.shipping_methods?.length) {
+    return { ok: false, error: "incomplete" }
+  }
+
+  const declaration = await setAgeDeclaration(cartId, {
+    method: "self_declaration",
+    declared_adult: true,
+    minimum_age: MINIMUM_AGE,
+    declared_at: new Date().toISOString(),
+  })
+  if (!declaration.ok) {
+    return { ok: false, error: declaration.error === "not_found" ? "not_found" : "unavailable" }
+  }
+
+  const payment = await initiatePaymentSession(cartId, TEST_PAYMENT_PROVIDER_ID)
+  if (!payment.ok) {
+    return { ok: false, error: payment.error === "not_found" ? "not_found" : "unavailable" }
+  }
+
+  const completed = await completeCart(cartId)
+  if (!completed.ok) {
+    return { ok: false, error: completed.error }
+  }
+
+  // The cart is now an order: forget the cart, remember the order for the confirmation page only.
+  const cookieStore = await cookies()
+  cookieStore.delete(CART_COOKIE)
+  cookieStore.set(ORDER_COOKIE, completed.orderId, ORDER_COOKIE_OPTIONS)
+
+  redirect(parsed.data.locale === "en" ? "/ordine/confermato?lang=en" : "/ordine/confermato")
 }

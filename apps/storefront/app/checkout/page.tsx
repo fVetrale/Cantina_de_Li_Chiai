@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { Lock } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { getCurrentCheckoutView } from "@/lib/data/checkout";
@@ -12,6 +11,7 @@ import { AgeGateModal } from "@/components/AgeGateModal";
 import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 import { CheckoutDetailsForm } from "@/components/checkout/CheckoutDetailsForm";
 import { CheckoutShippingForm } from "@/components/checkout/CheckoutShippingForm";
+import { CheckoutPlaceOrderForm } from "@/components/checkout/CheckoutPlaceOrderForm";
 
 export async function generateMetadata(props: {
   searchParams?: Promise<{ lang?: string }>;
@@ -28,7 +28,7 @@ function formatEuro(amount: number) {
   return amount.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-/** Checkout, part 3a (ADR 037): contact, addresses and shipping. Order placement comes in 3b. */
+/** Checkout (ADR 037–039): contact, addresses, shipping, age declaration and order placement. */
 export default async function CheckoutPage(props: { searchParams?: Promise<{ lang?: string }> }) {
   const searchParams = props.searchParams ? await props.searchParams : {};
   const currentLocale: Locale = searchParams.lang === "en" ? "en" : defaultLocale;
@@ -113,18 +113,14 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
                   aria-labelledby="step-review"
                   className="bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-7"
                 >
-                  <h2 id="step-review" className="font-serif text-2xl font-bold text-wine-950 mb-3">
+                  <h2 id="step-review" className="font-serif text-2xl font-bold text-wine-950 mb-5">
                     {t.stepReview}
                   </h2>
-                  <p className="text-sm text-cellar-600 mb-4">{t.reviewSoon}</p>
-                  <button
-                    type="button"
-                    disabled
-                    className="inline-flex items-center gap-2 rounded-full bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 opacity-60 cursor-not-allowed"
-                  >
-                    <Lock className="w-4 h-4" aria-hidden="true" />
-                    {t.placeOrderSoon}
-                  </button>
+                  <CheckoutPlaceOrderForm
+                    t={t}
+                    locale={currentLocale}
+                    ready={!!view.checkout.email && view.checkout.shippingComplete}
+                  />
                 </section>
               </div>
 
