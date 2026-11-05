@@ -120,7 +120,33 @@ Vale per **qualsiasi sito**, anche banche e Amazon. Si può solo **limitare il d
 | Dispositivo infetto | presente | non eliminabile dal sito: scadenza breve, sessioni revocabili in futuro |
 | Server e log | basso | niente token nei log, proxy configurato |
 
-## 7. Altre scelte di sicurezza della parte A (accesso)
+## 7. Niente dati sensibili negli URL (il "copia e incolla del link")
+
+Un indirizzo web (URL) **non è un posto sicuro** per i dati: finisce nella cronologia del browser, nei link
+copiati e incollati o inviati via chat, negli screenshot, nei log dei server e dei proxy, negli strumenti di
+statistica e nell'intestazione `Referer` inviata ad altri siti.
+
+**Il caso concreto: la pagina di conferma ordine (ADR 039).** Medusa permette a **chiunque conosca l'id di un
+ordine** di leggerlo tramite l'API pubblica (`GET /store/orders/:id`): email, prodotti, totali. Se l'id fosse
+nell'indirizzo (per esempio `/ordine/order_01ABC…`), chi riceve il link copiato, vede uno screenshot o la
+cronologia potrebbe vedere l'ordine di un'altra persona. Per questo:
+- l'indirizzo è sempre e solo **`/ordine/confermato`, senza nessun id**;
+- l'id dell'ordine sta in un **cookie httpOnly** (`cantina_last_order`, 1 giorno) che esiste solo nel browser di
+  chi ha comprato;
+- la pagina chiede a Medusa solo i dati che mostra (niente indirizzi, telefono o metadata);
+- verificato: un altro browser che apre lo stesso indirizzo vede "Non ci sono ordini recenti".
+
+**Lo stesso principio vale per tutto il sito:**
+- id del carrello → solo nel cookie httpOnly `cantina_cart_id`, mai nell'URL;
+- token di login → solo nel cookie httpOnly `cantina_auth`, mai nell'URL;
+- email e password → solo nel corpo delle richieste, mai nell'URL né nei log;
+- gli id ricevuti dai cookie vengono controllati nel formato prima di essere usati, per evitare manomissioni.
+
+**Per il futuro:** lo storico ordini dell'area riservata (parte B) mostrerà gli ordini solo al cliente
+autenticato e proprietario (con test 403/404); un eventuale "link all'ordine" da inviare via email dovrà usare
+un token firmato e a scadenza, mai l'id nudo.
+
+## 8. Altre scelte di sicurezza della parte A (accesso)
 
 - **Errori generici** al login e alla registrazione ("email o password non validi"): nessuno può scoprire quali
   email sono registrate.
@@ -152,3 +178,7 @@ Vale per **qualsiasi sito**, anche banche e Amazon. Si può solo **limitare il d
       aggiornata con i dati trattati (account, ordini, dichiarazione d'età senza data di nascita).
 - [ ] Ordini fatti da ospite **non compaiono** nello storico di chi si registra dopo con la stessa email (ADR 040):
       decidere se serve collegarli.
+- [ ] **Nessun id, token o dato personale negli URL** (sezione 7): ricontrollare ogni nuova pagina; i link
+      nelle email future (conferma ordine, recupero password) devono usare token firmati e a scadenza.
+- [ ] Valutare se limitare l'API pubblica `GET /store/orders/:id` di Medusa (oggi leggibile da chi conosce l'id)
+      con una rotta personalizzata riservata ai clienti autenticati o a un token firmato.
