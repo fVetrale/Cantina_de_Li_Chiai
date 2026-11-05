@@ -92,7 +92,9 @@ export type CartErrorCode = "out_of_stock" | "not_found" | "unavailable"
 
 export type CartResult = { ok: true; cart: MedusaCart } | { ok: false; error: CartErrorCode }
 
-export type StoreResult<T> = { ok: true; data: T } | { ok: false; error: CartErrorCode }
+export type StoreResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: CartErrorCode; status?: number; message?: string }
 
 /** Store API request with the publishable key, never cached, response validated by `schema`. */
 export async function storeRequest<T>(
@@ -127,7 +129,8 @@ export async function storeRequest<T>(
         return { ok: false, error: "out_of_stock" }
       }
       console.warn(`[Storefront] Medusa ${init.method} ${path} returned status ${res.status}.`)
-      return { ok: false, error: "unavailable" }
+      // Status and Medusa's message let callers tell validation refusals apart (e.g. age check).
+      return { ok: false, error: "unavailable", status: res.status, message }
     }
 
     const parsed = schema.safeParse(json)
