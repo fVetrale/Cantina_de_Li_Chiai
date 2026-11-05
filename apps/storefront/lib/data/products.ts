@@ -151,7 +151,7 @@ const CHIAI_BIANCO_DETAILS: WineDetails = {
     agingPotential: "2 - 3 anni, da bere giovane e fragrante",
   },
   pairings: [
-    "Piccolo tagliere della cantina con formaggi caprini freschi",
+    "Formaggi caprini freschi del Cilento",
     "Alici di Menaica marinate e fritture di paranza",
     "Mozzarella di bufala e pomodori dell'orto",
     "Aperitivo tra amici al banco della cantina",
@@ -181,10 +181,10 @@ const ROSSO_VECCHIO_DETAILS: WineDetails = {
     agingPotential: "10 - 15 anni",
   },
   pairings: [
-    "Spezzatino o bistecca di cinghiale ai ferri",
-    "Fusilli al ferretto con ragù di castrato",
-    "Soppressata di cinghiale della nostra salumeria",
     "Caciocavallo podolico stagionato",
+    "Fusilli al ferretto con sugo di funghi porcini",
+    "Lagane e ceci della tradizione cilentana",
+    "Melanzane alla parmigiana",
   ],
 }
 
@@ -211,10 +211,10 @@ const CHIAI_ROSSO_DETAILS: WineDetails = {
     agingPotential: "4 - 5 anni",
   },
   pairings: [
-    "Salsiccia dolce o piccante della nostra cantina",
-    "Pane cotto a legna e soppressata casereccia",
     "Pasta e fagioli della tradizione cilentana",
-    "Carni alla griglia e cene conviviali di famiglia",
+    "Pizza cotta nel forno a legna",
+    "Formaggi cilentani di media stagionatura",
+    "Cene conviviali di famiglia",
   ],
 }
 
