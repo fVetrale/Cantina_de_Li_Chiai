@@ -24,12 +24,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_STOREFRONT_URL || "http://localhost:3000"),
   title: "Cantina de Li Chiai | Vini d'Autore del Cilento",
   description:
-    "Enoteca ufficiale di Cantina de Li Chiai nel Parco Nazionale del Cilento (Salerno, Campania). Fiano del Cilento DOC, Aglianico Riserva e vini nati sul flysch tra ulivi e mare.",
+    "I vini di famiglia di Cantina de Li Chiai ad Abatemarco, nel Parco Nazionale del Cilento (Salerno, Campania): Chiai Rosso, Rosso Vecchio, Chiai Bianco e Bianco Dolce, con spedizione in tutta Italia o ritiro in cantina.",
   keywords: [
     "Cantina de Li Chiai",
-    "Fiano del Cilento DOC",
-    "Aglianico del Cilento DOC",
-    "Cilento DOC Rosso",
+    "Chiai Rosso",
+    "Rosso Vecchio",
+    "Chiai Bianco",
+    "Bianco Dolce",
+    "Vino del Cilento",
     "Parco Nazionale del Cilento",
     "Vino Salerno Campania",
     "Enoteca online vino campano",

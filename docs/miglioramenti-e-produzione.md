@@ -27,6 +27,10 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 - [ ] 🟠 **Vendita all'estero:** in quali paesi, commercialista per OSS e accise, corrieri. Oggi si
       vende **solo in Italia** (ADR 029).
 - [ ] 🟠 **Corriere con verifica del documento** alla consegna degli alcolici (ADR 038).
+- [ ] 🟠 **Email di contatto:** oggi è `cantina.salumeria.chiai@gmail.com`. Il cliente vuole un indirizzo nuovo senza
+      "salumeria"? Se sì, va cambiato in footer e note legali (ADR 044).
+- [ ] 🟠 **Degustazione offerta al ritiro:** il sito ora promette "una piccola degustazione dei nostri vini" a chi
+      ritira in cantina. Confermare con il cliente (ADR 044).
 
 ## 2. Aspetti legali e privacy 🔴🟠
 
@@ -123,8 +127,10 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 - [ ] ⚪ Avanzi del vecchio template sardo (chiave `sardinia`, immagini `cannonau.jpg`/`vermentino.jpg`).
 - [ ] ⚪ Lo stato "catalogo non disponibile" risponde con codice 200 invece di 503 (ADR 026).
 - [x] Categorie dei vini sistemate: Vini Rossi, Vini Bianchi, Vini Dolci (ADR 043).
-- [ ] 🟡 **Solo vino, branch 2:** riscrivere i testi (hero, presentazione, "Salumeria", titoli SEO, footer, pagina La
-      Cantina, abbinamenti che citano "la nostra salumeria") in italiano e inglese (ADR 043).
+- [x] Solo vino, branch 2: testi it/en riscritti, degustazione di vino offerta al ritiro al posto del tagliere,
+      abbinamenti senza salumi e carne, SEO con i vini veri (ADR 044).
+- [ ] ⚪ Hashtag del mosaico social presi dal vecchio template (`#FianoDelCilento`, `#AglianicoRiserva`) e pagina La
+      Cantina che dice "il prodotto non viaggia" anche se il sito spedisce: da rivedere nell'audit (ADR 044).
 - [ ] ⚪ **Solo vino, branch 3:** togliere le immagini di salumi, carne e olio da `public/images` (ADR 043).
 - [ ] ⚪ I nomi delle categorie arrivano da Medusa e restano in italiano anche nella versione inglese (ADR 043).
 
