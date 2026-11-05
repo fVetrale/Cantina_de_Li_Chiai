@@ -3,6 +3,8 @@ import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
 import { getCurrentCartSummary } from "@/lib/data/cart-session";
+import { CustomerProvider } from "@/components/CustomerProvider";
+import { getCurrentCustomer } from "@/lib/data/auth-session";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -58,7 +60,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Navbar cart counter (ADR 036). Null when there is no cart or the backend is unreachable.
-  const cart = await getCurrentCartSummary();
+  const [cart, customer] = await Promise.all([getCurrentCartSummary(), getCurrentCustomer()]);
 
   return (
     <html
@@ -66,11 +68,14 @@ export default async function RootLayout({
       className={`${cormorant.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-700 selection:text-gold-100">
-        <CartProvider
-          counter={cart ? { itemCount: cart.itemCount, itemTotal: cart.itemTotal } : null}
-        >
-          {children}
-        </CartProvider>
+        {/* Only the first name reaches the browser (ADR 040). */}
+        <CustomerProvider customer={customer ? { firstName: customer.firstName } : null}>
+          <CartProvider
+            counter={cart ? { itemCount: cart.itemCount, itemTotal: cart.itemTotal } : null}
+          >
+            {children}
+          </CartProvider>
+        </CustomerProvider>
       </body>
     </html>
   );

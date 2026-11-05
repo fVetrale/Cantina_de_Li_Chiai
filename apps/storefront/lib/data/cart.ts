@@ -99,7 +99,12 @@ export type StoreResult<T> =
 /** Store API request with the publishable key, never cached, response validated by `schema`. */
 export async function storeRequest<T>(
   path: string,
-  init: { method: "GET" | "POST" | "DELETE"; body?: unknown },
+  init: {
+    method: "GET" | "POST" | "DELETE"
+    body?: unknown
+    /** Customer JWT from the httpOnly auth cookie (ADR 040). Server-side only, never logged. */
+    authToken?: string
+  },
   schema: z.ZodType<T>
 ): Promise<StoreResult<T>> {
   const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
@@ -111,6 +116,7 @@ export async function storeRequest<T>(
       headers: {
         "x-publishable-api-key": publishableKey,
         ...(init.body !== undefined ? { "content-type": "application/json" } : {}),
+        ...(init.authToken ? { authorization: `Bearer ${init.authToken}` } : {}),
       },
       body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
       cache: "no-store", // carts and stock are per-customer / live data: never cache them
@@ -123,6 +129,10 @@ export async function storeRequest<T>(
         json && typeof json === "object" && "message" in json ? String(json.message) : ""
       if (res.status === 404) {
         return { ok: false, error: "not_found" }
+      }
+      if (res.status === 401) {
+        // Expired or invalid customer token, or wrong credentials: the caller decides.
+        return { ok: false, error: "unavailable", status: 401, message }
       }
       // Medusa answers 400 "Some variant does not have the required inventory" (ADR 034).
       if (res.status === 400 && /inventory/i.test(message)) {
@@ -157,10 +167,27 @@ export async function retrieveCart(cartId: string): Promise<CartResult> {
   return toCartResult(await storeRequest(`/store/carts/${cartId}`, { method: "GET" }, cartResponseSchema))
 }
 
-/** Creates an empty cart in the given region (prices, taxes and shipping depend on it). */
-export async function createCart(regionId: string): Promise<CartResult> {
+/**
+ * Creates an empty cart in the given region (prices, taxes and shipping depend on it).
+ * With a customer token, Medusa links the cart to the logged-in customer (ADR 040).
+ */
+export async function createCart(regionId: string, authToken?: string): Promise<CartResult> {
   return toCartResult(
-    await storeRequest("/store/carts", { method: "POST", body: { region_id: regionId } }, cartResponseSchema)
+    await storeRequest(
+      "/store/carts",
+      { method: "POST", body: { region_id: regionId }, authToken },
+      cartResponseSchema
+    )
+  )
+}
+
+/** Links an existing (guest) cart to the logged-in customer. */
+export async function transferCartToCustomer(cartId: string, authToken: string): Promise<CartResult> {
+  if (!CART_ID_PATTERN.test(cartId)) {
+    return { ok: false, error: "not_found" }
+  }
+  return toCartResult(
+    await storeRequest(`/store/carts/${cartId}/customer`, { method: "POST", authToken }, cartResponseSchema)
   )
 }
 
