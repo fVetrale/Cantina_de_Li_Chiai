@@ -28,6 +28,7 @@ export interface CurrentCustomer {
   email: string
   firstName: string
   lastName: string
+  phone: string
 }
 
 /**
@@ -48,5 +49,6 @@ export const getCurrentCustomer = cache(async (): Promise<CurrentCustomer | null
     email: result.customer.email,
     firstName: result.customer.first_name ?? "",
     lastName: result.customer.last_name ?? "",
+    phone: result.customer.phone ?? "",
   }
 })

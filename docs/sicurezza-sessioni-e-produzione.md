@@ -142,9 +142,14 @@ cronologia potrebbe vedere l'ordine di un'altra persona. Per questo:
 - email e password → solo nel corpo delle richieste, mai nell'URL né nei log;
 - gli id ricevuti dai cookie vengono controllati nel formato prima di essere usati, per evitare manomissioni.
 
-**Per il futuro:** lo storico ordini dell'area riservata (parte B) mostrerà gli ordini solo al cliente
-autenticato e proprietario (con test 403/404); un eventuale "link all'ordine" da inviare via email dovrà usare
-un token firmato e a scadenza, mai l'id nudo.
+**Area riservata (parte B, ADR 041):** lo storico ordini usa l'indirizzo `/account/ordini/<id>`. Qui l'id
+nell'URL **non è un rischio**: la pagina chiede a Medusa l'ordine tramite la lista **del cliente autenticato**
+(filtrata per id), mai l'API pubblica. Se il link viene aperto da un'altra persona (o da un ospite), risponde
+404 o rimanda al login. Verificato con due clienti reali e con test di integrazione nel backend (401 senza
+login, 404 sugli indirizzi di un altro cliente, lista ordini vuota per l'id di un ordine altrui).
+
+**Per il futuro:** un eventuale "link all'ordine" da inviare via email dovrà usare un token firmato e a scadenza,
+mai l'id nudo.
 
 ## 8. Altre scelte di sicurezza della parte A (accesso)
 

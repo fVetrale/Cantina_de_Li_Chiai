@@ -5,8 +5,11 @@ import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
 import { AccountAuthCard } from "@/components/AccountAuthCard";
-import { LogoutButton } from "@/components/auth/LogoutButton";
-import { getCurrentCustomer } from "@/lib/data/auth-session";
+import { getAuthToken, getCurrentCustomer } from "@/lib/data/auth-session";
+import { listOrders } from "@/lib/data/account";
+import { AccountShell } from "@/components/account/AccountShell";
+import { OrderStatusBadge, formatDate, formatEuro } from "@/components/account/OrderStatusBadge";
+import { User, ClipboardList, MapPin, ChevronRight, Trash2 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
 
@@ -41,6 +44,81 @@ export default async function AccountPage(props: {
 
   const [categories, customer] = await Promise.all([getCategories(), getCurrentCustomer()]);
   const langQuery = currentLocale === "en" ? "?lang=en" : "";
+
+  if (customer) {
+    // Signed in: overview of the reserved area (ADR 041).
+    const a = dict.accountArea;
+    const token = await getAuthToken();
+    const orders = token ? await listOrders(token) : null;
+    const recent = orders?.ok ? orders.data.slice(0, 3) : [];
+    const cards = [
+      { href: `/account/profilo${langQuery}`, label: a.navProfile, icon: User },
+      { href: `/account/ordini${langQuery}`, label: a.navOrders, icon: ClipboardList },
+      { href: `/account/indirizzi${langQuery}`, label: a.navAddresses, icon: MapPin },
+    ];
+    return (
+      <AccountShell dict={dict} locale={currentLocale} categories={categories} firstName={customer.firstName} active="overview">
+        <div className="space-y-6">
+          <p className="text-sm text-cellar-700">{a.overviewIntro}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {cards.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group flex items-center gap-3 rounded-2xl bg-white border border-ivory-200 p-5 shadow-sm hover:border-wine-300 transition-colors"
+              >
+                <Icon className="w-5 h-5 text-wine-900" aria-hidden="true" />
+                <span className="flex-1 font-semibold text-cellar-900">{label}</span>
+                <ChevronRight className="w-4 h-4 text-cellar-400 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+              </Link>
+            ))}
+          </div>
+
+          <section aria-labelledby="recent-orders" className="rounded-2xl bg-white border border-ivory-200 shadow-sm p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 id="recent-orders" className="font-serif text-xl font-bold text-wine-950">{a.recentOrders}</h2>
+              <Link href={`/account/ordini${langQuery}`} className="text-xs font-semibold text-wine-900 underline">
+                {a.viewAllOrders}
+              </Link>
+            </div>
+            {recent.length === 0 ? (
+              <p className="text-sm text-cellar-600">{a.ordersEmpty}</p>
+            ) : (
+              <ul className="divide-y divide-ivory-200">
+                {recent.map((order) => (
+                  <li key={order.id}>
+                    <Link
+                      href={`/account/ordini/${order.id}${langQuery}`}
+                      className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm hover:bg-ivory-50 rounded-lg px-2 -mx-2"
+                    >
+                      <span className="font-semibold text-cellar-900">
+                        {a.orderNumber} {order.displayId !== null ? `#${order.displayId}` : "—"}
+                      </span>
+                      <span className="text-cellar-500">{formatDate(order.createdAt, currentLocale)}</span>
+                      <OrderStatusBadge status={order.status} t={a} />
+                      <span className="ml-auto font-semibold">€ {formatEuro(order.total)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section aria-labelledby="delete-account" className="rounded-2xl border border-ivory-300 bg-ivory-50 p-5">
+            <h2 id="delete-account" className="flex items-center gap-2 text-sm font-semibold text-cellar-900">
+              <Trash2 className="w-4 h-4 text-cellar-500" aria-hidden="true" />
+              {a.deleteAccountTitle}
+            </h2>
+            <p className="mt-1 text-xs text-cellar-600">{a.deleteAccountDesc}</p>
+            {/* Self-service deletion is a planned improvement (docs/miglioramenti-e-produzione.md). */}
+            <Link href="/#footer" className="mt-2 inline-block text-xs font-semibold text-wine-900 underline">
+              {a.deleteAccountLink}
+            </Link>
+          </section>
+        </div>
+      </AccountShell>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
@@ -83,27 +161,7 @@ export default async function AccountPage(props: {
             </p>
           </header>
 
-          {customer ? (
-            // Signed in (ADR 040). Profile, orders, addresses and wishlist come in part B/C.
-            <section
-              aria-labelledby="account-welcome"
-              className="max-w-2xl mx-auto bg-white rounded-3xl border border-ivory-200 shadow-xl p-6 sm:p-10 text-center space-y-5"
-            >
-              <h2 id="account-welcome" className="font-serif text-3xl font-bold text-wine-950">
-                {t.welcome.replace("{name}", customer.firstName)}
-              </h2>
-              <p className="text-sm text-cellar-600">
-                {t.signedInAs} <strong className="text-cellar-900 break-all">{customer.email}</strong>
-              </p>
-              <div className="rounded-2xl bg-ivory-50 border border-ivory-200 p-5">
-                <p className="text-sm font-semibold text-cellar-900">{t.areaSoonTitle}</p>
-                <p className="mt-1 text-xs text-cellar-600">{t.areaSoonDesc}</p>
-              </div>
-              <LogoutButton label={dict.accountModal.logout} homeHref={`/${langQuery}`} />
-            </section>
-          ) : (
-            <AccountAuthCard dict={dict} currentLocale={currentLocale} />
-          )}
+          <AccountAuthCard dict={dict} currentLocale={currentLocale} />
         </div>
       </main>
 

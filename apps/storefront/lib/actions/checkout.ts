@@ -5,6 +5,7 @@ import { refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 import { checkAge, MINIMUM_AGE } from "@/lib/age"
+import { addressInputSchema, phoneSchema, type AddressInput } from "@/lib/validation/address"
 import { CART_COOKIE, getCartIdFromCookie } from "@/lib/data/cart-session"
 import {
   SHIPPING_OPTION_ID_PATTERN,
@@ -26,29 +27,10 @@ import { ORDER_COOKIE, ORDER_COOKIE_OPTIONS } from "@/lib/data/order-session"
  * Italy (ADR 029), whatever the client sends.
  */
 
-const requiredText = (max: number) => z.string().trim().min(1).max(max)
-
-const addressInputSchema = z.object({
-  firstName: requiredText(60),
-  lastName: requiredText(60),
-  address1: requiredText(120),
-  address2: z.string().trim().max(120).default(""),
-  postalCode: z.string().trim().regex(/^\d{5}$/), // Italian CAP
-  city: requiredText(60),
-  province: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z]{2}$/), // Italian province code, e.g. "SA"
-})
-
 const checkoutDetailsInputSchema = z
   .object({
     email: z.email().max(254),
-    phone: z
-      .string()
-      .trim()
-      .regex(/^\+?[0-9][0-9 ]{5,19}$/),
+    phone: phoneSchema,
     shipping: addressInputSchema,
     billingSameAsShipping: z.boolean(),
     billing: addressInputSchema.optional(),
@@ -71,7 +53,6 @@ export type SaveDetailsResult =
 
 export type SelectShippingResult = { ok: true } | { ok: false; error: CheckoutActionError }
 
-type AddressInput = z.infer<typeof addressInputSchema>
 
 function toMedusaAddress(address: AddressInput, phone: string): MedusaAddressInput {
   return {
