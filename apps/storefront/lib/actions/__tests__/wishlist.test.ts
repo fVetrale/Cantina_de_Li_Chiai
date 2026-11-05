@@ -29,7 +29,7 @@ function catalogProduct(id: string, handle: string) {
     id,
     title: handle,
     handle,
-    categories: [{ id: "pcat", name: "Vini", handle: "vini" }],
+    categories: [{ id: "pcat", name: "Vini Rossi", handle: "vini-rossi" }],
     variants: [
       {
         id: `variant_${id}`,

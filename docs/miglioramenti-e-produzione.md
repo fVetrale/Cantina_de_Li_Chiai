@@ -16,15 +16,15 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 - [ ] 🟠 **Prezzi IVA inclusa?** Oggi i prezzi del seed (es. €9) sono trattati come prezzi finali IVA inclusa. Se
       fossero netti, si cambia una preferenza nel backend e si rilancia il seed (ADR 027).
 - [ ] 🟠 **Spedizioni:** tariffa sotto i €90 (oggi €9,90 fissa, provvisoria), soglia della spedizione gratuita (€90),
-      orari di ritiro in cantina, carne fresca solo ritiro (ADR 033).
+      orari di ritiro in cantina (ADR 033). Dal 2026-11-05 il negozio vende **solo vino** (ADR 043).
 - [ ] 🟠 **Tariffe fisse o per peso/numero di bottiglie?** Oggi la tariffa è fissa: 18 bottiglie costano come 1
       (ADR 033).
-- [ ] 🟠 **Magazzino:** quantità reali per ogni prodotto (oggi provvisorie: vini 60, salumi 20, carne 10, olio 30) e se
+- [ ] 🟠 **Magazzino:** quantità reali per ogni vino (oggi provvisorie: 60 per vino, ADR 043) e se
       il negozio fisico usa le stesse scorte del sito (ADR 034).
 - [ ] 🟠 **Pagamenti:** Stripe o altro? Quali metodi (carta, PayPal, Apple Pay, Google Pay, Klarna, bonifico, contanti
       al ritiro)? Oggi il checkout usa solo il **pagamento di prova** (ADR 037, 039).
 - [ ] 🟠 **Fattura:** serve il campo "Richiedi fattura" (codice fiscale / P.IVA) nel checkout? (ADR 037)
-- [ ] 🟠 **Vendita all'estero:** in quali paesi, carne fresca sì/no, commercialista per OSS e accise, corrieri. Oggi si
+- [ ] 🟠 **Vendita all'estero:** in quali paesi, commercialista per OSS e accise, corrieri. Oggi si
       vende **solo in Italia** (ADR 029).
 - [ ] 🟠 **Corriere con verifica del documento** alla consegna degli alcolici (ADR 038).
 
@@ -122,12 +122,19 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
       foto caricate in Medusa e la configurazione di Next per le immagini esterne.
 - [ ] ⚪ Avanzi del vecchio template sardo (chiave `sardinia`, immagini `cannonau.jpg`/`vermentino.jpg`).
 - [ ] ⚪ Lo stato "catalogo non disponibile" risponde con codice 200 invece di 503 (ADR 026).
-- [ ] ⚪ Nel database di sviluppo la categoria dei vini si chiama ancora "Vini Rossi" e contiene anche i bianchi.
+- [x] Categorie dei vini sistemate: Vini Rossi, Vini Bianchi, Vini Dolci (ADR 043).
+- [ ] 🟡 **Solo vino, branch 2:** riscrivere i testi (hero, presentazione, "Salumeria", titoli SEO, footer, pagina La
+      Cantina, abbinamenti che citano "la nostra salumeria") in italiano e inglese (ADR 043).
+- [ ] ⚪ **Solo vino, branch 3:** togliere le immagini di salumi, carne e olio da `public/images` (ADR 043).
+- [ ] ⚪ I nomi delle categorie arrivano da Medusa e restano in italiano anche nella versione inglese (ADR 043).
 
 ## 7. Gestione operativa del negozio 🟠
 
 - [ ] 🟠 Tenere aggiornate le scorte nell'admin, **comprese le vendite al banco** in cantina (ADR 034).
 - [ ] 🟠 Segnare gli ordini come evasi nell'admin: è il momento in cui Medusa scala le scorte (ADR 034).
-- [ ] ⚪ Nel database di sviluppo ci sono ordini di prova (#1, #2, #3 e successivi): annullarli se danno fastidio.
+- [ ] ⚪ Nel database di sviluppo ci sono ordini di prova (#1–#8): annullarli se danno fastidio.
+- [ ] ⚪ **Database di sviluppo:** gli ordini di prova #1, #5, #6 e #7 sono aperti e tengono prenotati Salsiccia
+      Piccante, Bistecche e Misto Cinghiale. Finché non vengono annullati dall'admin (prima le loro spedizioni) quei 3
+      prodotti restano nascosti invece che cancellati. Dopo l'annullamento rilanciare il seed (ADR 043).
 - [ ] ⚪ La dichiarazione di maggiore età scade dopo 24 ore: comportamento voluto, il sito la rinnova a ogni
       "Conferma ordine" (ADR 038).

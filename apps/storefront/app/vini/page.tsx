@@ -43,7 +43,10 @@ export default async function WinesPage(props: {
     getCategories(),
   ]);
 
-  const initialCategory = searchParams.categoria || "all";
+  // Unknown or retired categories (e.g. old "insaccati" links, ADR 043) show the whole catalog.
+  const initialCategory = categories.some((c) => c.handle === searchParams.categoria)
+    ? (searchParams.categoria as string)
+    : "all";
   const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
   return (

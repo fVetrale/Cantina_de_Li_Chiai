@@ -68,8 +68,6 @@ export interface CartLineView {
   lineTotal: number
   /** Max quantity the visitor can set on this line (Medusa stock). null = not limited. */
   available: number | null
-  /** Fresh meat is pickup-only (ADR 033). */
-  isFreshMeat: boolean
 }
 
 export interface CartView {
@@ -85,7 +83,7 @@ export type CurrentCartView =
   | { status: "empty" }
   | { status: "unavailable" }
 
-/** Full cart for the /carrello page, with live stock and the fresh-meat flag per line. */
+/** Full cart for the /carrello page, with live stock per line. */
 export async function getCurrentCartView(): Promise<CurrentCartView> {
   const open = await getOpenCart()
   if (open.status === "unavailable") {
@@ -116,7 +114,6 @@ export async function getCurrentCartView(): Promise<CurrentCartView> {
       quantity: item.quantity,
       lineTotal: unitPrice * item.quantity,
       available: extra?.available ?? null,
-      isFreshMeat: extra?.isFreshMeat ?? false,
     }
   })
 

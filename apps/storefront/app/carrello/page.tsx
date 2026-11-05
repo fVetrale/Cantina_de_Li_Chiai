@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShoppingBag, Truck, Store, Snowflake, Lock } from "lucide-react";
+import { ShoppingBag, Truck, Store, Lock } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { getCurrentCartView } from "@/lib/data/cart-session";
@@ -135,12 +135,6 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
                     <Store className="w-4 h-4 text-wine-900 shrink-0" aria-hidden="true" />
                     {t.pickupFree}
                   </li>
-                  {view.cart.lines.some((line) => line.isFreshMeat) && (
-                    <li className="flex items-center gap-2 text-sky-900">
-                      <Snowflake className="w-4 h-4 shrink-0" aria-hidden="true" />
-                      {t.freshMeatPickupOnly}
-                    </li>
-                  )}
                 </ul>
 
                 <Link

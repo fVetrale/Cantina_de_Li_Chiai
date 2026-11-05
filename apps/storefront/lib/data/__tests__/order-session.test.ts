@@ -32,11 +32,11 @@ function installBackend(options: { status?: number; down?: boolean } = {}) {
             total: 33.9,
             items: [
               { id: "ordli_1", product_title: "Chiai Rosso", product_handle: "chiai-rosso", variant_title: "Bottiglia 0,75 l", quantity: 1, unit_price: 9 },
-              { id: "ordli_2", product_title: "Bistecche di Cinghiale", product_handle: "bistecche-di-cinghiale", variant_title: "~600g", quantity: 1, unit_price: 15 },
+              { id: "ordli_2", product_title: "Chiai Bianco", product_handle: "chiai-bianco", variant_title: "Bottiglia 0,75 l", quantity: 1, unit_price: 15 },
             ],
             shipping_methods: [
               { id: "osm_1", name: "Spedizione standard", amount: 9.9 },
-              { id: "osm_2", name: "Ritiro in cantina (carne fresca)", amount: 0 },
+              { id: "osm_2", name: "Ritiro in cantina", amount: 0 },
             ],
           },
         },
@@ -69,7 +69,7 @@ describe("getLastOrderView", () => {
     expect(view.order).toMatchObject({ displayId: 7, email: "buyer@example.it", itemTotal: 24, shippingTotal: 9.9, total: 33.9 });
     expect(view.order.lines.map((l) => [l.title, l.quantity, l.lineTotal])).toEqual([
       ["Chiai Rosso", 1, 9],
-      ["Bistecche di Cinghiale", 1, 15],
+      ["Chiai Bianco", 1, 15],
     ]);
     expect(view.order.lines[0].image).toMatch(/^\/images\//);
   });

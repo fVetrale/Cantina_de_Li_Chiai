@@ -19,9 +19,6 @@ export const MAX_ADD_QUANTITY = 120
 // the "Ti mancano €X" hint on the cart page.
 export const FREE_SHIPPING_THRESHOLD_EUR = 90
 
-// Products in this category are pickup-only (separate shipping profile, ADR 033).
-export const FRESH_MEAT_CATEGORY_HANDLE = "carne-fresca"
-
 const cartLineItemSchema = z.object({
   id: z.string(),
   variant_id: z.string().nullish(),
@@ -48,12 +45,11 @@ const cartResponseSchema = z.object({ cart: cartSchema })
 // DELETE /store/carts/:id/line-items/:line_id answers with the updated cart as `parent`.
 const lineItemDeleteResponseSchema = z.object({ deleted: z.literal(true), parent: cartSchema })
 
-// Stock and categories are only computed on the product endpoints, not on the cart.
+// Stock is only computed on the product endpoints, not on the cart.
 const cartProductsResponseSchema = z.object({
   products: z.array(
     z.object({
       id: z.string(),
-      categories: z.array(z.object({ handle: z.string().nullish() })).nullish(),
       variants: z
         .array(
           z.object({
@@ -80,11 +76,10 @@ export interface CartSummary {
   currencyCode: string
 }
 
-/** Stock and pickup rules for the variants in a cart. */
+/** Live stock for the variants in a cart. */
 export interface CartLineExtras {
   /** Orderable units now (Medusa stock). null = not limited. */
   available: number | null
-  isFreshMeat: boolean
 }
 
 /** Why a cart request failed, in terms the UI can act on. */
@@ -244,7 +239,7 @@ export async function deleteLineItem(cartId: string, lineItemId: string): Promis
 }
 
 /**
- * Live stock and fresh-meat flag for the products in a cart, keyed by variant id.
+ * Live stock for the products in a cart, keyed by variant id.
  * Returns an empty map on failure: the cart still renders, only the extras are missing.
  */
 export async function getCartLineExtras(productIds: string[]): Promise<Map<string, CartLineExtras>> {
@@ -256,7 +251,7 @@ export async function getCartLineExtras(productIds: string[]): Promise<Map<strin
 
   const query = new URLSearchParams({
     fields:
-      "id,*categories,variants.id,variants.manage_inventory,variants.allow_backorder,+variants.inventory_quantity",
+      "id,variants.id,variants.manage_inventory,variants.allow_backorder,+variants.inventory_quantity",
     limit: String(ids.length),
   })
   for (const id of ids) {
@@ -273,15 +268,12 @@ export async function getCartLineExtras(productIds: string[]): Promise<Map<strin
   }
 
   for (const product of result.data.products) {
-    const isFreshMeat = (product.categories ?? []).some(
-      (c) => c.handle === FRESH_MEAT_CATEGORY_HANDLE
-    )
     for (const variant of product.variants ?? []) {
       const available =
         !variant.manage_inventory || variant.allow_backorder
           ? null
           : Math.max(0, Math.floor(variant.inventory_quantity ?? 0))
-      extras.set(variant.id, { available, isFreshMeat })
+      extras.set(variant.id, { available })
     }
   }
   return extras

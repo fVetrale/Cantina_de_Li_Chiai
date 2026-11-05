@@ -7,8 +7,6 @@ import { getCartIdFromCookie, getCurrentCartView, type CartLineView } from "@/li
  * from Medusa: the storefront never computes them.
  */
 
-// Shipping option type code of the fresh-meat pickup option created by the seed (ADR 033).
-export const FRESH_MEAT_PICKUP_OPTION_CODE = "pickup-fresh-meat"
 export const SHIPPING_OPTION_ID_PATTERN = /^so_[0-9A-Za-z]+$/
 
 const medusaAddressSchema = z.object({
@@ -121,8 +119,8 @@ export async function listCartShippingOptions(
 }
 
 /**
- * Adds one shipping method per option. Medusa replaces only the existing methods of the same
- * shipping profiles, so "courier for wine" and "pickup for meat" can coexist.
+ * Adds one shipping method per option (one per shipping profile). Medusa replaces the existing
+ * method of the same profile.
  */
 export async function setCartShippingMethods(
   cartId: string,
@@ -138,41 +136,22 @@ export async function setCartShippingMethods(
   return result.ok ? { ok: true, data: result.data.cart } : result
 }
 
-export type ShippingGroupKey = "general" | "freshMeat"
-
 export interface ShippingGroup {
-  key: ShippingGroupKey
   profileId: string
   options: MedusaShippingOption[]
 }
 
 /**
- * Groups the offered options by shipping profile and keeps only the groups the cart needs.
- * The Store API does not expose a product's shipping profile, so the fresh-meat group is the
- * profile of the "pickup-fresh-meat" option and is needed when a line is fresh meat (category
- * `carne-fresca`). Medusa re-validates the profiles when the order is completed (ADR 033).
+ * Groups the offered options by shipping profile: the cart needs one method per profile.
+ * The wine-only catalog uses a single profile (courier or pickup at the cellar, ADR 043), so
+ * there is normally one group; Medusa re-validates the profiles when the order is completed.
  */
-export function groupShippingOptions(
-  options: MedusaShippingOption[],
-  needs: { general: boolean; freshMeat: boolean }
-): ShippingGroup[] {
-  const meatProfiles = new Set(
-    options.filter((o) => o.type?.code === FRESH_MEAT_PICKUP_OPTION_CODE).map((o) => o.shipping_profile_id)
-  )
+export function groupShippingOptions(options: MedusaShippingOption[]): ShippingGroup[] {
   const byProfile = new Map<string, MedusaShippingOption[]>()
   for (const option of options) {
     byProfile.set(option.shipping_profile_id, [...(byProfile.get(option.shipping_profile_id) ?? []), option])
   }
-
-  const groups: ShippingGroup[] = []
-  for (const [profileId, profileOptions] of byProfile) {
-    const key: ShippingGroupKey = meatProfiles.has(profileId) ? "freshMeat" : "general"
-    if ((key === "freshMeat" && needs.freshMeat) || (key === "general" && needs.general)) {
-      groups.push({ key, profileId, options: profileOptions })
-    }
-  }
-  // General goods first, fresh meat second.
-  return groups.sort((a, b) => (a.key === b.key ? 0 : a.key === "general" ? -1 : 1))
+  return [...byProfile].map(([profileId, profileOptions]) => ({ profileId, options: profileOptions }))
 }
 
 export interface AddressView {
@@ -247,10 +226,7 @@ export async function getCurrentCheckoutView(): Promise<CurrentCheckoutView> {
     if (!optionsResult.ok) {
       return optionsResult.error === "unavailable" ? { status: "unavailable" } : { status: "empty" }
     }
-    shippingGroups = groupShippingOptions(optionsResult.data, {
-      general: cartView.cart.lines.some((l) => !l.isFreshMeat),
-      freshMeat: cartView.cart.lines.some((l) => l.isFreshMeat),
-    })
+    shippingGroups = groupShippingOptions(optionsResult.data)
   }
 
   const offeredById = new Map(

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, AlertCircle, Snowflake } from "lucide-react";
+import { Check, AlertCircle } from "lucide-react";
 import { selectShippingOptions, type CheckoutActionError } from "@/lib/actions/checkout";
 import type { ShippingGroup } from "@/lib/data/checkout";
 import type { Dictionary } from "@/lib/i18n";
@@ -18,14 +18,15 @@ function formatEuro(amount: number) {
 }
 
 /**
- * Step 2: one shipping choice per group of products (ADR 037). Fresh meat has its own group,
- * pickup-only (ADR 033). Prices come from Medusa (free-shipping rule already applied).
+ * Step 2: one shipping choice per shipping profile (ADR 037); the wine-only catalog has one,
+ * courier or pickup at the cellar (ADR 043). Prices come from Medusa (free-shipping rule
+ * already applied).
  */
 export function CheckoutShippingForm({ t, groups, selected }: CheckoutShippingFormProps) {
   const [selection, setSelection] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = { ...selected };
     for (const group of groups) {
-      // A group with a single option (e.g. fresh-meat pickup) needs no choice.
+      // A group with a single option needs no choice.
       if (!initial[group.profileId] && group.options.length === 1) {
         initial[group.profileId] = group.options[0].id;
       }
@@ -75,10 +76,7 @@ export function CheckoutShippingForm({ t, groups, selected }: CheckoutShippingFo
     <form onSubmit={onSubmit} className="space-y-5" aria-busy={isPending}>
       {groups.map((group) => (
         <fieldset key={group.profileId} className="space-y-2.5">
-          <legend className="mb-1 flex items-center gap-2 text-sm font-semibold text-cellar-900">
-            {group.key === "freshMeat" && <Snowflake className="w-4 h-4 text-sky-800" aria-hidden="true" />}
-            {group.key === "freshMeat" ? t.groupFreshMeat : t.groupGeneral}
-          </legend>
+          <legend className="mb-1 text-sm font-semibold text-cellar-900">{t.shippingChoiceLegend}</legend>
           {group.options.map((option) => {
             const checked = selection[group.profileId] === option.id;
             const amount = option.amount ?? 0;

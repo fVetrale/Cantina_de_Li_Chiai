@@ -81,34 +81,26 @@ export function Footer({ dict }: FooterProps) {
             <ul className="space-y-2 text-xs text-ivory-300/80">
               <li>
                 <Link
-                  href="/vini?categoria=vini"
+                  href="/vini?categoria=vini-rossi"
                   className="hover:text-gold-300 transition-colors block py-0.5"
                 >
-                  {f.productsWines}
+                  {f.productsRedWines}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/vini?categoria=insaccati"
+                  href="/vini?categoria=vini-bianchi"
                   className="hover:text-gold-300 transition-colors block py-0.5"
                 >
-                  {f.productsCuredMeats}
+                  {f.productsWhiteWines}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/vini?categoria=carne"
+                  href="/vini?categoria=vini-dolci"
                   className="hover:text-gold-300 transition-colors block py-0.5"
                 >
-                  {f.productsFreshMeat}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/vini?categoria=olio"
-                  className="hover:text-gold-300 transition-colors block py-0.5"
-                >
-                  {f.productsOliveOil}
+                  {f.productsSweetWines}
                 </Link>
               </li>
               <li className="pt-1 border-t border-white/5">
