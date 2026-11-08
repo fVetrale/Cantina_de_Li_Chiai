@@ -73,6 +73,10 @@ export default async function RootLayout({
       className={`${bodoni.variable} ${lato.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-black selection:text-white">
+        {/* Without JavaScript the reveal animations never run: keep every block visible (ADR 046). */}
+        <noscript>
+          <style>{`.reveal-block,.reveal-block .text-reveal,.reveal-pending{opacity:1!important;transform:none!important}.reveal-block__media::before{display:none!important}`}</style>
+        </noscript>
         {/* Only the first name and the wishlist product ids reach the browser (ADR 040, 042). */}
         <CustomerProvider
           customer={customer ? { firstName: customer.firstName, wishlist: customer.wishlist } : null}

@@ -96,6 +96,24 @@ body {
   color: #ffffff;
 }
 
+/* Auto-hiding header (Navbar.tsx, ADR 047): sticky bars under it follow it up and down. */
+:root {
+  --header-offset: 4rem;
+}
+@media (min-width: 64rem) {
+  :root {
+    --header-offset: 72px;
+  }
+}
+html[data-header-hidden] {
+  --header-offset: 0px;
+}
+.sticky-under-header {
+  position: sticky;
+  top: var(--header-offset);
+  transition: top 300ms ease-out;
+}
+
 /* Visible keyboard focus everywhere (WCAG 2.4.7). */
 :focus-visible {
   outline: 2px solid var(--color-gold);
@@ -175,7 +193,215 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* Scroll reveal (components/Reveal.tsx). Content stays visible without JavaScript. */
+/* ── Image + text "dynamic reveal" (components/RevealBlock.tsx, ADR 046) ──────────────────
+   Server render: armed (hidden). JS activates it once (also when already on screen at load).
+   Safety nets: <noscript> style in app/layout.tsx, and the fail-safe below if JS never runs. */
+.reveal-block[data-state="armed"] {
+  opacity: 0;
+}
+.reveal-block[data-state="active"] {
+  opacity: 1;
+  transition: opacity 1.4s ease;
+}
+@keyframes reveal-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"],
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .text-reveal,
+html:not([data-reveal-ready]) .reveal-pending {
+  animation: reveal-failsafe 0.6s ease 4s forwards;
+}
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__media::before {
+  animation: reveal-failsafe 0.6s ease 4s forwards;
+  opacity: 0;
+}
+
+/* Text: slight 3D rotation, 0.2 s after the block */
+.reveal-block__content {
+  perspective: 800px;
+}
+.reveal-block[data-state="armed"] .text-reveal {
+  opacity: 0;
+  transform: rotateY(14deg) translateY(-3px);
+}
+.reveal-block[data-state="active"] .text-reveal {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.56s ease 0.2s,
+    transform 0.56s ease 0.2s;
+}
+
+/* Photo: slow zoom */
+.reveal-block__image {
+  transition:
+    transform 1.4s ease-in-out,
+    opacity 0.5s ease;
+}
+
+/* Curtain in the section color, anchored on the outer side, from 768 px */
+@media (min-width: 48rem) {
+  .reveal-block__media::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background: var(--reveal-bg);
+    z-index: 2;
+    pointer-events: none;
+    transform: translateX(100%);
+  }
+  .reveal-block[data-reversed] .reveal-block__media::before {
+    right: auto;
+    left: 0;
+    transform: translateX(-100%);
+  }
+  .reveal-block[data-state="armed"] .reveal-block__media::before {
+    transform: none;
+  }
+  .reveal-block[data-state="active"] .reveal-block__media::before {
+    transform: translateX(100%);
+    transition: transform 2.1s ease;
+  }
+  .reveal-block[data-reversed][data-state="active"] .reveal-block__media::before {
+    transform: translateX(-100%);
+  }
+}
+
+/* Side strip with a link (ivory, almost opaque, so the black label stays AA on any photo) */
+.reveal-block__overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 21.5%;
+  z-index: 1;
+  background: rgb(241 241 236 / 0.92);
+  transform: translateX(100%);
+  transition: transform 0.35s ease-in-out;
+}
+@media (min-width: 48rem) {
+  .reveal-block__overlay {
+    width: 12.3%;
+    min-width: 3.5rem;
+  }
+}
+.reveal-block[data-reversed] .reveal-block__overlay {
+  right: auto;
+  left: 0;
+  transform: translateX(-100%);
+}
+.reveal-block__overlay:focus-visible {
+  transform: none;
+  outline-offset: -4px;
+}
+.reveal-block__overlay-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #000;
+  transition: color 0.3s ease-out;
+}
+.reveal-block__overlay-label::before {
+  content: "";
+  width: 0;
+  height: 0.9rem;
+  border-left: 1px solid currentColor;
+  transform: skewX(-30deg);
+}
+.reveal-block__overlay-plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  font-weight: 400;
+  line-height: 1;
+}
+.reveal-block__overlay:hover .reveal-block__overlay-label,
+.reveal-block__overlay:focus-visible .reveal-block__overlay-label {
+  color: var(--color-gold-text);
+}
+
+@media (hover: hover) {
+  .reveal-block__media:hover .reveal-block__overlay {
+    transform: none;
+    transition-duration: 0.7s;
+  }
+  .reveal-block__media:hover .reveal-block__image {
+    transform: scale(1.3);
+    transition:
+      transform 5s ease-in-out,
+      opacity 0.5s ease;
+  }
+}
+/* Touch screens: strip always visible, lighter automatic zoom (1.1) */
+@media (hover: none) {
+  .reveal-block__overlay,
+  .reveal-block[data-reversed] .reveal-block__overlay {
+    transform: none;
+  }
+  .reveal-block[data-state="active"] .reveal-block__image {
+    transform: scale(1.1);
+    transition:
+      transform 5s ease-in-out,
+      opacity 0.5s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-block,
+  .reveal-block .text-reveal,
+  .reveal-pending {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .reveal-block__media::before {
+    display: none;
+  }
+  .reveal-block__image {
+    transform: none !important;
+  }
+}
+
+/* Wines selector column (components/WinesCatalogView.tsx, ADR 047): slides in from the right,
+   names follow one after the other. Replays on every category change (the column is keyed). */
+@keyframes selector-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.selector-column {
+  animation: selector-slide-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.selector-item {
+  animation: selector-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Scroll reveal (components/Reveal.tsx): pending (hidden) on the server, shown once by JS,
+   also for blocks already on screen at load. Same safety nets as the reveal blocks. */
 .reveal-pending {
   opacity: 0;
   transform: translateY(16px);

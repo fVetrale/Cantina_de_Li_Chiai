@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -55,6 +55,38 @@ export function Navbar({
   const router = useRouter();
   const pathname = usePathname() ?? "";
   const winesActive = pathname.startsWith("/vini") || pathname.startsWith("/prodotti");
+  const langSuffix = currentLocale === "en" ? "&lang=en" : "";
+  const langQuery = currentLocale === "en" ? "?lang=en" : "";
+
+  // Auto-hiding header (ADR 047): hidden while scrolling down, shown again when scrolling up,
+  // always visible near the top, with a menu open, or when keyboard focus is inside it.
+  const [hidden, setHidden] = useState(false);
+  const lastScrollY = useRef(0);
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastScrollY.current;
+      if (Math.abs(delta) < 6) return; // ignore tiny jitter
+      setHidden(y > 80 && delta > 0);
+      lastScrollY.current = y;
+    };
+    const onFocusIn = (e: FocusEvent) => {
+      if (headerRef.current?.contains(e.target as Node)) setHidden(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("focusin", onFocusIn);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("focusin", onFocusIn);
+    };
+  }, []);
+  const headerHidden = hidden && !mobileMenuOpen && !accountMenuOpen && !authModalOpen;
+  // Sticky bars under the header (PDP wines bar, chapter tabs) read this to move up with it.
+  useEffect(() => {
+    if (headerHidden) document.documentElement.dataset.headerHidden = "true";
+    else delete document.documentElement.dataset.headerHidden;
+  }, [headerHidden]);
   const estateActive = pathname.startsWith("/la-cantina");
   const accountLabel = customer
     ? dict.accountModal.greeting.replace("{name}", customer.firstName)
@@ -106,7 +138,12 @@ export function Navbar({
     "relative flex items-center justify-center p-2 text-white/90 hover:text-gold-400 transition-colors duration-200 shrink-0";
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-black text-white border-b border-white/10">
+    <header
+      ref={headerRef}
+      className={`fixed top-0 inset-x-0 z-50 bg-black text-white border-b border-white/10 transition-transform duration-300 ease-out ${
+        headerHidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="mx-auto max-w-[1400px] h-16 lg:h-[72px] px-4 sm:px-6 lg:px-10 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         {/* Left: main navigation (desktop) or menu toggle (mobile) */}
         <div className="flex items-center min-w-0">
@@ -124,14 +161,14 @@ export function Navbar({
           <nav aria-label="Navigazione principale" className="hidden lg:flex items-center gap-5 xl:gap-7">
             {/* Wines, with the category dropdown (opens on hover and on keyboard focus) */}
             <div className="relative group">
-              <Link href="/vini" className={navClass(winesActive)} aria-current={winesActive ? "page" : undefined}>
+              <Link href={`/vini${langQuery}`} className={navClass(winesActive)} aria-current={winesActive ? "page" : undefined}>
                 <span>{dict.nav.wines}</span>
                 <ChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
               </Link>
               <div className="absolute top-full left-0 pt-4 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200 z-50">
                 <div className="w-64 bg-black border border-white/15 p-2 text-left shadow-2xl">
                   <Link
-                    href="/vini"
+                    href={`/vini${langQuery}`}
                     className="flex items-center justify-between px-4 py-3 font-sans text-[11px] font-bold uppercase tracking-[3px] text-gold-400 hover:bg-white/10 transition-colors border-b border-white/10 whitespace-nowrap"
                   >
                     <span>{dict.winesPage?.filterAll || "Tutti i Vini"}</span>
@@ -140,7 +177,7 @@ export function Navbar({
                   {dynamicCategories.map((cat) => (
                     <Link
                       key={cat.id}
-                      href={`/vini?categoria=${cat.handle}`}
+                      href={`/vini?categoria=${cat.handle}${langSuffix}`}
                       className="flex items-center justify-between px-4 py-3 font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/85 hover:text-gold-400 hover:bg-white/10 transition-colors whitespace-nowrap"
                     >
                       <span>{cat.name}</span>
@@ -189,7 +226,7 @@ export function Navbar({
           </button>
 
           <Link
-            href="/vini"
+            href={`/vini${langQuery}`}
             className={`hidden sm:flex ${iconButton}`}
             aria-label="Cerca nel catalogo vini"
             title="Cerca nel catalogo vini"
@@ -346,7 +383,7 @@ export function Navbar({
         <div id="mobile-menu" className="lg:hidden border-t border-white/10 bg-black px-6 pb-8 pt-4 animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto">
           <nav aria-label="Menu mobile" className="flex flex-col">
             <Link
-              href="/vini"
+              href={`/vini${langQuery}`}
               onClick={() => setMobileMenuOpen(false)}
               className="py-4 border-b border-white/10 font-sans text-xs font-bold uppercase tracking-[4px] text-white hover:text-gold-400 transition-colors flex items-center justify-between"
             >
@@ -357,7 +394,7 @@ export function Navbar({
               {dynamicCategories.map((cat) => (
                 <Link
                   key={cat.id}
-                  href={`/vini?categoria=${cat.handle}`}
+                  href={`/vini?categoria=${cat.handle}${langSuffix}`}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-2.5 font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/70 hover:text-gold-400 transition-colors"
                 >

@@ -118,6 +118,40 @@ caratteri. **Moduli, campi e funzionamento non sono cambiati**, per non toccare 
 
 ---
 
+## 3b. Effetto "immagini che escono" (aggiunto il 2026-11-08, ADR 046)
+
+Su **tutti i blocchi foto + testo** (i 4 capitoli di "La Cantina", la sezione 50/50 della scheda prodotto, i due riquadri
+della home e il riquadro "Consegna" in `/vini`):
+- il blocco compare in **dissolvenza**;
+- un **sipario** dello stesso colore del fondo scivola via dalla foto;
+- titolo e testi entrano con una **leggera rotazione 3D**;
+- **col mouse sopra la foto:** zoom lento e una **striscia avorio** con "+ Scopri" in verticale, che diventa oro al
+  passaggio e porta a una pagina o sezione collegata;
+- l'effetto parte **una volta sola** e **anche quando il blocco è già visibile a pagina caricata**.
+
+Dettagli:
+- **"Il Lavoro"** ha uno **slider** di 3 foto che cambiano ogni 5 secondi, con un **pulsante pausa**. Si ferma anche
+  passandoci sopra con il mouse o con la tastiera.
+- **Su telefono** la striscia è sempre visibile e lo zoom automatico è leggero.
+- **Con "riduci movimento"** e **senza JavaScript** tutto resta visibile e fermo. Se il sito non si carica bene, i blocchi
+  compaiono comunque dopo 4 secondi.
+
+## 3c. Pagina dei vini, header ed effetti (aggiornato il 2026-11-08, ADR 047)
+
+- **Pagina dei vini (`/vini`):** è **solo il selettore**.
+  - Le tre categorie appaiono in grande sulla vigna sfocata, **senza nessuna scelta all'apertura**, con l'invito
+    "Scegli una categoria".
+  - Cliccando una categoria, la voce diventa oro e da destra **scorre dentro** la colonna con i vini, uno dopo l'altro,
+    con prezzo e annata. Cliccando un vino si apre la sua scheda, dove lo si aggiunge al carrello.
+  - Sotto non c'è più nulla: niente schede, ricerca, filtri o riquadro "Consegna".
+- **Menu "I Vini":** "Tutti i vini" apre il selettore vuoto. "Vini Rossi", "Vini Bianchi" e "Vini Dolci" lo aprono con
+  quella categoria già scelta, **anche se sei già nella pagina dei vini**. Prima, in quel caso, non succedeva nulla.
+- **Header che si nasconde:** su tutte le pagine sparisce mentre scorri verso il basso e ricompare appena scorri verso
+  l'alto. In cima alla pagina, con un menu aperto o navigando con la tastiera resta visibile. Le barre sotto l'header
+  (i 4 vini nella scheda prodotto, i capitoli su telefono) salgono con lui.
+- **Effetti sempre visibili:** sipari, testi in 3D e dissolvenze **ripartono ogni volta** che un blocco rientra nello
+  schermo, senza ricaricare la pagina.
+
 ## 4. Cosa del file di indicazioni NON è stato fatto, e perché
 
 | Indicazione | Perché no (per ora) |

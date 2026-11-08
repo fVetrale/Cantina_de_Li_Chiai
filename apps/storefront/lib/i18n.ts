@@ -30,6 +30,9 @@ export const dictionaries = {
       checkout: "Invia Richiesta Ordine",
       emptyCart: "Il carrello è vuoto",
       searchAction: "Cerca",
+      discover: "Scopri",
+      pauseSlideshow: "Metti in pausa le foto",
+      playSlideshow: "Riprendi le foto",
     },
     nav: {
       wines: "I Vini",
@@ -415,6 +418,7 @@ export const dictionaries = {
         "Scopri i vini di Cantina de Li Chiai ad Abatemarco, nel Cilento: Chiai Rosso, Rosso Vecchio, Chiai Bianco e Bianco Dolce, di nostra produzione.",
       breadcrumbsHome: "Home",
       breadcrumbsCurrent: "I Nostri Vini",
+      selectorHint: "Scegli una categoria per scoprire i nostri vini.",
       eyebrow: "Disponibilità in Cantina",
       title: "I Nostri Vini",
       subtitle:
@@ -752,6 +756,9 @@ export const dictionaries = {
       checkout: "Send Order Request",
       emptyCart: "Your cart is empty",
       searchAction: "Search",
+      discover: "Discover",
+      pauseSlideshow: "Pause the photos",
+      playSlideshow: "Play the photos",
     },
     nav: {
       wines: "Wines",
@@ -1133,6 +1140,7 @@ export const dictionaries = {
         "Discover the wines of Cantina de Li Chiai in Abatemarco, Cilento: Chiai Rosso, Rosso Vecchio, Chiai Bianco and Bianco Dolce, made on our estate.",
       breadcrumbsHome: "Home",
       breadcrumbsCurrent: "Our Wines",
+      selectorHint: "Choose a category to discover our wines.",
       eyebrow: "Cellar Availability",
       title: "Our Wines",
       subtitle:

@@ -12,6 +12,7 @@ import { ProductPurchaseSection } from "@/components/ProductPurchaseSection";
 import { ProductTabs } from "@/components/ProductTabs";
 import { AgeGateModal } from "@/components/AgeGateModal";
 import { Reveal } from "@/components/Reveal";
+import { RevealBlock } from "@/components/RevealBlock";
 import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 
 interface ProductPageProps {
@@ -165,7 +166,7 @@ export default async function ProductDetailPage({
         {/* 2. Sticky bar: the wines, the current one in gold */}
         <nav
           aria-label={dict.nav.wines}
-          className="sticky top-16 lg:top-[72px] z-30 bg-white border-b border-ivory-300"
+          className="sticky-under-header z-30 bg-white border-b border-ivory-300"
         >
           <ul className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 flex items-center gap-8 overflow-x-auto no-scrollbar">
             {allWines.map((wine) => {
@@ -218,31 +219,28 @@ export default async function ProductDetailPage({
           </div>
         </section>
 
-        {/* 4. 50/50: the land, with a link to the cellar story */}
-        <Reveal>
-          <section aria-label={dict.meetUs.title} className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="relative min-h-[320px] lg:min-h-[560px]">
-              <Image
-                src="/images/vigneto.jpeg"
-                alt="Tenuta e vigneti di Cantina de Li Chiai ad Abatemarco"
-                fill
-                loading="lazy"
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
-              />
+        {/* 4. 50/50: the land, with a link to the cellar story ("dynamic reveal", ADR 046) */}
+        <section aria-label={dict.meetUs.title} className="bg-gray-100">
+          <RevealBlock
+            reversed
+            curtainColor="#f5f5f5"
+            images={[{ src: "/images/vigneto.jpeg", alt: "Tenuta e vigneti di Cantina de Li Chiai ad Abatemarco" }]}
+            overlayLink={{ href: `/la-cantina${langQuery}`, label: dict.common.discover }}
+            mediaClassName="min-h-[320px] lg:min-h-[560px] h-full w-full"
+            contentClassName="px-6 sm:px-12 lg:px-20 py-16 lg:py-24 max-w-2xl"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            fullBleed
+          >
+            <p className="text-reveal label-caps text-gold-700">{dict.meetUs.eyebrow}</p>
+            <h2 className="text-reveal mt-5 title-section">{dict.meetUs.title}</h2>
+            <p className="text-reveal mt-6 text-editorial text-gray-600 drop-cap">{dict.meetUs.description}</p>
+            <div className="text-reveal mt-10">
+              <Link href={`/la-cantina${langQuery}`} className="link-editorial text-black hover:text-gold-700">
+                {dict.meetUs.ctaStory}
+              </Link>
             </div>
-            <div className="bg-gray-100 flex items-center">
-              <div className="px-6 sm:px-12 lg:px-20 py-16 lg:py-24 max-w-2xl">
-                <p className="label-caps text-gold-700">{dict.meetUs.eyebrow}</p>
-                <h2 className="mt-5 title-section">{dict.meetUs.title}</h2>
-                <p className="mt-6 text-editorial text-gray-600 drop-cap">{dict.meetUs.description}</p>
-                <Link href={`/la-cantina${langQuery}`} className="mt-10 link-editorial text-black hover:text-gold-700">
-                  {dict.meetUs.ctaStory}
-                </Link>
-              </div>
-            </div>
-          </section>
-        </Reveal>
+          </RevealBlock>
+        </section>
 
         {/* 5. Related wines */}
         {relatedProducts.length > 0 && (
