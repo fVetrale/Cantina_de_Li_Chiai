@@ -8,9 +8,6 @@ import {
   Lock,
   Eye,
   EyeOff,
-  ShieldCheck,
-  PackageCheck,
-  Wine,
   Info,
   AlertCircle,
   ArrowRight,
@@ -63,7 +60,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
     ) : null;
   };
 
-  const labelClass = "block text-xs uppercase tracking-wider font-semibold text-cellar-800 mb-1.5";
+  const labelClass = "block font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600 mb-1";
   const passwordToggle = (
     <button
       type="button"
@@ -75,12 +72,13 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
     </button>
   );
   const submitClass =
-    "w-full mt-6 py-3.5 px-6 bg-wine-700 hover:bg-wine-800 text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60";
+    "w-full mt-8 py-5 px-6 bg-black hover:bg-gold-700 text-white label-caps transition-colors duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60";
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <div className="lg:col-span-7 bg-white text-cellar-900 p-6 sm:p-10 border border-ivory-200">
-        <div className="flex border-b border-ivory-200 pb-4 mb-8 gap-6" role="tablist">
+    // Editorial layout (ADR 050): the forms, then the benefits as a quiet list. Logic unchanged.
+    <div className="space-y-12">
+      <div className="text-black">
+        <div className="flex border-b border-ivory-300 mb-10 gap-8" role="tablist">
           {(["signin", "register"] as const).map((tab) => (
             <button
               key={tab}
@@ -88,8 +86,10 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
               role="tab"
               aria-selected={activeTab === tab}
               onClick={() => switchTab(tab)}
-              className={`pb-2 px-1 text-sm sm:text-base font-bold uppercase tracking-wider transition-all relative ${
-                activeTab === tab ? "text-wine-700 border-b-2 border-wine-700" : "text-cellar-500 hover:text-cellar-900"
+              className={`relative py-4 font-sans text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
+                activeTab === tab
+                  ? "text-black after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-black"
+                  : "text-gray-500 hover:text-black"
               }`}
             >
               {tab === "signin" ? t.tabSignIn : t.tabRegister}
@@ -164,7 +164,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
             </div>
 
             <button type="submit" disabled={forms.isPending} className={submitClass}>
-              <ArrowRight className="w-4 h-4 text-gold-300" aria-hidden="true" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
               <span>{forms.isPending ? m.loggingIn : t.signInBtn}</span>
             </button>
           </form>
@@ -259,7 +259,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
                   checked={forms.register.ageConfirmed}
                   onChange={(e) => forms.register.setAgeConfirmed(e.target.checked)}
                   aria-invalid={!!forms.fieldError("ageConfirmed", "register")}
-                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-wine-700 focus:ring-wine-700"
+                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 accent-black"
                 />
                 <span className="text-xs text-cellar-700 leading-relaxed">{t.ageCheck}</span>
               </label>
@@ -270,11 +270,11 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
                   checked={forms.register.privacyAccepted}
                   onChange={(e) => forms.register.setPrivacyAccepted(e.target.checked)}
                   aria-invalid={!!forms.fieldError("privacyAccepted", "register")}
-                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-wine-700 focus:ring-wine-700"
+                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 accent-black"
                 />
                 <span className="text-xs text-cellar-700 leading-relaxed">
                   {m.privacyAcceptPrefix}{" "}
-                  <Link href={privacyHref} target="_blank" className="underline text-wine-700">
+                  <Link href={privacyHref} target="_blank" className="underline text-black">
                     {m.privacyLinkLabel}
                   </Link>
                 </span>
@@ -283,30 +283,27 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
             </div>
 
             <button type="submit" disabled={forms.isPending} className={submitClass}>
-              <ArrowRight className="w-4 h-4 text-gold-300" aria-hidden="true" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
               <span>{forms.isPending ? m.registering : t.registerBtn}</span>
             </button>
           </form>
         )}
       </div>
 
-      <div className="lg:col-span-5 space-y-6">
-        <div className="bg-white p-6 sm:p-8 border border-ivory-200">
-          <div className="flex items-center gap-2.5 text-wine-700 mb-4">
-            <Wine className="w-5 h-5 text-gold-600" aria-hidden="true" />
-            <h3 className="font-serif text-lg font-bold text-cellar-950">{t.benefitsTitle}</h3>
-          </div>
-          <ul className="space-y-4 text-xs sm:text-sm text-cellar-700">
+      <div>
+        <div className="border-t border-black pt-8">
+          <h3 className="label-caps text-black mb-6">{t.benefitsTitle}</h3>
+          <ul className="space-y-4 text-sm text-gray-600">
             <li className="flex items-start gap-3">
-              <PackageCheck className="w-4 h-4 text-wine-700 shrink-0 mt-0.5" aria-hidden="true" />
+              <span aria-hidden="true" className="mt-2 h-px w-4 shrink-0 bg-gold-500" />
               <span>{t.benefit1}</span>
             </li>
             <li className="flex items-start gap-3">
-              <Wine className="w-4 h-4 text-wine-700 shrink-0 mt-0.5" aria-hidden="true" />
+              <span aria-hidden="true" className="mt-2 h-px w-4 shrink-0 bg-gold-500" />
               <span>{t.benefit2}</span>
             </li>
             <li className="flex items-start gap-3">
-              <ShieldCheck className="w-4 h-4 text-wine-700 shrink-0 mt-0.5" aria-hidden="true" />
+              <span aria-hidden="true" className="mt-2 h-px w-4 shrink-0 bg-gold-500" />
               <span>{t.benefit3}</span>
             </li>
           </ul>

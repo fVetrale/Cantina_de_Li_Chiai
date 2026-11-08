@@ -77,7 +77,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-black selection:text-white">
         {/* Without JavaScript the reveal animations never run: keep every block visible (ADR 046). */}
         <noscript>
-          <style>{`.reveal-block,.reveal-block .text-reveal,.reveal-pending{opacity:1!important;transform:none!important}.reveal-block__media::before{display:none!important}`}</style>
+          <style>{`.reveal-block,.reveal-block .text-reveal{opacity:1!important;transform:none!important}.reveal-block__media::before{display:none!important}`}</style>
         </noscript>
         <Suspense fallback={null}>
           <HtmlLang />

@@ -40,19 +40,16 @@ export default async function WishlistPage(props: Props) {
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="wishlist">
-      <section aria-labelledby="wishlist-title" className="bg-white/60 border border-ivory-200 p-6 sm:p-7">
-        <h2 id="wishlist-title" className="font-serif text-2xl font-bold text-wine-950 mb-5">
+      <section aria-labelledby="wishlist-title" className="max-w-5xl">
+        <h2 id="wishlist-title" className="title-section mb-8 pb-6 border-b border-black">
           {t.pageTitle}
         </h2>
         {catalog.status !== "ok" ? (
           <CatalogUnavailable dict={dict} retryHref={`/account/preferiti${lang}`} />
         ) : products.length === 0 ? (
           <div className="space-y-4">
-            <p className="text-sm text-cellar-600">{t.empty}</p>
-            <Link
-              href={`/vini${lang}`}
-              className="inline-flex items-center bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
-            >
+            <p className="text-sm text-gray-600">{t.empty}</p>
+            <Link href={`/vini${lang}`} className="link-editorial text-black hover:text-gold-700">
               {t.browse}
             </Link>
           </div>

@@ -210,8 +210,7 @@ html[data-header-hidden] {
   }
 }
 html:not([data-reveal-ready]) .reveal-block[data-state="armed"],
-html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .text-reveal,
-html:not([data-reveal-ready]) .reveal-pending {
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .text-reveal {
   animation: reveal-failsafe 0.6s ease 4s forwards;
 }
 html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__media::before {
@@ -368,8 +367,7 @@ html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__m
 
 @media (prefers-reduced-motion: reduce) {
   .reveal-block,
-  .reveal-block .text-reveal,
-  .reveal-pending {
+  .reveal-block .text-reveal {
     opacity: 1 !important;
     transform: none !important;
   }
@@ -404,6 +402,25 @@ html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__m
   animation: scroll-cue 2.2s ease-in-out infinite;
 }
 
+/* Editorial form fields (reserved area, login, ADR 050): underlined, square, transparent.
+   Scoped with .form-editorial so the forms' markup and logic stay unchanged. */
+.form-editorial :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input:not([type]), select, textarea) {
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: var(--color-gray-300);
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  transition: border-color 200ms ease;
+}
+.form-editorial :is(input, select, textarea):focus {
+  border-color: #000000;
+  box-shadow: none;
+}
+.form-editorial :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: #be123c;
+}
+
 /* Wines selector column (components/WinesCatalogView.tsx, ADR 047): slides in from the right,
    names follow one after the other. Replays on every category change (the column is keyed). */
 @keyframes selector-slide-in {
@@ -423,18 +440,6 @@ html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__m
   animation: selector-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Scroll reveal (components/Reveal.tsx): pending (hidden) on the server, shown once by JS,
-   also for blocks already on screen at load. Same safety nets as the reveal blocks. */
-.reveal-pending {
-  opacity: 0;
-  transform: translateY(16px);
-}
-.reveal-pending,
-.reveal-shown {
-  transition:
-    opacity 700ms ease-out,
-    transform 700ms ease-out;
-}
 .reveal-shown {
   opacity: 1;
   transform: none;
@@ -465,23 +470,6 @@ html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__m
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Subtle gradients, now monochrome */
-.bg-gradient-wine {
-  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
-}
-
-.bg-gradient-olive {
-  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
-}
-
-.bg-gradient-gold {
-  background: linear-gradient(135deg, #776739 0%, #a18e56 50%, #776739 100%);
-}
-
-.bg-gradient-terracotta {
-  background: linear-gradient(135deg, #1a1a1a 0%, #333333 50%, #000000 100%);
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

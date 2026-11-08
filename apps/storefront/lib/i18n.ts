@@ -4,11 +4,8 @@ export const defaultLocale: Locale = "it";
 
 export const dictionaries = {
   it: {
-    announcement:
-      "Spedizioni assicurate in imballi anti-rottura in tutta Italia | Consegna gratuita per ordini superiori a €90",
     ticker:
       "Imballi anti-rottura in tutta Italia • Spedizione gratuita da €90 • Direttamente dalla cantina nel Parco Nazionale del Cilento • Vendemmia 100% manuale",
-    searchPlaceholder: "Cosa desideri degustare oggi? (es. Chiai Rosso, Rosso Vecchio, Chiai Bianco...)",
     common: {
       brand: "Cantina de Li Chiai",
       subtitle: "Cantina ad Abatemarco",
@@ -146,22 +143,6 @@ export const dictionaries = {
         "Spediamo in tutta Italia con imballi anti-rottura in 24/48h. Se invece vuoi venirci a trovare in Contrada Pozzo 15, prenota il ritiro dal lunedì al venerdì (11:00-13:00 e 15:00-18:00): ti aspetta una piccola degustazione dei nostri vini, offerta al ritiro.",
       cta: "Scopri i Vini",
     },
-    catalog: {
-      eyebrow: "Piccole Quantità · Un'Unica Attività",
-      title: "I Nostri Vini",
-      subtitle:
-        "Ordina online con spedizione a casa o ritira in cantina ad Abatemarco. Rossi, bianchi e un vino dolce, tutti di nostra produzione.",
-      filterAll: "Tutti i Vini",
-      noProducts: "Nessun vino trovato per questa categoria.",
-      tastingNotesTitle: "Note & Descrizione",
-      pagePrev: "Pagina precedente",
-      pageNext: "Pagina successiva",
-      pageOf: "Pagina",
-      of: "di",
-      viewSlider: "Pagine scorrevoli",
-      viewGrid: "Griglia completa",
-      productsCount: "vini",
-    },
     meetUs: {
       eyebrow: "Vieni a Conoscerci",
       title: "Dalla Terra di 'Li Chiai' alla Tua Tavola",
@@ -193,19 +174,6 @@ export const dictionaries = {
       badge2Desc: "Vinificazione lenta e genuinità di famiglia",
       badge3: "Assaggio al Ritiro",
       badge3Desc: "Piccola degustazione dei nostri vini, offerta al ritiro",
-    },
-    social: {
-      title: "Seguici sui Social",
-      subtitle:
-        "Condividi i tuoi momenti con #CantinaDeLiChiai tra calici, vigne e colline cilentane",
-    },
-    newsletter: {
-      title: "Resta Connesso con la Cantina",
-      subtitle:
-        "Iscriviti per ricevere aggiornamenti sulle disponibilità, le nuove annate e le novità della cantina.",
-      placeholder: "Inserisci il tuo indirizzo email...",
-      button: "Iscriviti",
-      legal: "Iscrivendoti accetti la nostra Privacy Policy. Puoi disiscriverti in qualsiasi momento.",
     },
     pdp: {
       breadcrumbHome: "Home",
@@ -316,9 +284,9 @@ export const dictionaries = {
     cartPage: {
       metaTitle: "Il tuo carrello | Cantina de Li Chiai",
       title: "Il tuo carrello",
-      breadcrumbsHome: "Home",
+      eyebrow: "Il tuo ordine",
       empty: "Il tuo carrello è vuoto.",
-      emptyCta: "Scopri i nostri prodotti",
+      emptyCta: "Scopri i nostri vini",
       continueShopping: "Continua gli acquisti",
       summaryTitle: "Riepilogo",
       itemsLabel: "articoli",
@@ -826,11 +794,8 @@ export const dictionaries = {
     },
   },
   en: {
-    announcement:
-      "Insured anti-breakage shipping across Italy | Free delivery on orders over €90",
     ticker:
       "Anti-breakage shipping across Italy • Free delivery for orders over €90 • Shipped direct from Cilento National Park • 100% hand harvested",
-    searchPlaceholder: "What wine would you like to taste today? (e.g. Chiai Rosso, Rosso Vecchio, Chiai Bianco...)",
     common: {
       brand: "Cantina de Li Chiai",
       subtitle: "Winery in Abatemarco",
@@ -968,22 +933,6 @@ export const dictionaries = {
         "We ship across Italy in 24/48h with certified shock-proof packaging. Or if you visit us in Contrada Pozzo 15 (Mon-Fri 11:00-13:00 & 15:00-18:00), enjoy a small complimentary tasting of our wines.",
       cta: "Discover Our Wines",
     },
-    catalog: {
-      eyebrow: "Small Quantities · Single Estate",
-      title: "Our Wines",
-      subtitle:
-        "Order online with express home delivery or pick up at our Abatemarco cellar. Reds, whites and a sweet wine, all made on our estate.",
-      filterAll: "All Wines",
-      noProducts: "No wines found in this category.",
-      tastingNotesTitle: "Notes & Description",
-      pagePrev: "Previous page",
-      pageNext: "Next page",
-      pageOf: "Page",
-      of: "of",
-      viewSlider: "Sliding pages",
-      viewGrid: "Full grid",
-      productsCount: "wines",
-    },
     meetUs: {
       eyebrow: "Meet Us in Cilento",
       title: "From the Land of 'Li Chiai' to Your Table",
@@ -1015,19 +964,6 @@ export const dictionaries = {
       badge2Desc: "Slow winemaking and genuine family touch",
       badge3: "Cellar Tasting",
       badge3Desc: "Small complimentary wine tasting upon pickup",
-    },
-    social: {
-      title: "Follow Us on Social Media",
-      subtitle:
-        "Share your moments with #CantinaDeLiChiai among full glasses, vineyards, and Cilento countryside",
-    },
-    newsletter: {
-      title: "Stay Connected with the Cellar",
-      subtitle:
-        "Subscribe to receive updates on availability, new vintages, and news from the cellar.",
-      placeholder: "Enter your email address...",
-      button: "Subscribe",
-      legal: "By subscribing you accept our Privacy Policy. You can unsubscribe at any time.",
     },
     pdp: {
       breadcrumbHome: "Home",
@@ -1138,9 +1074,9 @@ export const dictionaries = {
     cartPage: {
       metaTitle: "Your cart | Cantina de Li Chiai",
       title: "Your cart",
-      breadcrumbsHome: "Home",
+      eyebrow: "Your order",
       empty: "Your cart is empty.",
-      emptyCta: "Discover our products",
+      emptyCta: "Discover our wines",
       continueShopping: "Continue shopping",
       summaryTitle: "Summary",
       itemsLabel: "items",

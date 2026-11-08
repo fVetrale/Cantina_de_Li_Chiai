@@ -175,6 +175,24 @@ testi per i lettori di schermo, nomi delle categorie e delle spedizioni, schede 
 galleria. I prezzi restano in formato italiano ("€ 9,00"). Le traduzioni delle schede dei vini sono da far rivedere al
 cliente.
 
+## 3f. Carrello e area riservata (2026-11-08, ADR 050)
+
+- **Carrello:**
+  - intestazione editoriale; righe dei vini con foto verticale, nome in serif, quantità − / + sottile e "Rimuovi"
+    come link;
+  - riepilogo su grigio chiaro che resta visibile scorrendo, con la sottile linea oro della spedizione gratuita;
+  - su telefono una barra nera fissa con totale e "Procedi al checkout";
+  - carrello vuoto a tutto schermo sulla vigna sfocata.
+- **Accesso e registrazione:** pagina divisa, con una foto della vendemmia in chiaroscuro a sinistra e i moduli a destra
+  (campi sottolineati, pulsante nero).
+- **Area riservata:**
+  - intestazione nera con "Ciao, Nome" ed "Esci"; schede orizzontali (Panoramica, Profilo, I miei ordini, Indirizzi,
+    Preferiti) al posto della colonna laterale;
+  - panoramica con riquadri numerati; ordini come righe pulite; dettaglio con riepilogo su grigio;
+  - indirizzi e profilo con campi sottolineati, "Predefinito" in oro, azioni come link;
+  - stato degli ordini con un pallino colorato.
+- **Pulizia:** cancellati i componenti e i testi non più usati.
+
 ## 4. Cosa del file di indicazioni NON è stato fatto, e perché
 
 | Indicazione | Perché no (per ora) |
