@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Bodoni_Moda, Lato } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
+import { HtmlLang } from "@/components/HtmlLang";
 import { CartProvider } from "@/components/CartProvider";
 import { getCurrentCartSummary } from "@/lib/data/cart-session";
 import { CustomerProvider } from "@/components/CustomerProvider";
@@ -77,6 +79,9 @@ export default async function RootLayout({
         <noscript>
           <style>{`.reveal-block,.reveal-block .text-reveal,.reveal-pending{opacity:1!important;transform:none!important}.reveal-block__media::before{display:none!important}`}</style>
         </noscript>
+        <Suspense fallback={null}>
+          <HtmlLang />
+        </Suspense>
         {/* Only the first name and the wishlist product ids reach the browser (ADR 040, 042). */}
         <CustomerProvider
           customer={customer ? { firstName: customer.firstName, wishlist: customer.wishlist } : null}

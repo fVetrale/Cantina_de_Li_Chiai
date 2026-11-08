@@ -119,7 +119,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
                   required
                   value={forms.login.email}
                   onChange={(e) => forms.login.setEmail(e.target.value)}
-                  placeholder="nome@dominio.it"
+                  placeholder={dict.common.emailPlaceholder}
                   {...fieldProps("email", "pl-10 pr-4")}
                 />
               </div>

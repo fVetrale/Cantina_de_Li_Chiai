@@ -168,7 +168,7 @@ export function ProductPurchaseSection({
           {product.title}
         </h2>
         <div className="text-xs text-cellar-500 font-sans mt-2">
-          Codice Articolo:{" "}
+          {dict.pdp.skuLabel}:{" "}
           <span className="text-cellar-700 font-mono">
             {product.sku || "VFB00021 2025750"}
           </span>
@@ -185,12 +185,12 @@ export function ProductPurchaseSection({
         </span>
         {product.unitPrice && (
           <span className="text-xs text-cellar-600 font-medium bg-ivory-100 px-2.5 py-1 border border-ivory-300">
-            {product.unitPrice} • IVA inc.
+            {product.unitPrice} • {dict.common.vatIncShort}
           </span>
         )}
         {quantity > 1 && (
           <span className="text-xs text-cellar-500 font-medium">
-            (€ {formattedUnitPrice} / {product.category === "vini" ? "bottiglia" : "pz."} • {quantity} {product.category === "vini" ? "bt." : "pz."})
+            (€ {formattedUnitPrice} / {dict.pdp.perBottle} • {quantity} {dict.pdp.bottlesShort})
           </span>
         )}
       </div>
@@ -203,7 +203,7 @@ export function ProductPurchaseSection({
             ref={triggerRef}
             type="button"
             onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-            aria-label="Seleziona quantità di bottiglie"
+            aria-label={dict.pdp.selectQuantity}
             aria-expanded={isPopoverOpen}
             className={`h-12 px-4 border bg-white flex items-center justify-between gap-3 text-sm font-semibold text-cellar-900 transition-all hover:bg-ivory-50 shrink-0 ${
               isPopoverOpen
@@ -287,7 +287,7 @@ export function ProductPurchaseSection({
 
             {/* Title */}
             <h4 className="font-sans text-sm sm:text-base font-semibold text-cellar-900 mb-3">
-              Scegli la quantità di bottiglie da aggiungere al carrello:
+              {dict.pdp.quantityTitle}
             </h4>
 
             {/* Thin Horizontal Divider */}
@@ -324,7 +324,7 @@ export function ProductPurchaseSection({
                 onClick={() => setIsCustomQtyMode(true)}
                 className="text-xs font-bold uppercase tracking-wider underline text-cellar-900 hover:text-black transition-colors inline-block pt-1"
               >
-                Quantità Personalizzata
+                {dict.pdp.quantityCustom}
               </button>
             ) : (
               <form onSubmit={handleApplyCustomQty} className="flex items-center gap-2 pt-1">
@@ -334,7 +334,7 @@ export function ProductPurchaseSection({
                   max={maxQuantity}
                   value={customQtyInput}
                   onChange={(e) => setCustomQtyInput(e.target.value)}
-                  placeholder="Es. 24"
+                  placeholder={dict.pdp.quantityPlaceholder}
                   autoFocus
                   className="w-28 px-3 py-1.5 text-xs font-semibold border-2 border-ivory-300 focus:border-black focus:outline-none text-cellar-900"
                 />
@@ -342,14 +342,14 @@ export function ProductPurchaseSection({
                   type="submit"
                   className="px-3.5 py-1.5 bg-black text-white text-xs font-bold uppercase tracking-wider hover:bg-gold-700 transition-colors"
                 >
-                  Applica
+                  {dict.pdp.quantityApply}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsCustomQtyMode(false)}
                   className="text-xs text-cellar-500 hover:text-cellar-800 transition-colors ml-1"
                 >
-                  Annulla
+                  {dict.pdp.quantityCancel}
                 </button>
               </form>
             )}
@@ -362,7 +362,7 @@ export function ProductPurchaseSection({
         <div className="flex items-center gap-2 text-xs text-cellar-600">
           <Truck className="w-4 h-4 text-cellar-700 shrink-0" />
           <span>
-            Se acquisti entro 24 ore, consegna entro il{" "}
+            {dict.pdp.deliveryPrefix}{" "}
             <strong className="text-cellar-900 font-bold">
               {getDeliveryEstimate()}
             </strong>
@@ -380,7 +380,7 @@ export function ProductPurchaseSection({
           className="inline-flex items-center gap-2 hover:text-black transition-colors group"
         >
           <Store className="w-4 h-4 text-cellar-500 group-hover:text-black transition-colors" />
-          <span className="underline">Disponibile in Cantina</span>
+          <span className="underline">{dict.pdp.availableInCellar}</span>
         </button>
 
         {/* Real wishlist (ADR 042) */}
@@ -400,7 +400,7 @@ export function ProductPurchaseSection({
           <div className="flex items-center gap-3">
             <Calendar className="w-4 h-4 text-black shrink-0" />
             <span>
-              Annata:{" "}
+              {dict.pdp.vintageLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.details.vintage}
               </strong>
@@ -413,7 +413,7 @@ export function ProductPurchaseSection({
           <div className="flex items-center gap-3">
             <BottleIcon className="w-4 h-4 text-black shrink-0" />
             <span>
-              Formato / Peso:{" "}
+              {dict.pdp.formatWeightLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.format}
               </strong>
@@ -425,7 +425,7 @@ export function ProductPurchaseSection({
         <div className="flex items-center gap-3">
           <Wine className="w-4 h-4 text-black shrink-0" />
           <span>
-            Tipologia:{" "}
+            {dict.pdp.typeLabel}:{" "}
             <strong className="font-bold text-cellar-950 ml-1 capitalize">
               {product.category}
             </strong>
@@ -436,7 +436,7 @@ export function ProductPurchaseSection({
         <div className="flex items-center gap-3">
           <FileText className="w-4 h-4 text-black shrink-0" />
           <span>
-            Denominazione:{" "}
+            {dict.pdp.appellationLabel}:{" "}
             <strong className="font-bold text-cellar-950 ml-1">
               {product.appellation}
             </strong>
@@ -448,7 +448,7 @@ export function ProductPurchaseSection({
           <div className="flex items-center gap-3">
             <Grape className="w-4 h-4 text-black shrink-0" />
             <span>
-              Uve:{" "}
+              {dict.pdp.grapesLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.details.grapes}
               </strong>
@@ -461,7 +461,7 @@ export function ProductPurchaseSection({
           <div className="flex items-center gap-3">
             <Wine className="w-4 h-4 text-black shrink-0" />
             <span>
-              Gradazione:{" "}
+              {dict.pdp.alcoholLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.alcohol}
               </strong>

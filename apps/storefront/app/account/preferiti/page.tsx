@@ -5,6 +5,7 @@ import { getCategories, getProducts } from "@/lib/data/products";
 import { requireCustomer } from "@/lib/data/account-guard";
 import { AccountShell } from "@/components/account/AccountShell";
 import { WineCard } from "@/components/WineCard";
+import { localizeWine } from "@/lib/data/wine-copy";
 import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 
 type Props = { searchParams?: Promise<{ lang?: string }> };
@@ -32,7 +33,10 @@ export default async function WishlistPage(props: Props) {
   const [categories, catalog] = await Promise.all([getCategories(), getProducts()]);
 
   const byId = catalog.status === "ok" ? new Map(catalog.products.map((p) => [p.id, p])) : new Map();
-  const products = customer.wishlist.map((id) => byId.get(id)).filter((p) => p !== undefined);
+  const products = customer.wishlist
+    .map((id) => byId.get(id))
+    .filter((p) => p !== undefined)
+    .map((p) => localizeWine(p, locale));
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="wishlist">

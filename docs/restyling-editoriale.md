@@ -152,6 +152,29 @@ Dettagli:
 - **Effetti sempre visibili:** sipari, testi in 3D e dissolvenze **ripartono ogni volta** che un blocco rientra nello
   schermo, senza ricaricare la pagina.
 
+## 3d. "La Cantina" e scheda del vino (aggiornato il 2026-11-08)
+
+- **"La Cantina" si apre** con una foto a tutto schermo della vendemmia, in chiaroscuro.
+  - Al centro titolo e sottotitolo; in basso i tre dati della famiglia su una riga sottile e l'invito "Scorri".
+  - Tolti il monogramma provvisorio e il percorso "Home / La Cantina".
+- **Scheda del vino** (ADR 048):
+  - la foto compare **una volta sola**, nell'apertura a tutto schermo: nome, tipo e breve descrizione a sinistra, la
+    bottiglia grande a destra **con il selettore delle foto** (frecce, miniature, scorrimento col dito o con le frecce
+    della tastiera);
+  - su telefono prima la foto, poi il nome;
+  - "Scorri per ordinare" porta all'acquisto: a sinistra prezzo, quantità e "Aggiungi al carrello", a destra
+    l'accordion con caratteristiche, origine, abbinamenti e scheda tecnica;
+  - tolte le foto piccole delle bottiglie (si sgranavano) e la vista a schermo intero, ormai inutile.
+  - **sotto l'acquisto non c'è altro:** tolti il riquadro "Scopri la cantina" e le schede "Scopri anche", perché gli altri
+    vini sono già nella barra in alto.
+
+## 3e. Versione inglese (2026-11-08, ADR 049)
+
+Tutta la versione inglese (`?lang=en`) è tradotta: testi dei pulsanti e delle etichette, descrizioni delle foto e
+testi per i lettori di schermo, nomi delle categorie e delle spedizioni, schede complete dei vini, didascalie della
+galleria. I prezzi restano in formato italiano ("€ 9,00"). Le traduzioni delle schede dei vini sono da far rivedere al
+cliente.
+
 ## 4. Cosa del file di indicazioni NON è stato fatto, e perché
 
 | Indicazione | Perché no (per ora) |

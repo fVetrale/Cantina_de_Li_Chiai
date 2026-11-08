@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { localizeVariantTitle } from "@/lib/data/wine-copy";
 import Link from "next/link";
+import { shippingName } from "@/lib/shipping-labels";
 import Image from "next/image";
 import { CheckCircle2, IdCard, Store } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
@@ -105,7 +107,7 @@ export default async function OrderConfirmationPage(props: {
                     <span className="flex-1 min-w-0 text-sm">
                       <span className="block font-semibold text-cellar-900">{line.title}</span>
                       <span className="text-xs text-cellar-500">
-                        {line.variantTitle} × {line.quantity}
+                        {localizeVariantTitle(line.variantTitle, currentLocale)} × {line.quantity}
                       </span>
                     </span>
                     <span className="text-sm font-semibold whitespace-nowrap">€ {formatEuro(line.lineTotal)}</span>
@@ -117,7 +119,7 @@ export default async function OrderConfirmationPage(props: {
                 {view.order.shippingMethods.map((method) => (
                   <div key={method.id} className="flex justify-between">
                     <dt className="text-cellar-700">
-                      {t.shipping}: {method.name}
+                      {t.shipping}: {shippingName(dict.shipping, method.name)}
                     </dt>
                     <dd className="font-semibold">{method.amount === 0 ? t.free : `€ ${formatEuro(method.amount)}`}</dd>
                   </div>

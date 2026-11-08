@@ -111,6 +111,10 @@ export function Navbar({
     router.push(currentLocale === "en" ? "/?lang=en" : "/");
   };
 
+  // Medusa category names are Italian: show the translated name when the dictionary has one.
+  const categoryNames: Record<string, string> = dict.common.categoryNames;
+  const categoryLabel = (cat: WineCategory) => categoryNames[cat.handle] ?? cat.name;
+
   const dynamicCategories =
     categories && categories.length > 0 ? categories : DEFAULT_CATEGORIES;
 
@@ -151,14 +155,14 @@ export function Navbar({
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden -ml-2 p-2 text-white hover:text-gold-400 transition-colors"
-            aria-label={mobileMenuOpen ? "Chiudi menu" : "Apri menu"}
+            aria-label={mobileMenuOpen ? dict.common.closeMenu : dict.common.openMenu}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <nav aria-label="Navigazione principale" className="hidden lg:flex items-center gap-5 xl:gap-7">
+          <nav aria-label={dict.common.mainNav} className="hidden lg:flex items-center gap-5 xl:gap-7">
             {/* Wines, with the category dropdown (opens on hover and on keyboard focus) */}
             <div className="relative group">
               <Link href={`/vini${langQuery}`} className={navClass(winesActive)} aria-current={winesActive ? "page" : undefined}>
@@ -171,7 +175,7 @@ export function Navbar({
                     href={`/vini${langQuery}`}
                     className="flex items-center justify-between px-4 py-3 font-sans text-[11px] font-bold uppercase tracking-[3px] text-gold-400 hover:bg-white/10 transition-colors border-b border-white/10 whitespace-nowrap"
                   >
-                    <span>{dict.winesPage?.filterAll || "Tutti i Vini"}</span>
+                    <span>{dict.winesPage.filterAll}</span>
                     <Wine className="w-3.5 h-3.5" />
                   </Link>
                   {dynamicCategories.map((cat) => (
@@ -180,7 +184,7 @@ export function Navbar({
                       href={`/vini?categoria=${cat.handle}${langSuffix}`}
                       className="flex items-center justify-between px-4 py-3 font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/85 hover:text-gold-400 hover:bg-white/10 transition-colors whitespace-nowrap"
                     >
-                      <span>{cat.name}</span>
+                      <span>{categoryLabel(cat)}</span>
                       <span aria-hidden="true">→</span>
                     </Link>
                   ))}
@@ -202,7 +206,7 @@ export function Navbar({
         <Link
           href="/"
           className="flex flex-col items-center text-center leading-none whitespace-nowrap"
-          aria-label="Cantina de Li Chiai - Home"
+          aria-label={dict.common.homeLink}
         >
           <span className="font-serif text-[15px] sm:text-lg lg:text-[22px] tracking-[2px] sm:tracking-[3px] uppercase text-white">
             {dict.common.brand}
@@ -218,7 +222,7 @@ export function Navbar({
             onClick={toggleLanguage}
             type="button"
             className="hidden sm:flex items-center gap-1.5 px-2 py-2 font-sans text-[11px] font-bold uppercase tracking-[3px] transition-colors shrink-0"
-            aria-label="Cambia lingua"
+            aria-label={dict.common.changeLanguage}
           >
             <span className={currentLocale === "it" ? "text-gold-400" : "text-white/60 hover:text-white"}>IT</span>
             <span className="text-white/30" aria-hidden="true">/</span>
@@ -228,8 +232,8 @@ export function Navbar({
           <Link
             href={`/vini${langQuery}`}
             className={`hidden sm:flex ${iconButton}`}
-            aria-label="Cerca nel catalogo vini"
-            title="Cerca nel catalogo vini"
+            aria-label={dict.common.searchCatalog}
+            title={dict.common.searchCatalog}
           >
             <Search className="w-4 h-4" />
           </Link>
@@ -381,7 +385,7 @@ export function Navbar({
       {/* Mobile menu: full-width panel under the bar */}
       {mobileMenuOpen && (
         <div id="mobile-menu" className="lg:hidden border-t border-white/10 bg-black px-6 pb-8 pt-4 animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto">
-          <nav aria-label="Menu mobile" className="flex flex-col">
+          <nav aria-label={dict.common.mobileMenu} className="flex flex-col">
             <Link
               href={`/vini${langQuery}`}
               onClick={() => setMobileMenuOpen(false)}
@@ -398,7 +402,7 @@ export function Navbar({
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-2.5 font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/70 hover:text-gold-400 transition-colors"
                 >
-                  {cat.name}
+                  {categoryLabel(cat)}
                 </Link>
               ))}
             </div>
@@ -436,7 +440,7 @@ export function Navbar({
             )}
           </nav>
           <div className="pt-6 flex items-center justify-between font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/60">
-            <span>Parco Nazionale del Cilento</span>
+            <span>{dict.common.parkName}</span>
             <button
               onClick={() => {
                 toggleLanguage();
@@ -444,7 +448,7 @@ export function Navbar({
               }}
               type="button"
               className="px-3 py-2 border border-white/30 text-gold-400"
-              aria-label="Cambia lingua"
+              aria-label={dict.common.changeLanguage}
             >
               {currentLocale === "it" ? "EN" : "IT"}
             </button>

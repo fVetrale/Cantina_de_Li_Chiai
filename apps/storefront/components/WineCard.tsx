@@ -66,7 +66,7 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
             € {formattedPrice}
           </span>
           <span className="text-[10px] text-cellar-500 font-medium">
-            {product.unitPrice ? `${product.unitPrice} • IVA inc.` : "IVA inclusa"}
+            {product.unitPrice ? `${product.unitPrice} • ${dict.common.vatIncShort}` : dict.common.vatIncluded}
           </span>
         </div>
       </div>
@@ -77,12 +77,12 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
         <Link
           href={productUrl}
           className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
-          aria-label={`Visualizza scheda di ${product.title}`}
+          aria-label={`${dict.common.viewDetails}: ${product.title}`}
         >
           <div className="relative w-full h-full max-h-72 transition-transform duration-500 ease-out group-hover:scale-105">
             <Image
               src={product.image}
-              alt={`${product.title} - ${product.badge} di Cantina de Li Chiai`}
+              alt={`${product.title} - ${product.badge}, ${dict.common.brand}`}
               fill
               priority={priority}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

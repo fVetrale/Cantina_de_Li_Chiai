@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { localizeVariantTitle } from "@/lib/data/wine-copy";
 import Link from "next/link";
 import { ShoppingBag, Truck, Store, Lock } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
@@ -93,7 +94,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
                   {view.cart.lines.map((line) => (
                     <CartLineItem
                       key={line.id}
-                      line={line}
+                      line={{ ...line, variantTitle: localizeVariantTitle(line.variantTitle, currentLocale) }}
                       productHref={`/prodotti/${line.handle}${langQuery}`}
                       t={t}
                       cartT={{

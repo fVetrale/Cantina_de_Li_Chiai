@@ -2,17 +2,15 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getProductByHandle, getProducts, getRelatedProducts, getCategories } from "@/lib/data/products";
+import { getProductByHandle, getProducts, getCategories } from "@/lib/data/products";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { WineCard } from "@/components/WineCard";
-import { WineBottleGallery } from "@/components/WineBottleGallery";
+import { WineHeroGallery } from "@/components/WineHeroGallery";
+import { localizeWine } from "@/lib/data/wine-copy";
 import { ProductPurchaseSection } from "@/components/ProductPurchaseSection";
 import { ProductTabs } from "@/components/ProductTabs";
 import { AgeGateModal } from "@/components/AgeGateModal";
-import { Reveal } from "@/components/Reveal";
-import { RevealBlock } from "@/components/RevealBlock";
 import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 
 interface ProductPageProps {
@@ -49,11 +47,11 @@ export async function generateMetadata({
 
   if (result.status === "not_found") {
     return {
-      title: "Vino non trovato | Cantina de Li Chiai",
+      title: dict.pdp.notFoundMetaTitle,
     };
   }
 
-  const { product } = result;
+  const product = localizeWine(result.product, currentLocale);
 
   return {
     title: `${product.title} | ${dict.common.brand}`,
@@ -111,24 +109,26 @@ export default async function ProductDetailPage({
     );
   }
 
-  const { product } = result;
+  // Editorial copy in the page language (ADR 049); the data layer stays Italian.
+  const product = localizeWine(result.product, currentLocale);
 
-  const [relatedProducts, categories, catalog] = await Promise.all([
-    getRelatedProducts(product.handle),
-    getCategories(),
-    getProducts(),
-  ]);
+  // The other wines are reachable from the sticky wines bar: no "Scopri anche" cards (2026-11-08).
+  const [categories, catalog] = await Promise.all([getCategories(), getProducts()]);
   const langQuery = currentLocale === "en" ? "?lang=en" : "";
   // Every wine, for the sticky "variants" bar (ADR 045). Falls back to this wine alone.
   const allWines = catalog.status === "ok" && catalog.products.length > 0 ? catalog.products : [product];
-  const heroImage = product.images?.[0] || product.image;
+  // Hero photos (ADR 048): the large ambient photos only; the small bottle PNGs (354–400 px) would blur.
+  const allPhotos = product.images && product.images.length > 0 ? product.images : [product.image];
+  const largePhotos = allPhotos.filter((src) => !src.startsWith("/images/products/"));
+  const galleryImages = largePhotos.length > 0 ? largePhotos : allPhotos;
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-black selection:bg-black selection:text-white">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow">
-        {/* 1. Hero: chiaroscuro photograph, centered serif title, the wine on the right */}
+        {/* 1. Full-screen hero (ADR 048): the wine name on the left, the bottle photo selector on the right
+            (photo first on mobile). This is the only place where the photos appear. */}
         <section aria-label={product.title} className="relative overflow-hidden bg-black text-white">
           <div className="absolute inset-0">
             <Image
@@ -137,28 +137,35 @@ export default async function ProductDetailPage({
               fill
               priority
               sizes="100vw"
-              className="object-cover grayscale brightness-[0.35] contrast-125"
+              className="object-cover grayscale brightness-[0.3] contrast-125"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/80" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-black/70" />
           </div>
-          <div className="h-16 lg:h-[72px]" />
-          <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 py-14 lg:py-20 grid lg:grid-cols-12 items-center gap-10">
-            <div className="lg:col-span-8 text-center flex flex-col items-center animate-fade-in">
+          <div className="relative min-h-[100svh] mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 pt-24 lg:pt-[104px] pb-12 grid lg:grid-cols-12 items-center gap-10 lg:gap-16">
+            <div className="lg:col-span-5 order-last lg:order-first text-center lg:text-left flex flex-col items-center lg:items-start animate-fade-in">
               <p className="label-caps text-gold-400 mb-6">{product.appellation}</p>
               <h1 className="title-hero text-white">{product.title}</h1>
               <p className="mt-6 label-caps text-white/70">{product.category}</p>
+              <p className="mt-8 text-editorial text-white/75 max-w-md">{product.description}</p>
+              <a
+                href="#acquista"
+                className="mt-12 group flex flex-col items-center lg:items-start gap-3 font-sans text-[10px] font-bold uppercase tracking-[4px] text-white/80 hover:text-gold-400 transition-colors"
+              >
+                <span>{dict.pdp.scrollToOrder}</span>
+                <span aria-hidden="true" className="scroll-cue block h-10 w-px bg-white/60 group-hover:bg-gold-400" />
+              </a>
             </div>
-            <div className="hidden lg:block lg:col-span-4 animate-fade-in [animation-delay:250ms]">
-              <div className="relative aspect-[3/4] w-full max-w-xs ml-auto">
-                <Image
-                  src={heroImage}
-                  alt={product.title}
-                  fill
-                  priority
-                  sizes="320px"
-                  className="object-cover brightness-90"
-                />
-              </div>
+            <div className="lg:col-span-7 animate-fade-in [animation-delay:200ms]">
+              <WineHeroGallery
+                images={galleryImages}
+                title={product.title}
+                labels={{
+                  gallery: dict.pdp.galleryLabel,
+                  prev: dict.pdp.galleryPrev,
+                  next: dict.pdp.galleryNext,
+                  photo: dict.pdp.galleryPhoto,
+                }}
+              />
             </div>
           </div>
         </section>
@@ -190,9 +197,12 @@ export default async function ProductDetailPage({
           </ul>
         </nav>
 
-        {/* 3. Three columns: purchase · photograph · details (one column below 900px) */}
-        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 py-12 lg:py-20 grid grid-cols-1 min-[900px]:grid-cols-12 gap-10 xl:gap-14 items-start">
-          <div className="min-[900px]:col-span-4">
+        {/* 3. Two columns: purchase · details (one column below 900px) */}
+        <section
+          id="acquista"
+          className="scroll-mt-32 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 py-12 lg:py-20 grid grid-cols-1 min-[900px]:grid-cols-2 gap-12 xl:gap-20 items-start"
+        >
+          <div>
             <nav aria-label="Breadcrumb" className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 label-caps text-[11px]">
               <Link href={`/vini${langQuery}`} className="text-gray-600 hover:text-black transition-colors">
                 {dict.nav.wines}
@@ -210,55 +220,10 @@ export default async function ProductDetailPage({
             <ProductPurchaseSection product={product} dict={dict} />
           </div>
 
-          <div className="min-[900px]:col-span-4 min-[900px]:sticky min-[900px]:top-36">
-            <WineBottleGallery product={product} />
-          </div>
-
-          <div className="min-[900px]:col-span-4">
+          <div className="min-[900px]:pt-14">
             <ProductTabs product={product} dict={dict} />
           </div>
         </section>
-
-        {/* 4. 50/50: the land, with a link to the cellar story ("dynamic reveal", ADR 046) */}
-        <section aria-label={dict.meetUs.title} className="bg-gray-100">
-          <RevealBlock
-            reversed
-            curtainColor="#f5f5f5"
-            images={[{ src: "/images/vigneto.jpeg", alt: "Tenuta e vigneti di Cantina de Li Chiai ad Abatemarco" }]}
-            overlayLink={{ href: `/la-cantina${langQuery}`, label: dict.common.discover }}
-            mediaClassName="min-h-[320px] lg:min-h-[560px] h-full w-full"
-            contentClassName="px-6 sm:px-12 lg:px-20 py-16 lg:py-24 max-w-2xl"
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            fullBleed
-          >
-            <p className="text-reveal label-caps text-gold-700">{dict.meetUs.eyebrow}</p>
-            <h2 className="text-reveal mt-5 title-section">{dict.meetUs.title}</h2>
-            <p className="text-reveal mt-6 text-editorial text-gray-600 drop-cap">{dict.meetUs.description}</p>
-            <div className="text-reveal mt-10">
-              <Link href={`/la-cantina${langQuery}`} className="link-editorial text-black hover:text-gold-700">
-                {dict.meetUs.ctaStory}
-              </Link>
-            </div>
-          </RevealBlock>
-        </section>
-
-        {/* 5. Related wines */}
-        {relatedProducts.length > 0 && (
-          <Reveal>
-            <section className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 py-16 lg:py-24" aria-label="Vini correlati">
-              <div className="text-center max-w-xl mx-auto mb-12">
-                <span className="label-caps text-gold-700 block mb-3">Scopri Anche</span>
-                <h2 className="title-section mb-3">{dict.pdp.relatedTitle}</h2>
-                <p className="text-sm text-gray-600">{dict.pdp.relatedSubtitle}</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedProducts.map((relProduct) => (
-                  <WineCard key={relProduct.id} product={relProduct} dict={dict} />
-                ))}
-              </div>
-            </section>
-          </Reveal>
-        )}
       </main>
 
       <Footer dict={dict} />

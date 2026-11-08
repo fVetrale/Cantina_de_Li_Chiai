@@ -17,14 +17,14 @@ interface HeroSectionProps {
 export function HeroSection({ dict, langQuery = "" }: HeroSectionProps) {
   return (
     <section
-      aria-label="Presentazione Cantina de Li Chiai"
+      aria-label={dict.a11y.heroSection}
       className="relative min-h-[100svh] flex flex-col overflow-hidden bg-black text-white"
     >
       {/* Background: the vineyard in deep chiaroscuro */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/home_page.jpeg"
-          alt={dict.hero.imageAlt || "Tenuta e vigneti di Cantina de Li Chiai nel Parco Nazionale del Cilento"}
+          alt={dict.hero.imageAlt}
           fill
           priority
           sizes="100vw"
@@ -68,7 +68,7 @@ export function HeroSection({ dict, langQuery = "" }: HeroSectionProps) {
           <div className="relative aspect-[3/4] w-full max-w-sm ml-auto">
             <Image
               src="/images/VecchiaBottiglia.jpeg"
-              alt="La bottiglia di Chiai, Aglianico della famiglia, con l'etichetta storica di Abatemarco"
+              alt={dict.images.heroBottle}
               fill
               sizes="(min-width: 1024px) 384px, 0px"
               className="object-cover brightness-90"

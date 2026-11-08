@@ -13,14 +13,14 @@ export function FeaturesSection({ dict, className }: FeaturesSectionProps) {
   return (
     <section
       id="valori"
-      aria-label="I Valori e Servizi di Cantina de Li Chiai"
+      aria-label={dict.a11y.featuresSection}
       className={className || "py-16 bg-white border-y border-ivory-200"}
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="label-caps text-gold-700 block mb-4">
-            Eccellenza &amp; Garanzia
+            {dict.a11y.featuresEyebrow}
           </span>
           <h2 className="title-section mb-3">
             {dict.features.title}

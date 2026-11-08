@@ -5,9 +5,12 @@ import { Check, AlertCircle } from "lucide-react";
 import { selectShippingOptions, type CheckoutActionError } from "@/lib/actions/checkout";
 import type { ShippingGroup } from "@/lib/data/checkout";
 import type { Dictionary } from "@/lib/i18n";
+import { shippingDescription, shippingName } from "@/lib/shipping-labels";
 
 interface CheckoutShippingFormProps {
   t: Dictionary["checkout"];
+  /** Translated names of the known shipping options (ADR 049). */
+  labels: Dictionary["shipping"];
   groups: ShippingGroup[];
   /** Currently selected option id per shipping profile. */
   selected: Record<string, string>;
@@ -22,7 +25,7 @@ function formatEuro(amount: number) {
  * courier or pickup at the cellar (ADR 043). Prices come from Medusa (free-shipping rule
  * already applied).
  */
-export function CheckoutShippingForm({ t, groups, selected }: CheckoutShippingFormProps) {
+export function CheckoutShippingForm({ t, labels, groups, selected }: CheckoutShippingFormProps) {
   const [selection, setSelection] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = { ...selected };
     for (const group of groups) {
@@ -97,13 +100,15 @@ export function CheckoutShippingForm({ t, groups, selected }: CheckoutShippingFo
                 />
                 <span className="flex-1">
                   <span className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm font-semibold text-cellar-900">{option.name}</span>
+                    <span className="text-sm font-semibold text-cellar-900">{shippingName(labels, option.name, option.type?.code)}</span>
                     <span className="text-sm font-bold text-wine-950 whitespace-nowrap">
                       {amount === 0 ? t.free : `€ ${formatEuro(amount)}`}
                     </span>
                   </span>
                   {option.type?.description && (
-                    <span className="block text-xs text-cellar-600 mt-0.5">{option.type.description}</span>
+                    <span className="block text-xs text-cellar-600 mt-0.5">
+                      {shippingDescription(labels, option.type.description, option.type.code)}
+                    </span>
                   )}
                 </span>
               </label>

@@ -25,7 +25,7 @@ export function HomeHighlights({ dict, langQuery }: HomeHighlightsProps) {
           id="consegna"
           layout="stacked"
           curtainColor="#000000"
-          images={[{ src: "/images/VecchiaBottiglia.jpeg", alt: "La bottiglia di Chiai, Aglianico della famiglia, pronta per la spedizione" }]}
+          images={[{ src: "/images/VecchiaBottiglia.jpeg", alt: dict.images.deliveryBottle }]}
           overlayLink={{ href: `/vini${langQuery}`, label: dict.common.discover }}
           className="bg-black text-white"
           mediaClassName="aspect-[4/3]"
@@ -47,7 +47,7 @@ export function HomeHighlights({ dict, langQuery }: HomeHighlightsProps) {
           id="storia"
           layout="stacked"
           curtainColor="#f5f5f5"
-          images={[{ src: "/images/vigneto.jpeg", alt: "Tenuta e vigneti di Cantina de Li Chiai ad Abatemarco" }]}
+          images={[{ src: "/images/vigneto.jpeg", alt: dict.images.vineyard }]}
           overlayLink={{ href: `/la-cantina${langQuery}`, label: dict.common.discover }}
           className="bg-gray-100 text-black"
           mediaClassName="aspect-[4/3]"

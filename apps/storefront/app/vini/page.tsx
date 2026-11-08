@@ -3,6 +3,7 @@ import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getProducts, getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
 import { WinesCatalogView } from "@/components/WinesCatalogView";
+import { localizeCategoryName, localizeWine } from "@/lib/data/wine-copy";
 import { CatalogUnavailable } from "@/components/CatalogUnavailable";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
@@ -56,8 +57,8 @@ export default async function WinesPage(props: {
           // Keyed by the category: menu links to another category remount the selector with it chosen.
           <WinesCatalogView
             key={initialCategory || "none"}
-            products={catalog.products}
-            categories={categories}
+            products={catalog.products.map((p) => localizeWine(p, currentLocale))}
+            categories={categories.map((c) => ({ ...c, name: localizeCategoryName(c.handle, c.name, currentLocale) }))}
             dict={dict}
             initialCategory={initialCategory}
             langQuery={langQuery}

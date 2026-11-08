@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { localizeVariantTitle } from "@/lib/data/wine-copy";
 import Link from "next/link";
+import { shippingName } from "@/lib/shipping-labels";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ChevronLeft, MapPin } from "lucide-react";
@@ -71,7 +73,7 @@ export default async function OrderDetailPage(props: Props) {
                   <span className="flex-1 min-w-0 text-sm">
                     <span className="block font-semibold text-cellar-900">{item.product_title ?? item.title}</span>
                     <span className="text-xs text-cellar-500">
-                      {item.variant_title} × {item.quantity}
+                      {localizeVariantTitle(item.variant_title ?? "", locale)} × {item.quantity}
                     </span>
                   </span>
                   <span className="text-sm font-semibold whitespace-nowrap">
@@ -86,7 +88,7 @@ export default async function OrderDetailPage(props: Props) {
             {(result.data.shipping_methods ?? []).map((m) => (
               <div key={m.id} className="flex justify-between">
                 <dt className="text-cellar-700">
-                  {t.shipping}: {m.name}
+                  {t.shipping}: {shippingName(dict.shipping, m.name)}
                 </dt>
                 <dd className="font-semibold">{(m.amount ?? 0) === 0 ? t.free : `€ ${formatEuro(m.amount ?? 0)}`}</dd>
               </div>

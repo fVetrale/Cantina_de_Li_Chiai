@@ -116,6 +116,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
                     <p className="text-sm text-cellar-600">{t.shippingAfterAddress}</p>
                   ) : (
                     <CheckoutShippingForm
+                      labels={dict.shipping}
                       // Reset the local selection when the offered options change.
                       key={view.checkout.shippingGroups.flatMap((g) => g.options.map((o) => o.id)).join(",")}
                       t={t}

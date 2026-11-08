@@ -10,7 +10,7 @@ export function TickerBar({ dict }: TickerBarProps) {
 
   return (
     <aside
-      aria-label="Informazioni spedizioni e garanzie"
+      aria-label={dict.a11y.tickerLabel}
       className="relative z-10 w-full bg-black border-t border-white/10 py-3 px-3 sm:px-6 overflow-x-auto no-scrollbar"
     >
       <div

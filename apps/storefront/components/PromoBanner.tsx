@@ -11,14 +11,14 @@ export function PromoBanner({ dict }: PromoBannerProps) {
   return (
     <section
       id="promo"
-      aria-label="Confezioni regalo e degustazioni"
+      aria-label={dict.promoBanner.title}
       className="py-16 lg:py-24 bg-white"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* "Dynamic reveal" block (ADR 046): text left, photo right, black curtain */}
         <RevealBlock
           curtainColor="#000000"
-          images={[{ src: "/images/VecchiaBottiglia.jpeg", alt: "La bottiglia di Chiai, Aglianico della famiglia" }]}
+          images={[{ src: "/images/VecchiaBottiglia.jpeg", alt: dict.images.deliveryBottle }]}
           overlayLink={{ href: "/la-cantina#ritiro", label: dict.common.discover }}
           className="bg-black text-white p-8 sm:p-12 lg:p-16 gap-10"
           mediaClassName="aspect-[4/3] w-full max-w-md mx-auto lg:mr-0"
@@ -38,7 +38,7 @@ export function PromoBanner({ dict }: PromoBannerProps) {
             </Link>
             <div className="flex items-center gap-2 text-xs text-white/70">
               <ShieldCheck className="w-4 h-4 text-gold-400 shrink-0" />
-              <span>Consegna in 24/48h con imballi anti-rottura</span>
+              <span>{dict.a11y.deliveryNote}</span>
             </div>
           </div>
         </RevealBlock>

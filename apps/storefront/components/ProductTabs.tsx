@@ -30,10 +30,10 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
           <div className="space-y-8">
             <div className="max-w-2xl">
               <span className="label-caps text-gold-700 block mb-2">
-                Profilo Sensoriale
+                {dict.pdp.tastingEyebrow}
               </span>
               <h3 className="font-serif text-xl text-wine-950 mb-3">
-                L&apos;Esperienza nel Calice
+                {dict.pdp.tastingTitle}
               </h3>
               <p className="text-sm text-cellar-600 leading-relaxed font-sans">
                 {product.description}
@@ -51,7 +51,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                 </div>
                 <p className="text-xs sm:text-sm text-cellar-700 leading-relaxed">
                   {details?.tastingNotes.visual ||
-                    "Tonalità brillante e limpida con riflessi tipici del vitigno autoctono."}
+                    dict.pdp.fallbacks.visual}
                 </p>
               </div>
 
@@ -65,7 +65,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                 </div>
                 <p className="text-xs sm:text-sm text-cellar-700 leading-relaxed">
                   {details?.tastingNotes.olfactory ||
-                    "Bouquet ricco ed elegante con sentori tipici della macchia mediterranea."}
+                    dict.pdp.fallbacks.olfactory}
                 </p>
               </div>
 
@@ -79,7 +79,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                 </div>
                 <p className="text-xs sm:text-sm text-cellar-700 leading-relaxed">
                   {details?.tastingNotes.gustatory ||
-                    "Sorso armonico, fresco e minerale, con finale persistente e pulito."}
+                    dict.pdp.fallbacks.gustatory}
                 </p>
               </div>
             </div>
@@ -89,15 +89,13 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
           <div className="space-y-8">
             <div className="max-w-2xl">
               <span className="label-caps text-gold-700 block mb-2">
-                Geologia &amp; Natura
+                {dict.pdp.terroirEyebrow}
               </span>
               <h3 className="font-serif text-xl text-wine-950 mb-3">
-                Il Flysch del Parco Nazionale del Cilento
+                {dict.pdp.terroirTitle}
               </h3>
               <p className="text-sm text-cellar-600 leading-relaxed font-sans">
-                I vigneti di Cantina de Li Chiai sorgono su terreni flyschoidi millenari composti da
-                un&apos;alternanza di arenarie e marne argillose ricche di fossili e sali minerali,
-                modellati dal sole campano e dalle correnti del Mar Tirreno.
+                {dict.pdp.terroirText}
               </p>
             </div>
 
@@ -108,7 +106,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                 </span>
                 <p className="text-xs sm:text-sm text-cellar-800 font-medium leading-snug">
                   {details?.terroir.soil ||
-                    "Flysch Cilentano: arenarie e marne ricche di microelementi."}
+                    dict.pdp.fallbacks.soil}
                 </p>
               </div>
 
@@ -117,7 +115,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                   {dict.pdp.terroirLabels.altitude}
                 </span>
                 <p className="text-xs sm:text-sm text-cellar-800 font-medium leading-snug">
-                  {details?.terroir.altitude || "250 - 350 m s.l.m."}
+                  {details?.terroir.altitude || dict.pdp.fallbacks.altitude}
                 </p>
               </div>
 
@@ -126,7 +124,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                   {dict.pdp.terroirLabels.exposure}
                 </span>
                 <p className="text-xs sm:text-sm text-cellar-800 font-medium leading-snug">
-                  {details?.terroir.exposure || "Sud-Ovest verso il Tirreno"}
+                  {details?.terroir.exposure || dict.pdp.fallbacks.exposure}
                 </p>
               </div>
 
@@ -135,7 +133,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                   {dict.pdp.terroirLabels.harvest}
                 </span>
                 <p className="text-xs sm:text-sm text-cellar-800 font-medium leading-snug">
-                  {details?.terroir.harvest || "100% manuale in piccole cassette all'alba"}
+                  {details?.terroir.harvest || dict.pdp.fallbacks.harvest}
                 </p>
               </div>
 
@@ -144,7 +142,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
                   {dict.pdp.terroirLabels.aging}
                 </span>
                 <p className="text-xs sm:text-sm text-cellar-800 font-medium leading-snug">
-                  {details?.terroir.aging || "Affinamento controllato in cantina naturale."}
+                  {details?.terroir.aging || dict.pdp.fallbacks.aging}
                 </p>
               </div>
             </div>
@@ -154,7 +152,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
           <div className="space-y-6">
             <div className="max-w-2xl">
               <span className="label-caps text-gold-700 block mb-2">
-                Tavola &amp; Tradizione
+                {dict.pdp.pairingsEyebrow}
               </span>
               <h3 className="font-serif text-xl text-wine-950 mb-2">
                 {dict.pdp.pairingsTitle}
@@ -165,10 +163,7 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
             </div>
 
             <div className="grid grid-cols-1 gap-3 pt-1">
-              {(details?.pairings || [
-                "Mozzarella di Bufala Campana DOP",
-                "Piatti della tradizione campana e cilentana",
-              ]).map((pairing, idx) => (
+              {(details?.pairings || dict.pdp.fallbacks.pairings).map((pairing, idx) => (
                 <div
                   key={idx}
                   className="p-4 bg-ivory-50 border border-ivory-200 flex items-start gap-3"
@@ -186,10 +181,10 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
           <div className="space-y-6">
             <div className="max-w-2xl">
               <span className="label-caps text-gold-700 block mb-2">
-                Specifiche Enologiche
+                {dict.pdp.technicalEyebrow}
               </span>
               <h3 className="font-serif text-xl text-wine-950 mb-4">
-                Dati Tecnici &amp; Servizio
+                {dict.pdp.technicalTitle}
               </h3>
             </div>
 
@@ -233,13 +228,13 @@ export function ProductTabs({ product, dict }: ProductTabsProps) {
               <div className="py-3 flex items-start justify-between gap-4">
                 <span className="text-cellar-600">{dict.pdp.technicalLabels.glass}</span>
                 <span className="font-bold text-black text-right">
-                  {details?.technical.glass || "Calice da degustazione"}
+                  {details?.technical.glass || dict.pdp.fallbacks.glass}
                 </span>
               </div>
               <div className="py-3 flex items-start justify-between gap-4">
                 <span className="text-cellar-600">{dict.pdp.technicalLabels.potential}</span>
                 <span className="font-bold text-black text-right">
-                  {details?.technical.agingPotential || "Ottima evoluzione"}
+                  {details?.technical.agingPotential || dict.pdp.fallbacks.potential}
                 </span>
               </div>
               <div className="py-3 flex items-start justify-between gap-4">

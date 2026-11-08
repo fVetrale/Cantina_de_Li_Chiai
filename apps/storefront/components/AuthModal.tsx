@@ -11,7 +11,7 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: "login" | "register";
-  dict: Pick<Dictionary, "accountModal">;
+  dict: Pick<Dictionary, "accountModal" | "common">;
   currentLocale: Locale;
 }
 
@@ -96,7 +96,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
         <button
           type="button"
           onClick={onClose}
-          aria-label="Chiudi finestra"
+          aria-label={dict.common.closeDialog}
           className="absolute top-5 right-5 p-2 rounded-full text-cellar-400 hover:text-cellar-900 hover:bg-ivory-100 transition-colors"
         >
           <X className="w-5 h-5" />
@@ -134,7 +134,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                 required
                 value={forms.login.email}
                 onChange={(e) => forms.login.setEmail(e.target.value)}
-                placeholder="nome@dominio.it"
+                placeholder={dict.common.emailPlaceholder}
                 {...invalidProps("email")}
               />
               {fieldErrorText("email")}
@@ -272,7 +272,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                 required
                 value={forms.register.email}
                 onChange={(e) => forms.register.setEmail(e.target.value)}
-                placeholder="nome@dominio.it"
+                placeholder={dict.common.emailPlaceholder}
                 {...invalidProps("email")}
               />
               {fieldErrorText("email")}

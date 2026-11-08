@@ -66,7 +66,7 @@ export default async function EstatePage(props: {
         <header className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-72px)] flex flex-col overflow-hidden bg-black text-white">
           <Image
             src="/images/raccolta1.jpeg"
-            alt="Le mani di Antonio raccolgono un grappolo durante la vendemmia a Li Chiai"
+            alt={dict.images.estateHero}
             fill
             priority
             sizes="100vw"
@@ -112,7 +112,7 @@ export default async function EstatePage(props: {
           <RevealBlock
             className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 gap-14"
             curtainColor="#ffffff"
-            images={[{ src: "/images/raccolta.jpeg", alt: "La vendemmia a mano a Li Chiai" }]}
+            images={[{ src: "/images/raccolta.jpeg", alt: dict.images.harvest }]}
             overlayLink={{ href: "#galleria", label: dict.common.discover }}
             mediaClassName={frame}
             contentClassName="max-w-xl lg:ml-auto"
@@ -129,9 +129,9 @@ export default async function EstatePage(props: {
             reversed
             curtainColor="#f5f5f5"
             images={[
-              { src: "/images/lavorazione.jpeg", alt: "La lavorazione del vino in cantina" },
-              { src: "/images/produzione2.jpeg", alt: "Il lavoro in cantina durante la vinificazione" },
-              { src: "/images/uva.jpeg", alt: "L'uva appena raccolta" },
+              { src: "/images/lavorazione.jpeg", alt: dict.images.craft },
+              { src: "/images/produzione2.jpeg", alt: dict.images.craft2 },
+              { src: "/images/uva.jpeg", alt: dict.images.grapes },
             ]}
             sliderLabels={{ pause: dict.common.pauseSlideshow, play: dict.common.playSlideshow }}
             overlayLink={{ href: "#galleria", label: dict.common.discover }}
@@ -152,7 +152,7 @@ export default async function EstatePage(props: {
           <RevealBlock
             className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 gap-14"
             curtainColor="#ffffff"
-            images={[{ src: "/images/produzione.jpeg", alt: "Le bottiglie pronte in cantina" }]}
+            images={[{ src: "/images/produzione.jpeg", alt: dict.images.bottles }]}
             overlayLink={{ href: `/vini${langQuery}`, label: dict.common.discover }}
             mediaClassName={frame}
             contentClassName="max-w-xl lg:ml-auto"
@@ -173,7 +173,7 @@ export default async function EstatePage(props: {
             className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 gap-14"
             reversed
             curtainColor="#000000"
-            images={[{ src: "/images/vigneto.jpeg", alt: "I filari della vigna di famiglia" }]}
+            images={[{ src: "/images/vigneto.jpeg", alt: dict.images.familyVineyard }]}
             overlayLink={{ href: "#valori", label: dict.common.discover }}
             mediaClassName={frame}
             contentClassName="max-w-xl"

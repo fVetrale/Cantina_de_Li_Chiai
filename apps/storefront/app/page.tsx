@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
@@ -5,6 +6,18 @@ import { HeroSection } from "@/components/HeroSection";
 import { HomeHighlights } from "@/components/HomeHighlights";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
+
+export async function generateMetadata(props: {
+  searchParams?: Promise<{ lang?: string }>;
+}): Promise<Metadata> {
+  const searchParams = props.searchParams ? await props.searchParams : {};
+  const dict = getDictionary(searchParams.lang === "en" ? "en" : defaultLocale);
+  return {
+    title: dict.meta.homeTitle,
+    description: dict.meta.homeDescription,
+    openGraph: { title: dict.meta.homeTitle, description: dict.meta.homeDescription },
+  };
+}
 
 export default async function HomePage(props: {
   searchParams?: Promise<{ lang?: string }>;
