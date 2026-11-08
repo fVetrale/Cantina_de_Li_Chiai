@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
@@ -60,42 +61,50 @@ export default async function EstatePage(props: {
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow pt-16 lg:pt-[72px]">
-        {/* Chapter tabs: under the header on small screens */}
-        <ChapterNav chapters={chapters} label={t.chaptersLabel} className="lg:hidden sticky-under-header z-30 border-b" />
+        {/* Opening (2026-11-08): full-screen chiaroscuro photograph, title and subtitle, family facts as a
+            thin line and a scroll cue. No placeholder emblem, no breadcrumb (the header comes back on scroll up). */}
+        <header className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-72px)] flex flex-col overflow-hidden bg-black text-white">
+          <Image
+            src="/images/raccolta1.jpeg"
+            alt="Le mani di Antonio raccolgono un grappolo durante la vendemmia a Li Chiai"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[center_40%] grayscale-[60%] brightness-[0.42] contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/80" />
 
-        {/* Opening: emblem, title, family facts */}
-        <header className="min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-72px)] flex flex-col items-center justify-center text-center px-4 sm:px-6 py-20 bg-ivory">
-          {/* Placeholder emblem until the client provides the real one (see docs/restyling-editoriale.md) */}
-          <div
-            role="img"
-            aria-label={t.emblemPlaceholder}
-            className="mb-10 flex h-20 w-20 items-center justify-center rounded-full border border-black/30 font-serif text-2xl tracking-[2px] animate-fade-in"
-          >
-            LC
+          <div className="relative flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 py-20">
+            <p className="label-caps text-gold-400 mb-8 animate-fade-in">{t.eyebrow}</p>
+            <h1 className="title-page text-white max-w-5xl text-balance animate-fade-in">{t.title}</h1>
+            <p className="mt-8 text-editorial lg:text-[1.25rem] text-white/80 max-w-2xl animate-fade-in [animation-delay:200ms]">
+              {t.subtitle}
+            </p>
           </div>
-          <nav aria-label="Breadcrumbs" className="flex items-center gap-3 label-caps text-[11px] mb-6">
-            <Link href={`/${langQuery}`} className="text-gray-600 hover:text-black transition-colors">
-              {t.breadcrumbsHome}
-            </Link>
-            <span aria-hidden="true" className="text-gray-300">/</span>
-            <span className="text-gold-700" aria-current="page">{t.breadcrumbsCurrent}</span>
-          </nav>
-          <p className="label-caps text-gold-700 mb-6">{t.eyebrow}</p>
-          <h1 className="title-page max-w-4xl text-balance animate-fade-in">{t.title}</h1>
-          <p className="mt-8 text-editorial text-gray-600 max-w-2xl">{t.subtitle}</p>
-          <dl className="mt-14 grid grid-cols-3 gap-6 sm:gap-16">
-            {[
-              [t.stat1Number, t.stat1Label],
-              [t.stat2Number, t.stat2Label],
-              [t.stat3Number, t.stat3Label],
-            ].map(([n, l]) => (
-              <div key={n} className="flex flex-col items-center">
-                <dt className="font-serif text-xl sm:text-2xl">{n}</dt>
-                <dd className="mt-2 font-sans text-[10px] font-bold uppercase tracking-[3px] text-gray-600">{l}</dd>
-              </div>
-            ))}
-          </dl>
+
+          <div className="relative pb-8 lg:pb-24 px-4 sm:px-6 flex flex-col items-center gap-8 animate-fade-in [animation-delay:400ms]">
+            <dl className="flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-2 font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-[2px] sm:tracking-[3px] text-white/75">
+              {[
+                [t.stat1Number, t.stat1Label],
+                [t.stat2Number, t.stat2Label],
+                [t.stat3Number, t.stat3Label],
+              ].map(([n, l], i) => (
+                <div key={n} className="flex items-center gap-2 whitespace-nowrap">
+                  {i > 0 && <span aria-hidden="true" className="hidden sm:inline mr-4 text-white/30">·</span>}
+                  <dt className="text-white">{n}</dt>
+                  <dd className="text-white/60">{l}</dd>
+                </div>
+              ))}
+            </dl>
+            <a href="#terra" className="group flex flex-col items-center gap-3 font-sans text-[10px] font-bold uppercase tracking-[4px] text-white/80 hover:text-gold-400 transition-colors">
+              <span>{t.scrollCue}</span>
+              <span aria-hidden="true" className="scroll-cue block h-10 w-px bg-white/60 group-hover:bg-gold-400" />
+            </a>
+          </div>
         </header>
+
+        {/* Chapter tabs: under the header on small screens (after the opening) */}
+        <ChapterNav chapters={chapters} label={t.chaptersLabel} className="lg:hidden sticky-under-header z-30 border-b" />
 
         {/* Chapters 1–4: image + text blocks with the "dynamic reveal" effect (ADR 046), in zig-zag */}
         {/* 1. The land: text left, photo right */}

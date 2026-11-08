@@ -381,6 +381,29 @@ html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__m
   }
 }
 
+/* "Scorri" cue: a thin line that grows downwards, on a loop (disabled with reduced motion). */
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+.scroll-cue {
+  animation: scroll-cue 2.2s ease-in-out infinite;
+}
+
 /* Wines selector column (components/WinesCatalogView.tsx, ADR 047): slides in from the right,
    names follow one after the other. Replays on every category change (the column is keyed). */
 @keyframes selector-slide-in {

@@ -475,6 +475,7 @@ export const dictionaries = {
       ctaExploreWines: "Guarda i Nostri Vini",
       emblemPlaceholder: "Emblema provvisorio della cantina",
       chaptersLabel: "Capitoli della storia",
+      scrollCue: "Scorri",
       chapters: {
         land: "La Terra",
         craft: "Il Lavoro",
@@ -1197,6 +1198,7 @@ export const dictionaries = {
       ctaExploreWines: "Browse Our Wines",
       emblemPlaceholder: "Temporary cellar emblem",
       chaptersLabel: "Story chapters",
+      scrollCue: "Scroll",
       chapters: {
         land: "The Land",
         craft: "The Craft",
