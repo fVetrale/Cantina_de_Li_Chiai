@@ -115,12 +115,23 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 
 ## 6. Interfaccia e contenuti (audit grafico in programma) ⚪
 
+- [x] **Restyling editoriale** (nero, bianco, un solo oro; Bodoni Moda e Lato; scheda prodotto a tre colonne, "La
+      Cantina" a capitoli, selettore dei vini): fatto il 2026-11-05 (ADR 045). Dettagli e materiale da chiedere al cliente
+      (logo, etichetta storica, foto su fondo bianco, archivio) in **`docs/restyling-editoriale.md`**.
+
 - [ ] 🟡 **Audit completo** di responsive (telefono, tablet, desktop), pulsanti morti e testi ingannevoli — da fare dopo
       l'area riservata (deciso il 2026-11-05).
 - [ ] ⚪ Scheda prodotto: "consegna entro il …" con una data calcolata a caso, codice articolo di riserva finto,
       pulsante "Disponibile in Cantina" senza funzione.
-- [ ] ⚪ Testi italiani fissi anche nella versione inglese (scheda prodotto, pagina 404, `<html lang="it">`).
-- [ ] ⚪ Prezzi in formato italiano ("€ 24,00") anche nella versione inglese.
+- [x] Versione inglese completa (ADR 049): testi dei componenti, nomi di categorie e spedizioni, schede dei vini,
+      didascalie della galleria, titoli, `<html lang>`, corpo della 404.
+- [ ] 🟠 **Far rivedere al cliente le traduzioni inglesi delle schede dei vini** (scritte dallo sviluppatore, in
+      `lib/data/wine-copy.ts`) (ADR 049).
+- [ ] ⚪ Pagina 404 con `?lang=en`: intestazione e piè di pagina restano in italiano (solo il testo centrale è tradotto)
+      (ADR 049).
+- [ ] ⚪ Nuovi vini o descrizioni cambiate nel gestionale: aggiornare anche la versione inglese in
+      `lib/data/wine-copy.ts`, finché non si usa un modulo di traduzione (ADR 049).
+- [x] Prezzi in formato italiano ("€ 24,00") anche nella versione inglese: scelta confermata dal committente il 2026-11-08.
 - [ ] ⚪ Il contatore del carrello non gestisce numeri sopra 99.
 - [ ] ⚪ Prodotti creati in futuro dall'admin senza foto locale mostrerebbero l'immagine del Chiai Rosso: servono le
       foto caricate in Medusa e la configurazione di Next per le immagini esterne.

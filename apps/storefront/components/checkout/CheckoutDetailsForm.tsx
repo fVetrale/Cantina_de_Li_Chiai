@@ -94,7 +94,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
     const invalid = invalidFields.has(name);
     return (
       <div className={options.className}>
-        <label htmlFor={id} className="block text-xs font-semibold text-cellar-700 mb-1">
+        <label htmlFor={id} className="block font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600 mb-1">
           {label}
         </label>
         <input
@@ -109,8 +109,8 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
           required={options.required ?? true}
           aria-invalid={invalid}
           aria-describedby={invalid ? `${id}-error` : undefined}
-          className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:outline-none focus:ring-2 focus:ring-wine-800/30 ${
-            invalid ? "border-rose-500" : "border-ivory-300 focus:border-wine-800"
+          className={`w-full border px-0 py-2.5 text-sm text-black focus:outline-none ${
+ invalid ?"border-rose-500" : "border-ivory-300 focus:border-wine-800"
           }`}
         />
         {invalid && (
@@ -181,7 +181,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
 
       {savedAddresses.length > 0 && (
         <div className="sm:max-w-md">
-          <label htmlFor="checkout-saved-address" className="block text-xs font-semibold text-cellar-700 mb-1">
+          <label htmlFor="checkout-saved-address" className="block font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600 mb-1">
             {t.savedAddresses}
           </label>
           <select
@@ -193,7 +193,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
               setShipping(pickAddress(chosen));
               if (chosen.phone) setPhone(chosen.phone);
             }}
-            className="w-full rounded-xl border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
+            className="w-full border px-0 py-2.5 text-sm text-black focus:outline-none"
           >
             <option value="" disabled>
               {t.savedAddressesPlaceholder}
@@ -210,25 +210,25 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
       {addressFields("shipping", shipping, setShipping, "shipping")}
 
       <div>
-        <p className="block text-xs font-semibold text-cellar-700 mb-1">{t.country}</p>
-        <p className="text-sm text-cellar-900">
-          {t.countryItaly} <span className="text-xs text-cellar-500">— {t.italyOnlyNote}</span>
+        <p className="block font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600 mb-1">{t.country}</p>
+        <p className="text-sm text-black">
+          {t.countryItaly} <span className="text-xs text-gray-600">— {t.italyOnlyNote}</span>
         </p>
       </div>
 
-      <label className="flex items-center gap-2.5 text-sm text-cellar-800 cursor-pointer">
+      <label className="flex items-center gap-2.5 text-sm text-black cursor-pointer">
         <input
           type="checkbox"
           checked={billingSame}
           onChange={(e) => setBillingSame(e.target.checked)}
-          className="w-4 h-4 rounded border-ivory-400 text-wine-900 focus:ring-wine-800"
+          className="w-4 h-4 accent-black"
         />
         {t.billingSame}
       </label>
 
       {!billingSame && (
-        <fieldset className="space-y-4 rounded-2xl border border-ivory-200 p-4">
-          <legend className="px-1 text-sm font-semibold text-cellar-900">{t.billingTitle}</legend>
+        <fieldset className="space-y-4 bg-gray-100 p-6">
+          <legend className="float-left w-full mb-2 label-caps text-black">{t.billingTitle}</legend>
           {addressFields("billing", billing, setBilling, "billing")}
         </fieldset>
       )}
@@ -237,7 +237,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-full bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+          className="inline-flex items-center justify-center bg-black px-8 py-4 label-caps text-white hover:bg-gold-700 transition-colors duration-300 disabled:opacity-60"
         >
           {isPending ? t.saving : t.saveDetails}
         </button>

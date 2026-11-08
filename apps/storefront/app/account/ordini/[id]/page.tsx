@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { localizeVariantTitle } from "@/lib/data/wine-copy";
 import Link from "next/link";
+import { shippingName } from "@/lib/shipping-labels";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ChevronLeft, MapPin } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories, getLocalProductImage } from "@/lib/data/products";
 import { requireCustomer } from "@/lib/data/account-guard";
@@ -43,38 +44,37 @@ export default async function OrderDetailPage(props: Props) {
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="orders">
-      <Link href={`/account/ordini${lang}`} className="mb-4 inline-flex items-center gap-1 text-xs font-semibold text-wine-900 underline">
-        <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
+      <Link href={`/account/ordini${lang}`} className="mb-10 link-editorial text-black hover:text-gold-700">
         {t.backToOrders}
       </Link>
 
       {!result.ok ? (
         <CatalogUnavailable dict={dict} retryHref={`/account/ordini/${encodeURIComponent(id)}${lang}`} />
       ) : (
-        <section aria-labelledby="order-title" className="rounded-2xl bg-white border border-ivory-200 shadow-sm p-6 sm:p-7 space-y-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 id="order-title" className="font-serif text-2xl font-bold text-wine-950">
+        <section aria-labelledby="order-title" className="space-y-10 max-w-4xl">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <h2 id="order-title" className="title-section">
               {t.orderNumber} {result.data.display_id ? `#${result.data.display_id}` : "—"}
             </h2>
             <OrderStatusBadge status={toStatusKey(result.data.status, result.data.fulfillment_status)} t={t} />
-            <span className="text-sm text-cellar-500">{formatDate(result.data.created_at, locale)}</span>
+            <span className="text-sm text-gray-600">{formatDate(result.data.created_at, locale)}</span>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-cellar-900 mb-2">{t.products}</h3>
-            <ul className="divide-y divide-ivory-200">
+            <h3 className="label-caps text-black mb-4">{t.products}</h3>
+            <ul className="border-t border-black">
               {(result.data.items ?? []).map((item) => (
-                <li key={item.id} className="flex items-center gap-3 py-3">
-                  <span className="relative w-10 h-12 shrink-0 rounded-lg bg-ivory-50 border border-ivory-200 overflow-hidden">
-                    <Image src={getLocalProductImage(item.product_handle ?? "")} alt="" fill sizes="40px" className="object-contain p-0.5" />
+                <li key={item.id} className="flex items-center gap-5 py-5 border-b border-ivory-300">
+                  <span className="relative w-14 h-20 shrink-0 bg-gray-100 overflow-hidden">
+                    <Image src={getLocalProductImage(item.product_handle ?? "")} alt="" fill sizes="56px" className="object-cover" />
                   </span>
                   <span className="flex-1 min-w-0 text-sm">
-                    <span className="block font-semibold text-cellar-900">{item.product_title ?? item.title}</span>
-                    <span className="text-xs text-cellar-500">
-                      {item.variant_title} × {item.quantity}
+                    <span className="block font-serif text-xl text-black">{item.product_title ?? item.title}</span>
+                    <span className="font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600">
+                      {localizeVariantTitle(item.variant_title ?? "", locale)} × {item.quantity}
                     </span>
                   </span>
-                  <span className="text-sm font-semibold whitespace-nowrap">
+                  <span className="font-serif text-lg whitespace-nowrap">
                     € {formatEuro((item.unit_price ?? 0) * item.quantity)}
                   </span>
                 </li>
@@ -82,29 +82,28 @@ export default async function OrderDetailPage(props: Props) {
             </ul>
           </div>
 
-          <dl className="space-y-1.5 border-t border-ivory-200 pt-4 text-sm">
+          <dl className="space-y-2 bg-gray-100 p-6 lg:p-8 text-sm max-w-md ml-auto">
             {(result.data.shipping_methods ?? []).map((m) => (
               <div key={m.id} className="flex justify-between">
-                <dt className="text-cellar-700">
-                  {t.shipping}: {m.name}
+                <dt className="text-gray-600">
+                  {t.shipping}: {shippingName(dict.shipping, m.name)}
                 </dt>
                 <dd className="font-semibold">{(m.amount ?? 0) === 0 ? t.free : `€ ${formatEuro(m.amount ?? 0)}`}</dd>
               </div>
             ))}
-            <div className="flex justify-between items-baseline border-t border-ivory-200 pt-3 mt-2">
-              <dt className="font-semibold text-cellar-900">{t.total}</dt>
-              <dd className="font-serif text-2xl font-bold text-wine-950">€ {formatEuro(result.data.total ?? 0)}</dd>
+            <div className="flex justify-between items-baseline border-t border-ivory-400 pt-4 mt-3">
+              <dt className="label-caps text-black">{t.total}</dt>
+              <dd className="font-serif text-3xl">€ {formatEuro(result.data.total ?? 0)}</dd>
             </div>
           </dl>
-          <p className="text-[11px] text-cellar-500 text-right -mt-4">{t.ivaIncluded}</p>
+          <p className="text-xs text-gray-600 text-right -mt-8">{t.ivaIncluded}</p>
 
           {result.data.shipping_address?.address_1 && (
             <div>
-              <h3 className="flex items-center gap-1.5 text-sm font-semibold text-cellar-900 mb-1">
-                <MapPin className="w-4 h-4 text-wine-900" aria-hidden="true" />
+              <h3 className="label-caps text-black mb-3">
                 {t.shippingAddress}
               </h3>
-              <address className="not-italic text-sm text-cellar-700">
+              <address className="not-italic text-sm text-gray-600 leading-relaxed">
                 {result.data.shipping_address.first_name} {result.data.shipping_address.last_name}
                 <br />
                 {result.data.shipping_address.address_1}

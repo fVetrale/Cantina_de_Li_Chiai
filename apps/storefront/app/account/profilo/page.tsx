@@ -29,8 +29,8 @@ export default async function ProfilePage(props: Props) {
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="profile">
-      <section aria-labelledby="profile-title" className="rounded-2xl bg-white border border-ivory-200 shadow-sm p-6 sm:p-7">
-        <h2 id="profile-title" className="font-serif text-2xl font-bold text-wine-950 mb-5">
+      <section aria-labelledby="profile-title" className="max-w-5xl">
+        <h2 id="profile-title" className="title-section mb-8 pb-6 border-b border-black">
           {t.profileTitle}
         </h2>
         {profile.ok ? (

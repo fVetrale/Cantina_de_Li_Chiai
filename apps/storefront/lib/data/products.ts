@@ -628,14 +628,6 @@ export async function getProductByHandle(handle: string): Promise<ProductResult>
   return product ? { status: "ok", product } : { status: "not_found" }
 }
 
-export async function getRelatedProducts(currentHandle: string): Promise<WineProduct[]> {
-  const result = await getProducts()
-  if (result.status !== "ok") {
-    return []
-  }
-  return result.products.filter((p) => p.handle !== currentHandle).slice(0, 3)
-}
-
 export async function getCategories(): Promise<WineCategory[]> {
   const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
   const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""

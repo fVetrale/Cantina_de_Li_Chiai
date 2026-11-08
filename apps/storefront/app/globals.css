@@ -1,59 +1,80 @@
 @import "tailwindcss";
 
 @theme {
-  /* Rosso Aglianico del Cilento */
-  --color-wine-950: #24090e;
-  --color-wine-900: #3d0f18;
-  --color-wine-800: #521521;
-  --color-wine-700: #691c2b;
-  --color-wine-600: #842537;
-  --color-wine-500: #9e3246;
+  /*
+   * Editorial palette (ADR 045): black and white, photography, one gold accent.
+   * Base values from the design brief. The older families (wine, cellar, ivory, gold) are
+   * kept as NAMES so existing classes keep working, but they now point at this palette.
+   */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-gold: #a18e56; /* accent on dark backgrounds and large elements (6.5:1 on black) */
+  --color-gold-text: #776739; /* same gold, darker: small text on light backgrounds (AA: 5.5 white, 4.9 ivory) */
+  --color-ivory: #f1f1ec;
+  --color-gray-100: #f5f5f5;
+  --color-gray-300: #bdbdbd; /* borders and disabled elements only: 1.9:1 is not readable text */
+  --color-gray-500: #757575; /* inactive menu items as text (4.6:1 on white) */
+  --color-gray-600: #666666;
 
-  /* Verde Oliva del Parco Nazionale del Cilento */
+  /* Former "wine" brand color → blacks (buttons, titles, dark sections) */
+  --color-wine-950: #000000;
+  --color-wine-900: #0a0a0a;
+  --color-wine-800: #1a1a1a;
+  --color-wine-700: #262626;
+  --color-wine-600: #333333;
+  --color-wine-500: #4d4d4d;
+  --color-wine-300: #bdbdbd;
+
+  /* Status only: success (olive: added to cart, stock available). Muted, never decorative. */
   --color-olive-900: #1c261e;
   --color-olive-800: #2a392d;
   --color-olive-700: #394d3d;
   --color-olive-600: #4c6651;
   --color-olive-500: #618167;
 
-  /* Terracotta & Arenaria Cilentana (Naturale, non eccessivo) */
-  --color-terracotta-800: #7a3519;
-  --color-terracotta-700: #994421;
-  --color-terracotta-600: #b8552c;
-  --color-terracotta-500: #cf693c;
-  --color-terracotta-400: #de835b;
-  --color-terracotta-300: #eaa180;
-  --color-terracotta-100: #fae4da;
+  /* Former "terracotta" was only decorative: it now follows the single gold accent. */
+  --color-terracotta-800: #776739;
+  --color-terracotta-700: #776739;
+  --color-terracotta-600: #776739;
+  --color-terracotta-500: #a18e56;
+  --color-terracotta-400: #a18e56;
+  --color-terracotta-300: #cfc39e;
+  --color-terracotta-100: #ede8da;
 
-  /* Oro anticato discreto */
-  --color-gold-700: #7d591c;
-  --color-gold-600: #9c7126;
-  --color-gold-500: #b88732;
-  --color-gold-400: #cca04d;
-  --color-gold-300: #dec076;
-  --color-gold-200: #ebd8a4;
-  --color-gold-100: #f7edd4;
+  /* Gold: the only accent. 700/600 are the AA text variant, 500/400 the brief's gold. */
+  --color-gold-700: #776739;
+  --color-gold-600: #776739;
+  --color-gold-500: #a18e56;
+  --color-gold-400: #a18e56;
+  --color-gold-300: #b5a46e;
+  --color-gold-200: #cfc39e;
+  --color-gold-100: #ede8da;
 
-  /* Pietra Cilentana & Notte degli Alburni */
-  --color-cellar-950: #0d0c0c;
-  --color-cellar-900: #171615;
-  --color-cellar-800: #22201e;
-  --color-cellar-700: #302d2a;
-  --color-cellar-600: #423e3b;
+  /* Former "cellar" stone → black text and grays */
+  --color-cellar-950: #000000;
+  --color-cellar-900: #000000;
+  --color-cellar-800: #1a1a1a;
+  --color-cellar-700: #333333;
+  --color-cellar-600: #666666;
+  --color-cellar-500: #757575;
+  --color-cellar-400: #9e9e9e;
+  --color-cellar-300: #bdbdbd;
+  --color-cellar-200: #e0e0e0;
 
-  /* Sfondo Pergamena / Arenaria chiara */
-  --color-ivory-50: #fbf9f5;
-  --color-ivory-100: #f4efe5;
-  --color-ivory-200: #eae1d2;
-  --color-ivory-300: #dcd0bc;
+  /* Former "ivory" parchment → white page, light gray blocks, ivory secondary */
+  --color-ivory-50: #ffffff;
+  --color-ivory-100: #f5f5f5;
+  --color-ivory-200: #f1f1ec;
+  --color-ivory-300: #e0e0e0;
+  --color-ivory-400: #bdbdbd;
 
-  --font-serif: var(--font-serif), Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-serif), "Bodoni Moda", Didot, "Times New Roman", Times, serif;
+  --font-sans: var(--font-sans), Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: #fbf9f5;
-  --foreground: #1c1a19;
+  --background: #ffffff;
+  --foreground: #000000;
 }
 
 html {
@@ -70,27 +91,385 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Natural Cilento selection */
 ::selection {
-  background-color: #521521;
-  color: #f7edd4;
+  background-color: #000000;
+  color: #ffffff;
 }
 
-/* Subtle organic gradients */
-.bg-gradient-wine {
-  background: linear-gradient(135deg, #3d0f18 0%, #171615 100%);
+/* Auto-hiding header (Navbar.tsx, ADR 047): sticky bars under it follow it up and down. */
+:root {
+  --header-offset: 4rem;
+}
+@media (min-width: 64rem) {
+  :root {
+    --header-offset: 72px;
+  }
+}
+html[data-header-hidden] {
+  --header-offset: 0px;
+}
+.sticky-under-header {
+  position: sticky;
+  top: var(--header-offset);
+  transition: top 300ms ease-out;
 }
 
-.bg-gradient-olive {
-  background: linear-gradient(135deg, #2a392d 0%, #171615 100%);
+/* Visible keyboard focus everywhere (WCAG 2.4.7). */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
 }
 
-.bg-gradient-gold {
-  background: linear-gradient(135deg, #b88732 0%, #cca04d 50%, #9c7126 100%);
+/* Editorial type scale (ADR 045): Bodoni Moda titles, Lato uppercase labels. */
+@utility label-caps {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
 
-.bg-gradient-terracotta {
-  background: linear-gradient(135deg, #994421 0%, #b8552c 50%, #7a3519 100%);
+@utility title-hero {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+@utility title-section {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 3vw, 2.0625rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+@utility text-editorial {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+/* "Scopri di più" links: Lato uppercase preceded by a thin diagonal line (ADR 045). */
+@utility link-editorial {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-left: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  transition: color 200ms ease;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    top: 50%;
+    width: 1px;
+    height: 1rem;
+    background: currentColor;
+    opacity: 0.5;
+    transform: translateY(-50%) rotate(30deg);
+  }
+}
+
+/* Slightly enlarged first letter in narrative sections. */
+@utility drop-cap {
+  &::first-letter {
+    float: left;
+    font-family: var(--font-serif);
+    font-size: 3.4em;
+    line-height: 0.85;
+    padding: 0.08em 0.12em 0 0;
+  }
+}
+
+/* Large full-screen section titles (about 72px). */
+@utility title-page {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.5px;
+}
+
+/* ── Image + text "dynamic reveal" (components/RevealBlock.tsx, ADR 046) ──────────────────
+   Server render: armed (hidden). JS activates it once (also when already on screen at load).
+   Safety nets: <noscript> style in app/layout.tsx, and the fail-safe below if JS never runs. */
+.reveal-block[data-state="armed"] {
+  opacity: 0;
+}
+.reveal-block[data-state="active"] {
+  opacity: 1;
+  transition: opacity 1.4s ease;
+}
+@keyframes reveal-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"],
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .text-reveal {
+  animation: reveal-failsafe 0.6s ease 4s forwards;
+}
+html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__media::before {
+  animation: reveal-failsafe 0.6s ease 4s forwards;
+  opacity: 0;
+}
+
+/* Text: slight 3D rotation, 0.2 s after the block */
+.reveal-block__content {
+  perspective: 800px;
+}
+.reveal-block[data-state="armed"] .text-reveal {
+  opacity: 0;
+  transform: rotateY(14deg) translateY(-3px);
+}
+.reveal-block[data-state="active"] .text-reveal {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.56s ease 0.2s,
+    transform 0.56s ease 0.2s;
+}
+
+/* Photo: slow zoom */
+.reveal-block__image {
+  transition:
+    transform 1.4s ease-in-out,
+    opacity 0.5s ease;
+}
+
+/* Curtain in the section color, anchored on the outer side, from 768 px */
+@media (min-width: 48rem) {
+  .reveal-block__media::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background: var(--reveal-bg);
+    z-index: 2;
+    pointer-events: none;
+    transform: translateX(100%);
+  }
+  .reveal-block[data-reversed] .reveal-block__media::before {
+    right: auto;
+    left: 0;
+    transform: translateX(-100%);
+  }
+  .reveal-block[data-state="armed"] .reveal-block__media::before {
+    transform: none;
+  }
+  .reveal-block[data-state="active"] .reveal-block__media::before {
+    transform: translateX(100%);
+    transition: transform 2.1s ease;
+  }
+  .reveal-block[data-reversed][data-state="active"] .reveal-block__media::before {
+    transform: translateX(-100%);
+  }
+}
+
+/* Side strip with a link (ivory, almost opaque, so the black label stays AA on any photo) */
+.reveal-block__overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 21.5%;
+  z-index: 1;
+  background: rgb(241 241 236 / 0.92);
+  transform: translateX(100%);
+  transition: transform 0.35s ease-in-out;
+}
+@media (min-width: 48rem) {
+  .reveal-block__overlay {
+    width: 12.3%;
+    min-width: 3.5rem;
+  }
+}
+.reveal-block[data-reversed] .reveal-block__overlay {
+  right: auto;
+  left: 0;
+  transform: translateX(-100%);
+}
+.reveal-block__overlay:focus-visible {
+  transform: none;
+  outline-offset: -4px;
+}
+.reveal-block__overlay-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #000;
+  transition: color 0.3s ease-out;
+}
+.reveal-block__overlay-label::before {
+  content: "";
+  width: 0;
+  height: 0.9rem;
+  border-left: 1px solid currentColor;
+  transform: skewX(-30deg);
+}
+.reveal-block__overlay-plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  font-weight: 400;
+  line-height: 1;
+}
+.reveal-block__overlay:hover .reveal-block__overlay-label,
+.reveal-block__overlay:focus-visible .reveal-block__overlay-label {
+  color: var(--color-gold-text);
+}
+
+@media (hover: hover) {
+  .reveal-block__media:hover .reveal-block__overlay {
+    transform: none;
+    transition-duration: 0.7s;
+  }
+  .reveal-block__media:hover .reveal-block__image {
+    transform: scale(1.3);
+    transition:
+      transform 5s ease-in-out,
+      opacity 0.5s ease;
+  }
+}
+/* Touch screens: strip always visible, lighter automatic zoom (1.1) */
+@media (hover: none) {
+  .reveal-block__overlay,
+  .reveal-block[data-reversed] .reveal-block__overlay {
+    transform: none;
+  }
+  .reveal-block[data-state="active"] .reveal-block__image {
+    transform: scale(1.1);
+    transition:
+      transform 5s ease-in-out,
+      opacity 0.5s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-block,
+  .reveal-block .text-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .reveal-block__media::before {
+    display: none;
+  }
+  .reveal-block__image {
+    transform: none !important;
+  }
+}
+
+/* "Scorri" cue: a thin line that grows downwards, on a loop (disabled with reduced motion). */
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+.scroll-cue {
+  animation: scroll-cue 2.2s ease-in-out infinite;
+}
+
+/* Editorial form fields (reserved area, login, ADR 050): underlined, square, transparent.
+   Scoped with .form-editorial so the forms' markup and logic stay unchanged. */
+.form-editorial :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="date"], input:not([type]), select, textarea) {
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: var(--color-gray-300);
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  transition: border-color 200ms ease;
+}
+.form-editorial :is(input, select, textarea):focus {
+  border-color: #000000;
+  box-shadow: none;
+}
+.form-editorial :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: #be123c;
+}
+
+/* Wines selector column (components/WinesCatalogView.tsx, ADR 047): slides in from the right,
+   names follow one after the other. Replays on every category change (the column is keyed). */
+@keyframes selector-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.selector-column {
+  animation: selector-slide-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.selector-item {
+  animation: selector-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-shown {
+  opacity: 1;
+  transform: none;
+}
+
+/* Gentle entrance animations, disabled for users who prefer reduced motion. */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in-up 900ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

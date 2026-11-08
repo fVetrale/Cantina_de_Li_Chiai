@@ -160,14 +160,15 @@ export function ProductPurchaseSection({
     <div className="space-y-5 text-cellar-900">
       {/* 1. Brand / Winery Header */}
       <div>
-        <span className="text-xs font-extrabold uppercase tracking-widest text-[#1e3a3a] block mb-1">
+        <span className="label-caps text-gray-600 block mb-2">
           {dict.common.brand}
         </span>
-        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-wine-950 leading-tight">
+        {/* The page h1 is in the product hero (ADR 045). */}
+        <h2 className="font-serif text-3xl lg:text-4xl text-black leading-tight">
           {product.title}
-        </h1>
+        </h2>
         <div className="text-xs text-cellar-500 font-sans mt-2">
-          Codice Articolo:{" "}
+          {dict.pdp.skuLabel}:{" "}
           <span className="text-cellar-700 font-mono">
             {product.sku || "VFB00021 2025750"}
           </span>
@@ -179,17 +180,17 @@ export function ProductPurchaseSection({
 
       {/* 2. Dynamic Price Row (Updates with Selected Quantity) */}
       <div className="flex items-baseline gap-3 flex-wrap">
-        <span className="font-serif text-3xl sm:text-4xl font-bold text-wine-950">
+        <span className="font-serif text-3xl sm:text-4xl text-black">
           € {formattedTotalPrice}
         </span>
         {product.unitPrice && (
-          <span className="text-xs text-cellar-600 font-medium bg-ivory-100 px-2.5 py-1 rounded-md border border-ivory-300">
-            {product.unitPrice} • IVA inc.
+          <span className="text-xs text-cellar-600 font-medium bg-ivory-100 px-2.5 py-1 border border-ivory-300">
+            {product.unitPrice} • {dict.common.vatIncShort}
           </span>
         )}
         {quantity > 1 && (
           <span className="text-xs text-cellar-500 font-medium">
-            (€ {formattedUnitPrice} / {product.category === "vini" ? "bottiglia" : "pz."} • {quantity} {product.category === "vini" ? "bt." : "pz."})
+            (€ {formattedUnitPrice} / {dict.pdp.perBottle} • {quantity} {dict.pdp.bottlesShort})
           </span>
         )}
       </div>
@@ -202,18 +203,18 @@ export function ProductPurchaseSection({
             ref={triggerRef}
             type="button"
             onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-            aria-label="Seleziona quantità di bottiglie"
+            aria-label={dict.pdp.selectQuantity}
             aria-expanded={isPopoverOpen}
-            className={`h-12 px-4 rounded-full border bg-white shadow-sm flex items-center justify-between gap-3 text-sm font-semibold text-cellar-900 transition-all hover:bg-ivory-50 shrink-0 ${
+            className={`h-12 px-4 border bg-white flex items-center justify-between gap-3 text-sm font-semibold text-cellar-900 transition-all hover:bg-ivory-50 shrink-0 ${
               isPopoverOpen
-                ? "border-[#72182b] ring-2 ring-[#72182b]/20"
-                : "border-ivory-300 hover:border-wine-300"
+                ? "border-black"
+                : "border-ivory-400 hover:border-black"
             }`}
           >
             <span className="w-5 text-center font-bold">{quantity}</span>
             <ChevronDown
               className={`w-3.5 h-3.5 text-cellar-500 transition-transform duration-200 ${
-                isPopoverOpen ? "rotate-180 text-[#72182b]" : ""
+                isPopoverOpen ? "rotate-180 text-black" : ""
               }`}
             />
           </button>
@@ -224,10 +225,10 @@ export function ProductPurchaseSection({
             onClick={handleAddToCart}
             disabled={isSoldOut || exceedsStock || isPending}
             aria-busy={isPending}
-            className={`h-12 flex-1 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase flex items-center justify-center gap-2.5 transition-all duration-300 shadow-md active:scale-98 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`h-12 flex-1 label-caps flex items-center justify-center gap-2.5 transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-60 ${
               isAdded
-                ? "bg-emerald-700 text-white shadow-emerald-700/30"
-                : "bg-[#72182b] hover:bg-[#581321] text-white hover:shadow-lg"
+                ? "bg-olive-700 text-white"
+                : "bg-black hover:bg-gold-700 text-white"
             }`}
           >
             {isSoldOut ? (
@@ -236,14 +237,14 @@ export function ProductPurchaseSection({
               <span>{t.adding}</span>
             ) : isAdded ? (
               <>
-                <Check className="w-4 h-4 text-emerald-200" />
+                <Check className="w-4 h-4" />
                 <span>
                   {t.added} ({quantity})
                 </span>
               </>
             ) : (
               <>
-                <ShoppingBag className="w-4 h-4 text-gold-300" />
+                <ShoppingBag className="w-4 h-4" />
                 <span>{t.addToCart}</span>
               </>
             )}
@@ -279,14 +280,14 @@ export function ProductPurchaseSection({
         {isPopoverOpen && (
           <div
             ref={popoverRef}
-            className="absolute left-0 top-full mt-2 z-40 w-full max-w-sm sm:max-w-md rounded-2xl bg-white border-2 border-[#72182b] shadow-2xl p-4 sm:p-5 animate-fadeIn"
+            className="absolute left-0 top-full mt-2 z-40 w-full max-w-sm sm:max-w-md bg-white border-2 border-black shadow-2xl p-4 sm:p-5 animate-fadeIn"
           >
             {/* Popover Arrow Indicator (Pointing Up to [ 1 ˅ ]) */}
-            <div className="absolute -top-2 left-6 w-3.5 h-3.5 bg-white border-t-2 border-l-2 border-[#72182b] rotate-45" />
+            <div className="absolute -top-2 left-6 w-3.5 h-3.5 bg-white border-t-2 border-l-2 border-black rotate-45" />
 
             {/* Title */}
             <h4 className="font-sans text-sm sm:text-base font-semibold text-cellar-900 mb-3">
-              Scegli la quantità di bottiglie da aggiungere al carrello:
+              {dict.pdp.quantityTitle}
             </h4>
 
             {/* Thin Horizontal Divider */}
@@ -300,15 +301,15 @@ export function ProductPurchaseSection({
                   type="button"
                   onClick={() => handleSelectQuantity(preset)}
                   disabled={preset > maxQuantity}
-                  className={`disabled:cursor-not-allowed disabled:opacity-35 flex items-center justify-center gap-1.5 py-2.5 px-1.5 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
+                  className={`disabled:cursor-not-allowed disabled:opacity-35 flex items-center justify-center gap-1.5 py-2.5 px-1.5 border text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
                     quantity === preset
-                      ? "border-2 border-[#72182b] text-[#72182b] bg-[#72182b]/5 shadow-sm font-bold"
-                      : "border-ivory-300 hover:border-wine-300 text-cellar-700 hover:bg-ivory-50"
+                      ? "border-2 border-black text-black bg-ivory-100 shadow-sm font-bold"
+                      : "border-ivory-300 hover:border-black text-cellar-700 hover:bg-ivory-50"
                   }`}
                 >
                   <BottleIcon
                     className={`w-3.5 h-4.5 ${
-                      quantity === preset ? "text-[#72182b]" : "text-[#72182b]/80"
+                      quantity === preset ? "text-black" : "text-black/80"
                     }`}
                   />
                   <span>x {preset}</span>
@@ -321,9 +322,9 @@ export function ProductPurchaseSection({
               <button
                 type="button"
                 onClick={() => setIsCustomQtyMode(true)}
-                className="text-xs font-bold uppercase tracking-wider underline text-cellar-900 hover:text-[#72182b] transition-colors inline-block pt-1"
+                className="text-xs font-bold uppercase tracking-wider underline text-cellar-900 hover:text-black transition-colors inline-block pt-1"
               >
-                Quantità Personalizzata
+                {dict.pdp.quantityCustom}
               </button>
             ) : (
               <form onSubmit={handleApplyCustomQty} className="flex items-center gap-2 pt-1">
@@ -333,22 +334,22 @@ export function ProductPurchaseSection({
                   max={maxQuantity}
                   value={customQtyInput}
                   onChange={(e) => setCustomQtyInput(e.target.value)}
-                  placeholder="Es. 24"
+                  placeholder={dict.pdp.quantityPlaceholder}
                   autoFocus
-                  className="w-28 px-3 py-1.5 text-xs font-semibold border-2 border-ivory-300 rounded-lg focus:border-[#72182b] focus:outline-none text-cellar-900"
+                  className="w-28 px-3 py-1.5 text-xs font-semibold border-2 border-ivory-300 focus:border-black focus:outline-none text-cellar-900"
                 />
                 <button
                   type="submit"
-                  className="px-3.5 py-1.5 rounded-lg bg-[#72182b] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#581321] transition-colors"
+                  className="px-3.5 py-1.5 bg-black text-white text-xs font-bold uppercase tracking-wider hover:bg-gold-700 transition-colors"
                 >
-                  Applica
+                  {dict.pdp.quantityApply}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsCustomQtyMode(false)}
                   className="text-xs text-cellar-500 hover:text-cellar-800 transition-colors ml-1"
                 >
-                  Annulla
+                  {dict.pdp.quantityCancel}
                 </button>
               </form>
             )}
@@ -361,7 +362,7 @@ export function ProductPurchaseSection({
         <div className="flex items-center gap-2 text-xs text-cellar-600">
           <Truck className="w-4 h-4 text-cellar-700 shrink-0" />
           <span>
-            Se acquisti entro 24 ore, consegna entro il{" "}
+            {dict.pdp.deliveryPrefix}{" "}
             <strong className="text-cellar-900 font-bold">
               {getDeliveryEstimate()}
             </strong>
@@ -376,10 +377,10 @@ export function ProductPurchaseSection({
       <div className="flex items-center gap-6 text-xs text-cellar-700 font-medium">
         <button
           type="button"
-          className="inline-flex items-center gap-2 hover:text-[#72182b] transition-colors group"
+          className="inline-flex items-center gap-2 hover:text-black transition-colors group"
         >
-          <Store className="w-4 h-4 text-cellar-500 group-hover:text-[#72182b] transition-colors" />
-          <span className="underline">Disponibile in Cantina</span>
+          <Store className="w-4 h-4 text-cellar-500 group-hover:text-black transition-colors" />
+          <span className="underline">{dict.pdp.availableInCellar}</span>
         </button>
 
         {/* Real wishlist (ADR 042) */}
@@ -397,9 +398,9 @@ export function ProductPurchaseSection({
         {/* Annata (only if present) */}
         {product.details?.vintage && (
           <div className="flex items-center gap-3">
-            <Calendar className="w-4 h-4 text-[#72182b] shrink-0" />
+            <Calendar className="w-4 h-4 text-black shrink-0" />
             <span>
-              Annata:{" "}
+              {dict.pdp.vintageLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.details.vintage}
               </strong>
@@ -410,9 +411,9 @@ export function ProductPurchaseSection({
         {/* Formato / Peso */}
         {product.format && (
           <div className="flex items-center gap-3">
-            <BottleIcon className="w-4 h-4 text-[#72182b] shrink-0" />
+            <BottleIcon className="w-4 h-4 text-black shrink-0" />
             <span>
-              Formato / Peso:{" "}
+              {dict.pdp.formatWeightLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.format}
               </strong>
@@ -422,9 +423,9 @@ export function ProductPurchaseSection({
 
         {/* Categoria */}
         <div className="flex items-center gap-3">
-          <Wine className="w-4 h-4 text-[#72182b] shrink-0" />
+          <Wine className="w-4 h-4 text-black shrink-0" />
           <span>
-            Tipologia:{" "}
+            {dict.pdp.typeLabel}:{" "}
             <strong className="font-bold text-cellar-950 ml-1 capitalize">
               {product.category}
             </strong>
@@ -433,9 +434,9 @@ export function ProductPurchaseSection({
 
         {/* Denominazione / Origine */}
         <div className="flex items-center gap-3">
-          <FileText className="w-4 h-4 text-[#72182b] shrink-0" />
+          <FileText className="w-4 h-4 text-black shrink-0" />
           <span>
-            Denominazione:{" "}
+            {dict.pdp.appellationLabel}:{" "}
             <strong className="font-bold text-cellar-950 ml-1">
               {product.appellation}
             </strong>
@@ -445,9 +446,9 @@ export function ProductPurchaseSection({
         {/* Uve (only if present) */}
         {product.details?.grapes && (
           <div className="flex items-center gap-3">
-            <Grape className="w-4 h-4 text-[#72182b] shrink-0" />
+            <Grape className="w-4 h-4 text-black shrink-0" />
             <span>
-              Uve:{" "}
+              {dict.pdp.grapesLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.details.grapes}
               </strong>
@@ -458,9 +459,9 @@ export function ProductPurchaseSection({
         {/* Gradazione alcolica (only if present) */}
         {product.alcohol && (
           <div className="flex items-center gap-3">
-            <Wine className="w-4 h-4 text-[#72182b] shrink-0" />
+            <Wine className="w-4 h-4 text-black shrink-0" />
             <span>
-              Gradazione:{" "}
+              {dict.pdp.alcoholLabel}:{" "}
               <strong className="font-bold text-cellar-950 ml-1">
                 {product.alcohol}
               </strong>

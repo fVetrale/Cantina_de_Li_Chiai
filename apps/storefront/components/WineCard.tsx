@@ -55,18 +55,18 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
   const productUrl = `/prodotti/${product.handle}`;
 
   return (
-    <article className="group relative rounded-2xl bg-white border border-ivory-200 shadow-sm hover:shadow-xl hover:border-wine-300 transition-all duration-300 flex flex-col overflow-hidden">
+    <article className="group relative bg-white border border-ivory-300 hover:border-black transition-colors duration-300 flex flex-col overflow-hidden">
       {/* Top Header: Badge on left, Price on right (Signorvino Style) */}
       <div className="p-4 sm:p-5 flex items-start justify-between gap-2 z-10">
-        <span className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-[#4a141b] text-gold-200 border border-gold-400/20 shadow-sm">
+        <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2px] bg-black text-white">
           {product.badge}
         </span>
         <div className="flex flex-col items-end">
-          <span className="text-xl sm:text-2xl font-bold font-serif text-[#4a141b]">
+          <span className="text-xl sm:text-2xl font-bold font-serif text-wine-950">
             € {formattedPrice}
           </span>
           <span className="text-[10px] text-cellar-500 font-medium">
-            {product.unitPrice ? `${product.unitPrice} • IVA inc.` : "IVA inclusa"}
+            {product.unitPrice ? `${product.unitPrice} • ${dict.common.vatIncShort}` : dict.common.vatIncluded}
           </span>
         </div>
       </div>
@@ -77,12 +77,12 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
         <Link
           href={productUrl}
           className="relative w-full h-72 sm:h-80 flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-ivory-50/40 to-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-wine-800"
-          aria-label={`Visualizza scheda di ${product.title}`}
+          aria-label={`${dict.common.viewDetails}: ${product.title}`}
         >
           <div className="relative w-full h-full max-h-72 transition-transform duration-500 ease-out group-hover:scale-105">
             <Image
               src={product.image}
-              alt={`${product.title} - ${product.badge} di Cantina de Li Chiai`}
+              alt={`${product.title} - ${product.badge}, ${dict.common.brand}`}
               fill
               priority={priority}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -120,7 +120,7 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
         </span>
 
         {/* Product Full Title */}
-        <h3 className="font-serif text-lg sm:text-xl font-bold text-wine-950 mb-2 leading-snug group-hover:text-[#4a141b] transition-colors">
+        <h3 className="font-serif text-lg sm:text-xl font-bold text-wine-950 mb-2 leading-snug group-hover:text-wine-950 transition-colors">
           <Link href={productUrl} className="hover:underline">
             {product.title}
           </Link>
@@ -154,10 +154,10 @@ export function WineCard({ product, dict, priority = false }: WineCardProps) {
           onClick={handleAddToCart}
           disabled={isSoldOut || isPending}
           aria-busy={isPending}
-          className={`w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-sm active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 ${
+          className={`w-full py-3.5 px-4 label-caps flex items-center justify-center gap-2 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 ${
             isAdded
-              ? "bg-olive-700 text-white shadow-olive-700/20"
-              : "bg-[#4a141b] hover:bg-[#3d0f18] text-gold-100 hover:text-white border border-gold-500/20"
+              ? "bg-olive-700 text-white"
+              : "bg-black hover:bg-gold-700 text-white"
           }`}
           aria-label={`${dict.common.addToCart}: ${product.title}`}
         >

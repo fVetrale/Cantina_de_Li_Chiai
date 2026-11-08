@@ -84,12 +84,12 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
     >
       {/* 1. Header Section */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4a141b]/10 border border-gold-500/30 text-wine-900 text-xs font-semibold tracking-widest uppercase shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-wine-950/10 border border-gold-500/30 text-wine-900 text-xs font-semibold tracking-widest uppercase shadow-sm">
           <Camera className="w-3.5 h-3.5 text-gold-600" />
           <span>{gallery.badge}</span>
         </div>
 
-        <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#4a141b] tracking-tight">
+        <h2 className="font-serif text-2xl sm:text-4xl font-bold text-wine-950 tracking-tight">
           {gallery.title}
         </h2>
 
@@ -99,7 +99,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
       </div>
 
       {/* 2. Main Cinematic Active Showcase Frame */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl border border-gold-500/30 bg-[#160509] group select-none">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] overflow-hidden shadow-2xl border border-gold-500/30 bg-black group select-none">
         {/* Active High-Res Image with smooth zoom on hover */}
         <Image
           src={currentItem.image}
@@ -117,7 +117,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
         {/* Top Badges Bar */}
         <div className="absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 flex items-center justify-between z-10 pointer-events-auto">
           {/* Category Chip */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#20080e]/85 backdrop-blur-md border border-gold-400/40 text-gold-200 text-[11px] sm:text-xs font-semibold uppercase tracking-wider shadow-md">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-wine-950/85 backdrop-blur-md border border-gold-400/40 text-gold-200 text-[11px] sm:text-xs font-semibold uppercase tracking-wider shadow-md">
             <Layers className="w-3 h-3 text-gold-400" />
             <span>{currentItem.category}</span>
           </div>
@@ -132,7 +132,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
               type="button"
               onClick={() => setLightboxOpen(true)}
               aria-label={gallery.openLightbox}
-              className="p-2 rounded-full bg-[#20080e]/85 hover:bg-[#521521] border border-gold-400/40 text-gold-200 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-md"
+              className="p-2 rounded-full bg-wine-950/85 hover:bg-wine-800 border border-gold-400/40 text-gold-200 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-md"
               title={gallery.openLightbox}
             >
               <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold-300" />
@@ -145,7 +145,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
           type="button"
           onClick={goToPrev}
           aria-label={gallery.prevButton}
-          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1b0509]/80 hover:bg-[#521521] border border-gold-400/40 text-gold-200 flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
+          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-wine-950/80 hover:bg-wine-800 border border-gold-400/40 text-gold-200 flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gold-300" />
         </button>
@@ -154,7 +154,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
           type="button"
           onClick={goToNext}
           aria-label={gallery.nextButton}
-          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1b0509]/80 hover:bg-[#521521] border border-gold-400/40 text-gold-200 flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
+          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-wine-950/80 hover:bg-wine-800 border border-gold-400/40 text-gold-200 flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gold-300" />
         </button>
@@ -220,7 +220,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
                 type="button"
                 onClick={() => goToIndex(idx)}
                 aria-label={`${item.title} (${idx + 1}/${items.length})`}
-                className={`relative shrink-0 w-32 sm:w-44 aspect-[4/3] rounded-2xl overflow-hidden snap-center transition-all duration-300 text-left group ${
+                className={`relative shrink-0 w-32 sm:w-44 aspect-[4/3] overflow-hidden snap-center transition-all duration-300 text-left group ${
                   isActive
                     ? "ring-2 ring-gold-500 border-2 border-gold-400 scale-[1.03] shadow-lg"
                     : "border border-ivory-300/80 opacity-75 hover:opacity-100 hover:border-gold-400/60 shadow-sm"
@@ -295,7 +295,7 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
               type="button"
               onClick={goToPrev}
               aria-label={gallery.prevButton}
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-3 sm:p-4 rounded-full bg-[#1b0509]/80 hover:bg-[#521521] border border-gold-400/40 text-gold-200 backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-3 sm:p-4 rounded-full bg-wine-950/80 hover:bg-wine-800 border border-gold-400/40 text-gold-200 backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
             >
               <ChevronLeft className="w-6 h-6 text-gold-300" />
             </button>
@@ -304,14 +304,14 @@ export function CellarGallery({ dict }: CellarGalleryProps) {
               type="button"
               onClick={goToNext}
               aria-label={gallery.nextButton}
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-3 sm:p-4 rounded-full bg-[#1b0509]/80 hover:bg-[#521521] border border-gold-400/40 text-gold-200 backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-3 sm:p-4 rounded-full bg-wine-950/80 hover:bg-wine-800 border border-gold-400/40 text-gold-200 backdrop-blur-md shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
             >
               <ChevronRight className="w-6 h-6 text-gold-300" />
             </button>
           </div>
 
           {/* Lightbox Bottom Story Box */}
-          <div className="max-w-2xl mx-auto w-full z-10 text-center bg-[#1b0509]/80 border border-gold-500/25 rounded-2xl p-4 sm:p-5 backdrop-blur-md shadow-xl text-white space-y-1.5">
+          <div className="max-w-2xl mx-auto w-full z-10 text-center bg-wine-950/80 border border-gold-500/25 p-4 sm:p-5 backdrop-blur-md shadow-xl text-white space-y-1.5">
             <span className="text-xs text-gold-300 font-semibold block">
               {currentItem.subtitle}
             </span>

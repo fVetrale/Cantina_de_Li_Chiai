@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, AlertCircle } from "lucide-react";
+import { Minus, Plus, AlertCircle } from "lucide-react";
 import { removeCartItem, updateCartItem, type CartItemError } from "@/lib/actions/cart";
 import type { CartLineView } from "@/lib/data/cart-session";
 import type { Dictionary } from "@/lib/i18n";
@@ -55,60 +55,51 @@ export function CartLineItem({ line, productHref, t, cartT }: CartLineItemProps)
             ? cartT.errorUnavailable
             : null;
 
+  // Editorial cart row (ADR 050): portrait photo, serif name, thin quantity stepper, text link to remove.
   return (
     <li
-      className={`flex gap-4 py-5 border-b border-ivory-200 last:border-b-0 transition-opacity ${
+      className={`grid grid-cols-[auto_1fr] gap-5 sm:gap-8 py-8 border-b border-ivory-300 transition-opacity ${
         isPending ? "opacity-60" : ""
       }`}
       aria-busy={isPending}
     >
-      <Link
-        href={productHref}
-        className="relative w-20 h-24 sm:w-24 sm:h-28 shrink-0 rounded-xl bg-ivory-50 border border-ivory-200 overflow-hidden"
-      >
-        <Image src={line.image} alt={line.title} fill sizes="96px" className="object-contain p-1.5" />
+      <Link href={productHref} className="relative block w-24 h-32 sm:w-28 sm:h-36 shrink-0 overflow-hidden bg-gray-100">
+        <Image src={line.image} alt={line.title} fill sizes="112px" className="object-cover" />
       </Link>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0 flex flex-col">
+        <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <Link
-              href={productHref}
-              className="font-serif text-lg font-bold text-wine-950 hover:underline leading-snug"
-            >
+            <Link href={productHref} className="font-serif text-2xl leading-tight text-black hover:text-gold-700 transition-colors">
               {line.title}
             </Link>
-            {line.variantTitle && <p className="text-xs text-cellar-500">{line.variantTitle}</p>}
-            <p className="text-xs text-cellar-600 mt-0.5">
+            {line.variantTitle && (
+              <p className="mt-2 font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600">{line.variantTitle}</p>
+            )}
+            <p className="mt-1 text-sm text-gray-600">
               € {formatEuro(line.unitPrice)} {t.each}
               {line.available !== null && (
                 <span className="ml-2 text-olive-700">
-                  • <strong>{line.available}</strong> {cartT.available}
+                  · <strong>{line.available}</strong> {cartT.available}
                 </span>
               )}
             </p>
           </div>
-          <p className="font-serif text-lg font-bold text-wine-950 whitespace-nowrap">
-            € {formatEuro(line.lineTotal)}
-          </p>
+          <p className="font-serif text-xl text-black whitespace-nowrap">€ {formatEuro(line.lineTotal)}</p>
         </div>
 
-        <div className="mt-3 flex items-center gap-4">
-          <div
-            className="inline-flex items-center rounded-full border border-ivory-300 bg-white"
-            role="group"
-            aria-label={`${t.quantity}: ${line.title}`}
-          >
+        <div className="mt-auto pt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="inline-flex items-center border border-ivory-400" role="group" aria-label={`${t.quantity}: ${line.title}`}>
             <button
               type="button"
               onClick={() => changeQuantity(line.quantity - 1)}
               disabled={isPending || line.quantity <= 1}
               aria-label={t.decrease}
-              className="p-2 rounded-l-full text-cellar-700 hover:bg-ivory-100 disabled:opacity-35 disabled:cursor-not-allowed"
+              className="flex h-10 w-10 items-center justify-center text-black hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
-            <span className="w-9 text-center text-sm font-bold text-cellar-900" aria-live="polite">
+            <span className="w-10 text-center text-sm font-bold text-black" aria-live="polite">
               {line.quantity}
             </span>
             <button
@@ -116,7 +107,7 @@ export function CartLineItem({ line, productHref, t, cartT }: CartLineItemProps)
               onClick={() => changeQuantity(line.quantity + 1)}
               disabled={isPending || atMax}
               aria-label={t.increase}
-              className="p-2 rounded-r-full text-cellar-700 hover:bg-ivory-100 disabled:opacity-35 disabled:cursor-not-allowed"
+              className="flex h-10 w-10 items-center justify-center text-black hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
@@ -126,19 +117,16 @@ export function CartLineItem({ line, productHref, t, cartT }: CartLineItemProps)
             type="button"
             onClick={remove}
             disabled={isPending}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-cellar-600 hover:text-rose-700 underline disabled:opacity-50"
+            className="link-editorial text-gray-600 hover:text-black disabled:opacity-50"
           >
-            <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
             {t.remove}
           </button>
 
-          {atMax && line.available !== null && (
-            <span className="text-[11px] text-cellar-500">{t.maxReached}</span>
-          )}
+          {atMax && line.available !== null && <span className="text-[11px] text-gray-600">{t.maxReached}</span>}
         </div>
 
         {errorMessage && (
-          <p role="alert" className="mt-2 flex items-start gap-1.5 text-xs text-rose-700">
+          <p role="alert" className="mt-3 flex items-start gap-1.5 text-xs text-rose-700">
             <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" />
             <span>{errorMessage}</span>
           </p>

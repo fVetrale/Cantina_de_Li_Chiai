@@ -1,8 +1,14 @@
-import Link from "next/link";
-import { Wine, ArrowLeft } from "lucide-react";
-import { getDictionary, defaultLocale, pickNavbarDictionary } from "@/lib/i18n";
+import { Suspense } from "react";
+import { getDictionary, defaultLocale, pickNavbarDictionary, type Locale } from "@/lib/i18n";
+import { NotFoundContent } from "@/components/NotFoundContent";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+
+/** Only the four strings the 404 body needs, in both languages (the boundary is in every page payload). */
+function texts(locale: Locale) {
+  const pdp = getDictionary(locale).pdp;
+  return { errorLabel: pdp.errorLabel, title: pdp.notFoundTitle, description: pdp.notFoundDesc, back: pdp.backToCatalog };
+}
 
 export default function NotFound() {
   const dict = getDictionary(defaultLocale);
@@ -13,33 +19,9 @@ export default function NotFound() {
       <Navbar dict={pickNavbarDictionary(dict)} currentLocale={defaultLocale} />
 
       <main className="flex-grow flex items-center justify-center pt-28 pb-20 px-4">
-        <div className="max-w-md w-full text-center space-y-6 bg-white p-8 sm:p-12 rounded-3xl border border-ivory-200 shadow-xl">
-          <div className="w-16 h-16 rounded-full bg-ivory-100 border border-gold-400/30 flex items-center justify-center mx-auto text-[#4a141b]">
-            <Wine className="w-8 h-8 text-[#4a141b]" />
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-terracotta-700">
-              Errore 404
-            </span>
-            <h1 className="font-serif text-3xl font-bold text-wine-950">
-              {dict.pdp.notFoundTitle}
-            </h1>
-            <p className="text-sm text-cellar-600 leading-relaxed font-sans">
-              {dict.pdp.notFoundDesc}
-            </p>
-          </div>
-
-          <div className="pt-2">
-            <Link
-              href="/vini"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#4a141b] hover:bg-[#3d0f18] text-gold-100 font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95"
-            >
-              <ArrowLeft className="w-4 h-4 text-gold-300" />
-              <span>{dict.pdp.backToCatalog}</span>
-            </Link>
-          </div>
-        </div>
+        <Suspense fallback={null}>
+          <NotFoundContent it={texts("it")} en={texts("en")} />
+        </Suspense>
       </main>
 
       <Footer dict={dict} />

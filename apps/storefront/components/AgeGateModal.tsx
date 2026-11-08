@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShieldAlert, Wine, CheckCircle2, XCircle } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
 
 interface AgeGateModalProps {
@@ -44,79 +44,67 @@ export function AgeGateModal({ dict }: AgeGateModalProps) {
 
   if (!isOpen) return null;
 
+  // Full-screen black "entrance" with a radial vignette and the emblem (ADR 045).
+  // Same behaviour as before: confirm stores the flag in sessionStorage, decline blocks.
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="age-gate-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cellar-950/85 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black text-white animate-fade-in"
+      style={{ backgroundImage: "radial-gradient(ellipse at center, #1a1a1a 0%, #000000 70%)" }}
     >
-      <div className="relative w-full max-w-lg rounded-2xl bg-cellar-900 border border-gold-500/40 p-8 shadow-2xl text-center text-ivory-100">
-        {/* Winery Crest Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-gradient-wine flex items-center justify-center text-gold-300 shadow-md border border-gold-500/40 mb-6">
-          <Wine className="w-8 h-8 text-gold-400" />
+      <div className="relative w-full max-w-xl text-center">
+        {/* Placeholder emblem until the client provides the real one */}
+        <div
+          role="img"
+          aria-label={dict.estatePage.emblemPlaceholder}
+          className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-full border border-white/40 font-serif text-2xl tracking-[2px]"
+        >
+          LC
         </div>
 
         {isBlocked ? (
-          <div className="space-y-4">
-            <div className="w-12 h-12 mx-auto rounded-full bg-red-950/80 border border-red-500/40 flex items-center justify-center text-red-400">
-              <XCircle className="w-6 h-6" />
-            </div>
-            <h2
-              id="age-gate-title"
-              className="font-serif text-2xl font-bold text-red-300"
-            >
+          <div className="space-y-6">
+            <h2 id="age-gate-title" className="title-section text-white">
               {dict.ageGate.blockedTitle}
             </h2>
-            <p className="text-sm text-ivory-200/80 leading-relaxed font-sans">
-              {dict.ageGate.blockedDesc}
-            </p>
-            <div className="pt-4 text-xs text-ivory-300/60 border-t border-ivory-200/10">
+            <p className="text-editorial text-white/75">{dict.ageGate.blockedDesc}</p>
+            <p className="pt-6 border-t border-white/15 font-sans text-[10px] font-bold uppercase tracking-[3px] text-white/60">
               {dict.footer.legalNotice}
-            </div>
+            </p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-gold-400 block mb-2">
-                {dict.common.brand}
-              </span>
-              <h2
-                id="age-gate-title"
-                className="font-serif text-3xl font-bold text-ivory-50 mb-3"
-              >
+              <p className="label-caps text-gold-400 mb-6">{dict.common.brand}</p>
+              <h2 id="age-gate-title" className="title-section text-white mb-5">
                 {dict.ageGate.title}
               </h2>
-              <p className="text-sm text-ivory-200/80 leading-relaxed font-sans">
-                {dict.ageGate.description}
-              </p>
+              <p className="text-editorial text-white/75">{dict.ageGate.description}</p>
             </div>
 
-            {/* Verification Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 type="button"
                 onClick={handleConfirm}
-                className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-gradient-gold text-wine-950 font-bold text-sm uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all shadow-gold-glow flex items-center justify-center gap-2"
+                className="w-full sm:flex-1 py-4 px-4 bg-white text-black label-caps hover:bg-gold-400 transition-colors duration-300"
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>{dict.ageGate.confirm}</span>
+                {dict.ageGate.confirm}
               </button>
-
               <button
                 type="button"
                 onClick={handleDecline}
-                className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-cellar-800 hover:bg-cellar-700 text-ivory-300/80 hover:text-ivory-100 font-medium text-sm uppercase tracking-wider border border-ivory-200/20 active:scale-95 transition-all"
+                className="w-full sm:flex-1 py-4 px-4 border border-white/40 text-white label-caps hover:border-white transition-colors duration-300"
               >
-                <span>{dict.ageGate.decline}</span>
+                {dict.ageGate.decline}
               </button>
             </div>
 
-            {/* Legal Notice Footer */}
-            <div className="pt-4 border-t border-ivory-200/10 flex items-center justify-center gap-2 text-xs text-gold-300/70 font-sans">
-              <ShieldAlert className="w-3.5 h-3.5 shrink-0 text-gold-400" />
+            <p className="pt-6 border-t border-white/15 flex items-center justify-center gap-2 font-sans text-[10px] font-bold uppercase tracking-[3px] text-white/60">
+              <ShieldAlert className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span>{dict.footer.legalNotice}</span>
-            </div>
+            </p>
           </div>
         )}
       </div>

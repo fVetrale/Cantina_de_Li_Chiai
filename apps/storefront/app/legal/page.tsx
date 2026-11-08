@@ -37,7 +37,7 @@ export default async function LegalPage(props: {
   const t = dict.legalPage;
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       {/* 1. Header Navbar */}
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
@@ -58,7 +58,7 @@ export default async function LegalPage(props: {
               </span>
             </nav>
 
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#4a141b] tracking-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-wine-950 tracking-tight">
               {t.title}
             </h1>
             <p className="text-sm sm:text-base text-cellar-700 font-light leading-relaxed">
@@ -70,40 +70,40 @@ export default async function LegalPage(props: {
           <div className="flex flex-wrap items-center justify-center gap-3 py-3 border-y border-ivory-200 text-xs font-semibold uppercase tracking-wider text-cellar-700">
             <a
               href="#privacy"
-              className="px-4 py-2 rounded-full bg-white border border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-2xs transition-colors"
+              className="px-4 py-2 bg-white border border-ivory-300 hover:border-wine-800 hover:text-wine-900 transition-colors"
             >
               {dict.footer.privacy}
             </a>
             <a
               href="#termini"
-              className="px-4 py-2 rounded-full bg-white border border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-2xs transition-colors"
+              className="px-4 py-2 bg-white border border-ivory-300 hover:border-wine-800 hover:text-wine-900 transition-colors"
             >
               {dict.footer.terms}
             </a>
             <a
               href="#cookie"
-              className="px-4 py-2 rounded-full bg-white border border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-2xs transition-colors"
+              className="px-4 py-2 bg-white border border-ivory-300 hover:border-wine-800 hover:text-wine-900 transition-colors"
             >
               {dict.footer.cookie}
             </a>
           </div>
 
           {/* Content Sections */}
-          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-ivory-300 shadow-sm space-y-12 text-cellar-800 font-sans leading-relaxed">
+          <div className="bg-white p-8 sm:p-12 border border-ivory-300 space-y-12 text-cellar-800 font-sans leading-relaxed">
             {/* 1. Privacy Policy */}
             <section id="privacy" className="scroll-mt-32 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#4a141b]/10 text-[#4a141b]">
+                <div className="p-2.5 bg-wine-950/10 text-wine-950">
                   <ShieldCheck className="w-5 h-5 text-gold-600" />
                 </div>
-                <h2 className="font-serif text-2xl font-bold text-[#4a141b]">
+                <h2 className="font-serif text-2xl font-bold text-wine-950">
                   {t.privacyTitle}
                 </h2>
               </div>
               <p className="text-sm sm:text-base text-cellar-700 leading-relaxed pl-12">
                 {t.privacyText}
               </p>
-              <div className="ml-12 p-4 rounded-2xl bg-ivory-50 border border-ivory-200 text-xs text-cellar-600 space-y-1.5">
+              <div className="ml-12 p-4 bg-ivory-50 border border-ivory-200 text-xs text-cellar-600 space-y-1.5">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-gold-600 shrink-0" />
                   <span>Cantina de Li Chiai — Contrada Pozzo 15, Abatemarco (SA)</span>
@@ -120,10 +120,10 @@ export default async function LegalPage(props: {
             {/* 2. Terms of Sale */}
             <section id="termini" className="scroll-mt-32 space-y-4 pt-8 border-t border-ivory-200">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#4a141b]/10 text-[#4a141b]">
+                <div className="p-2.5 bg-wine-950/10 text-wine-950">
                   <FileText className="w-5 h-5 text-gold-600" />
                 </div>
-                <h2 className="font-serif text-2xl font-bold text-[#4a141b]">
+                <h2 className="font-serif text-2xl font-bold text-wine-950">
                   {t.termsTitle}
                 </h2>
               </div>
@@ -135,10 +135,10 @@ export default async function LegalPage(props: {
             {/* 3. Cookie Policy */}
             <section id="cookie" className="scroll-mt-32 space-y-4 pt-8 border-t border-ivory-200">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#4a141b]/10 text-[#4a141b]">
+                <div className="p-2.5 bg-wine-950/10 text-wine-950">
                   <Cookie className="w-5 h-5 text-gold-600" />
                 </div>
-                <h2 className="font-serif text-2xl font-bold text-[#4a141b]">
+                <h2 className="font-serif text-2xl font-bold text-wine-950">
                   {t.cookieTitle}
                 </h2>
               </div>
@@ -151,14 +151,14 @@ export default async function LegalPage(props: {
             <div className="pt-8 border-t border-ivory-200 flex flex-col sm:flex-row items-center justify-between gap-4">
               <Link
                 href="/"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-ivory-50 text-cellar-800 font-semibold text-xs uppercase tracking-wider border border-ivory-300 shadow-2xs transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-ivory-50 text-cellar-800 font-semibold text-xs uppercase tracking-wider border border-ivory-300 transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>{t.backHome}</span>
               </Link>
               <Link
                 href="/vini"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#521521] hover:bg-[#3d0f18] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all hover:scale-105 active:scale-95"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-wine-800 hover:bg-wine-900 text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
               >
                 <span>{t.backCatalog}</span>
                 <ArrowRight className="w-4 h-4 text-gold-300" />
