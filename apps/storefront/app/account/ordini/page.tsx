@@ -32,7 +32,7 @@ export default async function OrdersPage(props: Props) {
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="orders">
-      <section aria-labelledby="orders-title" className="rounded-2xl bg-white border border-ivory-200 shadow-sm p-6 sm:p-7">
+      <section aria-labelledby="orders-title" className="bg-white border border-ivory-200 p-6 sm:p-7">
         <h2 id="orders-title" className="font-serif text-2xl font-bold text-wine-950 mb-5">
           {t.ordersTitle}
         </h2>
@@ -46,7 +46,7 @@ export default async function OrdersPage(props: Props) {
               <li key={order.id}>
                 <Link
                   href={`/account/ordini/${order.id}${lang}`}
-                  className="group grid grid-cols-2 sm:grid-cols-[1.2fr_1fr_1fr_1fr_auto] items-center gap-x-4 gap-y-1 py-4 px-2 -mx-2 rounded-lg hover:bg-ivory-50 text-sm"
+                  className="group grid grid-cols-2 sm:grid-cols-[1.2fr_1fr_1fr_1fr_auto] items-center gap-x-4 gap-y-1 py-4 px-2 -mx-2 hover:bg-ivory-50 text-sm"
                 >
                   <span className="font-semibold text-cellar-900">
                     {t.orderNumber} {order.displayId !== null ? `#${order.displayId}` : "—"}

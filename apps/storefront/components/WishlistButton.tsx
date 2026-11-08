@@ -83,9 +83,9 @@ export function WishlistButton({ productId, productTitle, t, loginHref, variant 
           aria-pressed={saved}
           aria-label={label}
           title={label}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 border border-ivory-300 shadow-sm hover:border-wine-300 transition-colors"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 border border-ivory-300 hover:border-wine-300 transition-colors"
         >
-          <Heart className={`w-4 h-4 transition-colors ${saved ? "fill-[#72182b] text-[#72182b]" : "text-cellar-500"}`} aria-hidden="true" />
+          <Heart className={`w-4 h-4 transition-colors ${saved ? "fill-wine-700 text-wine-700" : "text-cellar-500"}`} aria-hidden="true" />
         </button>
         {messageBox}
       </span>
@@ -99,10 +99,10 @@ export function WishlistButton({ productId, productTitle, t, loginHref, variant 
         onClick={onClick}
         aria-pressed={saved}
         aria-label={label}
-        className="inline-flex items-center gap-2 hover:text-[#72182b] transition-colors group"
+        className="inline-flex items-center gap-2 hover:text-wine-700 transition-colors group"
       >
         <Heart
-          className={`w-4 h-4 transition-colors ${saved ? "fill-[#72182b] text-[#72182b]" : "text-cellar-500 group-hover:text-[#72182b]"}`}
+          className={`w-4 h-4 transition-colors ${saved ? "fill-wine-700 text-wine-700" : "text-cellar-500 group-hover:text-wine-700"}`}
           aria-hidden="true"
         />
         <span className="underline">{saved ? t.saved : t.add}</span>

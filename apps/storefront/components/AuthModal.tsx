@@ -67,7 +67,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
     return {
       "aria-invalid": invalid,
       "aria-describedby": invalid ? `auth-${mode}-${field}-error` : undefined,
-      className: `${inputClass} ${invalid ? "border-rose-500" : "border-cellar-200 focus:border-[#72182b]"}`,
+      className: `${inputClass} ${invalid ? "border-rose-500" : "border-cellar-200 focus:border-wine-700"}`,
     };
   };
 
@@ -92,7 +92,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-6 sm:p-9 border border-ivory-200 text-cellar-900 my-auto">
+      <div className="relative w-full max-w-lg bg-white p-6 sm:p-9 border border-ivory-200 text-cellar-900 my-auto">
         <button
           type="button"
           onClick={onClose}
@@ -114,7 +114,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
         {forms.errorMessage && (
           <div
             role="alert"
-            className="mb-5 p-3.5 rounded-2xl flex items-center gap-2.5 text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-800"
+            className="mb-5 p-3.5 flex items-center gap-2.5 text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-800"
           >
             <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
             <span>{forms.errorMessage}</span>
@@ -165,12 +165,12 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                 type="button"
                 onClick={() => setShowForgotNotice(!showForgotNotice)}
                 aria-expanded={showForgotNotice}
-                className="text-xs font-medium text-cellar-800 underline hover:text-[#72182b] transition-colors"
+                className="text-xs font-medium text-cellar-800 underline hover:text-wine-700 transition-colors"
               >
                 {t.forgotPassword}
               </button>
               {showForgotNotice && (
-                <p role="status" className="mt-2 flex items-start gap-2 rounded-xl bg-ivory-100 border border-ivory-300 p-3 text-xs text-cellar-800">
+                <p role="status" className="mt-2 flex items-start gap-2 bg-ivory-100 border border-ivory-300 p-3 text-xs text-cellar-800">
                   <Info className="w-4 h-4 text-gold-700 shrink-0" aria-hidden="true" />
                   {t.forgotPasswordNotice}
                 </p>
@@ -180,7 +180,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
             <button
               type="submit"
               disabled={forms.isPending}
-              className="w-full mt-3 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              className="w-full mt-3 py-3.5 px-6 bg-wine-700 hover:bg-wine-800 text-white font-bold text-sm tracking-wide hover:shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               <span>{forms.isPending ? t.loggingIn : t.loginBtn}</span>
             </button>
@@ -192,7 +192,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                 type="button"
                 disabled
                 aria-describedby="google-soon"
-                className="w-full py-2.5 px-4 rounded-xl border border-cellar-200 flex items-center justify-center gap-2.5 text-xs font-semibold text-cellar-800 shadow-sm opacity-60 cursor-not-allowed"
+                className="w-full py-2.5 px-4 border border-cellar-200 flex items-center justify-center gap-2.5 text-xs font-semibold text-cellar-800 opacity-60 cursor-not-allowed"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -201,7 +201,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
                 <span>{t.googleBtn}</span>
-                <span id="google-soon" className="ml-1 rounded-full bg-ivory-100 px-2 py-0.5 text-[10px] font-semibold text-cellar-600">
+                <span id="google-soon" className="ml-1 bg-ivory-100 px-2 py-0.5 text-[10px] font-semibold text-cellar-600">
                   {t.googleSoon}
                 </span>
               </button>
@@ -217,7 +217,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
             <button
               type="button"
               onClick={() => switchMode("register")}
-              className="w-full py-3 rounded-full border-2 border-[#72182b] text-[#72182b] hover:bg-[#72182b]/5 font-bold text-sm tracking-wide transition-colors cursor-pointer"
+              className="w-full py-3 border-2 border-wine-700 text-wine-700 hover:bg-wine-700/5 font-bold text-sm tracking-wide transition-colors cursor-pointer"
             >
               {t.registerNowBtn}
             </button>
@@ -306,7 +306,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                   checked={forms.register.ageConfirmed}
                   onChange={(e) => forms.register.setAgeConfirmed(e.target.checked)}
                   aria-invalid={!!forms.fieldError("ageConfirmed", "register")}
-                  className="mt-0.5 w-4 h-4 rounded border-cellar-300 text-[#72182b] focus:ring-[#72182b]"
+                  className="mt-0.5 w-4 h-4 rounded border-cellar-300 text-wine-700 focus:ring-wine-700"
                 />
                 <span className="text-xs text-cellar-700 leading-relaxed">{t.ageCheckbox}</span>
               </label>
@@ -317,11 +317,11 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
                   checked={forms.register.privacyAccepted}
                   onChange={(e) => forms.register.setPrivacyAccepted(e.target.checked)}
                   aria-invalid={!!forms.fieldError("privacyAccepted", "register")}
-                  className="mt-0.5 w-4 h-4 rounded border-cellar-300 text-[#72182b] focus:ring-[#72182b]"
+                  className="mt-0.5 w-4 h-4 rounded border-cellar-300 text-wine-700 focus:ring-wine-700"
                 />
                 <span className="text-xs text-cellar-700 leading-relaxed">
                   {t.privacyAcceptPrefix}{" "}
-                  <Link href={privacyHref} target="_blank" className="underline text-[#72182b]">
+                  <Link href={privacyHref} target="_blank" className="underline text-wine-700">
                     {t.privacyLinkLabel}
                   </Link>
                 </span>
@@ -332,7 +332,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
             <button
               type="submit"
               disabled={forms.isPending}
-              className="w-full mt-3 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              className="w-full mt-3 py-3.5 px-6 bg-wine-700 hover:bg-wine-800 text-white font-bold text-sm tracking-wide hover:shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               <ArrowRight className="w-4 h-4 text-gold-300" aria-hidden="true" />
               <span>{forms.isPending ? t.registering : t.registerSubmitBtn}</span>
@@ -347,7 +347,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login", dict, curren
             <button
               type="button"
               onClick={() => switchMode("login")}
-              className="w-full py-3 rounded-full border-2 border-[#72182b] text-[#72182b] hover:bg-[#72182b]/5 font-bold text-sm tracking-wide transition-colors cursor-pointer"
+              className="w-full py-3 border-2 border-wine-700 text-wine-700 hover:bg-wine-700/5 font-bold text-sm tracking-wide transition-colors cursor-pointer"
             >
               {t.loginNowBtn}
             </button>

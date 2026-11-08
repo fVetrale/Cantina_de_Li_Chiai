@@ -42,7 +42,7 @@ export default async function OrderConfirmationPage(props: {
   const [view, categories] = await Promise.all([getLastOrderView(), getCategories()]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow pt-24 sm:pt-28 pb-16">
@@ -63,7 +63,7 @@ export default async function OrderConfirmationPage(props: {
               </h1>
               <Link
                 href={`/vini${langQuery}`}
-                className="inline-flex items-center rounded-full bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
+                className="inline-flex items-center bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
               >
                 {t.continueShopping}
               </Link>
@@ -71,7 +71,7 @@ export default async function OrderConfirmationPage(props: {
           )}
 
           {view.status === "ok" && (
-            <section aria-labelledby="order-title" className="bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-9">
+            <section aria-labelledby="order-title" className="bg-white border border-ivory-200 p-6 sm:p-9">
               <div className="flex items-start gap-3 mb-6">
                 <CheckCircle2 className="w-8 h-8 text-olive-700 shrink-0" aria-hidden="true" />
                 <div>
@@ -83,13 +83,13 @@ export default async function OrderConfirmationPage(props: {
               </div>
 
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-6">
-                <div className="rounded-2xl bg-ivory-50 border border-ivory-200 p-4">
+                <div className="bg-ivory-50 border border-ivory-200 p-4">
                   <dt className="text-xs text-cellar-500">{t.orderNumber}</dt>
                   <dd className="font-serif text-2xl font-bold text-wine-950">
                     {view.order.displayId !== null ? `#${view.order.displayId}` : "—"}
                   </dd>
                 </div>
-                <div className="rounded-2xl bg-ivory-50 border border-ivory-200 p-4">
+                <div className="bg-ivory-50 border border-ivory-200 p-4">
                   <dt className="text-xs text-cellar-500">{t.summaryFor}</dt>
                   <dd className="font-semibold text-cellar-900 break-all">{view.order.email}</dd>
                 </div>
@@ -99,7 +99,7 @@ export default async function OrderConfirmationPage(props: {
               <ul className="divide-y divide-ivory-200 mb-4">
                 {view.order.lines.map((line) => (
                   <li key={line.id} className="flex items-center gap-3 py-3">
-                    <span className="relative w-10 h-12 shrink-0 rounded-lg bg-ivory-50 border border-ivory-200 overflow-hidden">
+                    <span className="relative w-10 h-12 shrink-0 bg-ivory-50 border border-ivory-200 overflow-hidden">
                       <Image src={line.image} alt="" fill sizes="40px" className="object-contain p-0.5" />
                     </span>
                     <span className="flex-1 min-w-0 text-sm">
@@ -143,7 +143,7 @@ export default async function OrderConfirmationPage(props: {
 
               <Link
                 href={`/vini${langQuery}`}
-                className="mt-6 inline-flex items-center rounded-full bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
+                className="mt-6 inline-flex items-center bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
               >
                 {t.continueShopping}
               </Link>

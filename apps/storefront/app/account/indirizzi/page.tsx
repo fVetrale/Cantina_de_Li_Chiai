@@ -29,7 +29,7 @@ export default async function AddressesPage(props: Props) {
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="addresses">
-      <section aria-labelledby="addresses-title" className="rounded-2xl bg-white/60 border border-ivory-200 shadow-sm p-6 sm:p-7">
+      <section aria-labelledby="addresses-title" className="bg-white/60 border border-ivory-200 p-6 sm:p-7">
         <h2 id="addresses-title" className="font-serif text-2xl font-bold text-wine-950 mb-5">
           {t.addressesTitle}
         </h2>

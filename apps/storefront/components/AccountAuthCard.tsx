@@ -24,7 +24,7 @@ interface AccountAuthCardProps {
 }
 
 const inputBase =
-  "w-full py-3 bg-ivory-50/70 border rounded-xl text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:ring-1 transition-colors";
+  "w-full py-3 bg-ivory-50/70 border text-cellar-900 placeholder:text-cellar-400 text-sm focus:outline-none focus:bg-white focus:ring-1 transition-colors";
 
 /** Login / registration on the /account page (ADR 040). Same Server Actions as the popup. */
 export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
@@ -50,7 +50,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
       "aria-invalid": invalid,
       "aria-describedby": invalid ? `account-${mode}-${field}-error` : undefined,
       className: `${inputBase} ${padding} ${
-        invalid ? "border-rose-500 focus:ring-rose-500" : "border-ivory-300 focus:border-[#72182b] focus:ring-[#72182b]"
+        invalid ? "border-rose-500 focus:ring-rose-500" : "border-ivory-300 focus:border-wine-700 focus:ring-wine-700"
       }`,
     };
   };
@@ -75,11 +75,11 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
     </button>
   );
   const submitClass =
-    "w-full mt-6 py-3.5 px-6 rounded-full bg-[#72182b] hover:bg-[#581321] text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60";
+    "w-full mt-6 py-3.5 px-6 bg-wine-700 hover:bg-wine-800 text-white font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <div className="lg:col-span-7 bg-white text-cellar-900 rounded-3xl p-6 sm:p-10 border border-ivory-200 shadow-xl">
+      <div className="lg:col-span-7 bg-white text-cellar-900 p-6 sm:p-10 border border-ivory-200">
         <div className="flex border-b border-ivory-200 pb-4 mb-8 gap-6" role="tablist">
           {(["signin", "register"] as const).map((tab) => (
             <button
@@ -89,7 +89,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
               aria-selected={activeTab === tab}
               onClick={() => switchTab(tab)}
               className={`pb-2 px-1 text-sm sm:text-base font-bold uppercase tracking-wider transition-all relative ${
-                activeTab === tab ? "text-[#72182b] border-b-2 border-[#72182b]" : "text-cellar-500 hover:text-cellar-900"
+                activeTab === tab ? "text-wine-700 border-b-2 border-wine-700" : "text-cellar-500 hover:text-cellar-900"
               }`}
             >
               {tab === "signin" ? t.tabSignIn : t.tabRegister}
@@ -98,7 +98,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
         </div>
 
         {forms.errorMessage && (
-          <div role="alert" className="mb-6 p-4 rounded-2xl flex items-center gap-3 text-xs sm:text-sm font-medium bg-rose-50 border border-rose-200 text-rose-800">
+          <div role="alert" className="mb-6 p-4 flex items-center gap-3 text-xs sm:text-sm font-medium bg-rose-50 border border-rose-200 text-rose-800">
             <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" aria-hidden="true" />
             <span>{forms.errorMessage}</span>
           </div>
@@ -156,7 +156,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
               </div>
               {fieldErrorText("password")}
               {showForgotNotice && (
-                <p role="status" className="mt-2 flex items-start gap-2 rounded-xl bg-ivory-100 border border-ivory-300 p-3 text-xs text-cellar-800">
+                <p role="status" className="mt-2 flex items-start gap-2 bg-ivory-100 border border-ivory-300 p-3 text-xs text-cellar-800">
                   <Info className="w-4 h-4 text-gold-700 shrink-0" aria-hidden="true" />
                   {m.forgotPasswordNotice}
                 </p>
@@ -259,7 +259,7 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
                   checked={forms.register.ageConfirmed}
                   onChange={(e) => forms.register.setAgeConfirmed(e.target.checked)}
                   aria-invalid={!!forms.fieldError("ageConfirmed", "register")}
-                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-[#72182b] focus:ring-[#72182b]"
+                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-wine-700 focus:ring-wine-700"
                 />
                 <span className="text-xs text-cellar-700 leading-relaxed">{t.ageCheck}</span>
               </label>
@@ -270,11 +270,11 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
                   checked={forms.register.privacyAccepted}
                   onChange={(e) => forms.register.setPrivacyAccepted(e.target.checked)}
                   aria-invalid={!!forms.fieldError("privacyAccepted", "register")}
-                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-[#72182b] focus:ring-[#72182b]"
+                  className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-wine-700 focus:ring-wine-700"
                 />
                 <span className="text-xs text-cellar-700 leading-relaxed">
                   {m.privacyAcceptPrefix}{" "}
-                  <Link href={privacyHref} target="_blank" className="underline text-[#72182b]">
+                  <Link href={privacyHref} target="_blank" className="underline text-wine-700">
                     {m.privacyLinkLabel}
                   </Link>
                 </span>
@@ -291,22 +291,22 @@ export function AccountAuthCard({ dict, currentLocale }: AccountAuthCardProps) {
       </div>
 
       <div className="lg:col-span-5 space-y-6">
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-ivory-200 shadow-sm">
-          <div className="flex items-center gap-2.5 text-[#72182b] mb-4">
+        <div className="bg-white p-6 sm:p-8 border border-ivory-200">
+          <div className="flex items-center gap-2.5 text-wine-700 mb-4">
             <Wine className="w-5 h-5 text-gold-600" aria-hidden="true" />
             <h3 className="font-serif text-lg font-bold text-cellar-950">{t.benefitsTitle}</h3>
           </div>
           <ul className="space-y-4 text-xs sm:text-sm text-cellar-700">
             <li className="flex items-start gap-3">
-              <PackageCheck className="w-4 h-4 text-[#72182b] shrink-0 mt-0.5" aria-hidden="true" />
+              <PackageCheck className="w-4 h-4 text-wine-700 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{t.benefit1}</span>
             </li>
             <li className="flex items-start gap-3">
-              <Wine className="w-4 h-4 text-[#72182b] shrink-0 mt-0.5" aria-hidden="true" />
+              <Wine className="w-4 h-4 text-wine-700 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{t.benefit2}</span>
             </li>
             <li className="flex items-start gap-3">
-              <ShieldCheck className="w-4 h-4 text-[#72182b] shrink-0 mt-0.5" aria-hidden="true" />
+              <ShieldCheck className="w-4 h-4 text-wine-700 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{t.benefit3}</span>
             </li>
           </ul>

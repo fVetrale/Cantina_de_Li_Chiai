@@ -23,7 +23,7 @@ export function NewsletterSection({ dict }: NewsletterSectionProps) {
   return (
     <section
       aria-label="Iscrizione alla Newsletter"
-      className="bg-[#1a2e26] text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-ivory-200"
+      className="bg-cellar-950 text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-ivory-200"
     >
       <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
         <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-gold-300 border border-gold-400/30 mb-4">
@@ -58,7 +58,7 @@ export function NewsletterSection({ dict }: NewsletterSectionProps) {
             />
             <button
               type="submit"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#4a141b] hover:bg-[#3d0f18] text-white font-bold text-xs uppercase tracking-wider shrink-0 shadow-md transition-all flex items-center justify-center gap-2 border border-gold-400/30 active:scale-95"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-wine-950 hover:bg-wine-900 text-white font-bold text-xs uppercase tracking-wider shrink-0 shadow-md transition-all flex items-center justify-center gap-2 border border-gold-400/30 active:scale-95"
             >
               <span>{dict.newsletter.button}</span>
               <ArrowRight className="w-4 h-4 text-gold-300" />

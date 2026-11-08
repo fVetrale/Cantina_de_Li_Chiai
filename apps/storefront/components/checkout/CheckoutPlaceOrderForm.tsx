@@ -84,7 +84,7 @@ export function CheckoutPlaceOrderForm({ t, locale, ready }: CheckoutPlaceOrderF
           required
           aria-invalid={error === "birth_date" || error === "underage" || error === "invalid_input"}
           aria-describedby="checkout-birth-date-hint"
-          className="w-full rounded-xl border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
+          className="w-full border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
         />
         <p id="checkout-birth-date-hint" className="mt-1 text-[11px] text-cellar-500">
           {t.birthDateHint}
@@ -130,7 +130,7 @@ export function CheckoutPlaceOrderForm({ t, locale, ready }: CheckoutPlaceOrderF
       <button
         type="submit"
         disabled={isPending}
-        className="inline-flex items-center justify-center gap-2 rounded-full bg-wine-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+        className="inline-flex items-center justify-center gap-2 bg-wine-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
       >
         <Lock className="w-4 h-4" aria-hidden="true" />
         {isPending ? t.placing : t.placeOrder}

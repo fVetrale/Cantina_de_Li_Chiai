@@ -1,13 +1,8 @@
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
-import { getProducts, getCategories } from "@/lib/data/products";
+import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-import { WineCatalog } from "@/components/WineCatalog";
-import { CatalogUnavailable } from "@/components/CatalogUnavailable";
-import { PromoBanner } from "@/components/PromoBanner";
-import { MeetUsBanner } from "@/components/MeetUsBanner";
-import { SocialMosaic } from "@/components/SocialMosaic";
-import { NewsletterSection } from "@/components/NewsletterSection";
+import { HomeHighlights } from "@/components/HomeHighlights";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
 
@@ -19,48 +14,20 @@ export default async function HomePage(props: {
     searchParams.lang === "en" ? "en" : defaultLocale;
   const dict = getDictionary(currentLocale);
 
-  // Fetch products and categories concurrently on the server
-  const [catalog, categories] = await Promise.all([
-    getProducts(),
-    getCategories(),
-  ]);
+  // The catalog lives on /vini (reached from the navbar): the home only needs the categories.
+  const categories = await getCategories();
   const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-white text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       {/* 1. Floating Glass Island Header */}
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow">
-        {/* 2. Full-Screen 100vh Hero with docked single-line TickerBar */}
-        <HeroSection dict={dict} />
+        <HeroSection dict={dict} langQuery={langQuery} />
 
-        {/* 3. Vetrina Prodotti (La nostra grande cantina) */}
-        {catalog.status === "ok" ? (
-          <WineCatalog
-            products={catalog.products}
-            categories={categories}
-            dict={dict}
-          />
-        ) : (
-          <CatalogUnavailable
-            id="catalog"
-            dict={dict}
-            retryHref={`/${langQuery}#catalog`}
-          />
-        )}
-
-        {/* 4. Promotional Corporate & Gift Banner */}
-        <PromoBanner dict={dict} />
-
-        {/* 5. Vieni a conoscerci Banner */}
-        <MeetUsBanner dict={dict} />
-
-        {/* 8. Social Mosaic */}
-        <SocialMosaic dict={dict} />
-
-        {/* 9. Newsletter Club */}
-        <NewsletterSection dict={dict} />
+        {/* Delivery and story, side by side */}
+        <HomeHighlights dict={dict} langQuery={langQuery} />
       </main>
 
       {/* 10. Multi-Column Footer */}

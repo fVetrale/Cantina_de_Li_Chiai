@@ -57,7 +57,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow pt-24 sm:pt-28 pb-16">
@@ -73,7 +73,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
               <span className="text-ivory-400">•</span>
               <span className="text-cellar-900 font-bold">{t.title}</span>
             </nav>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#4a141b] tracking-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-wine-950 tracking-tight">
               {t.title}
             </h1>
           </div>
@@ -87,7 +87,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
               <div className="lg:col-span-8 space-y-6">
                 <section
                   aria-labelledby="step-details"
-                  className="bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-7"
+                  className="bg-white border border-ivory-200 p-6 sm:p-7"
                 >
                   <h2 id="step-details" className="font-serif text-2xl font-bold text-wine-950 mb-5">
                     {t.stepDetails}
@@ -107,7 +107,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
 
                 <section
                   aria-labelledby="step-shipping"
-                  className="bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-7"
+                  className="bg-white border border-ivory-200 p-6 sm:p-7"
                 >
                   <h2 id="step-shipping" className="font-serif text-2xl font-bold text-wine-950 mb-5">
                     {t.stepShipping}
@@ -127,7 +127,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
 
                 <section
                   aria-labelledby="step-review"
-                  className="bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-7"
+                  className="bg-white border border-ivory-200 p-6 sm:p-7"
                 >
                   <h2 id="step-review" className="font-serif text-2xl font-bold text-wine-950 mb-5">
                     {t.stepReview}
@@ -142,7 +142,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
 
               <aside
                 aria-labelledby="checkout-summary"
-                className="lg:col-span-4 bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-7 lg:sticky lg:top-28"
+                className="lg:col-span-4 bg-white border border-ivory-200 p-6 sm:p-7 lg:sticky lg:top-28"
               >
                 <h2 id="checkout-summary" className="font-serif text-2xl font-bold text-wine-950 mb-4">
                   {t.summaryTitle}
@@ -150,7 +150,7 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
                 <ul className="space-y-3 mb-4">
                   {view.checkout.lines.map((line) => (
                     <li key={line.id} className="flex items-center gap-3">
-                      <span className="relative w-10 h-12 shrink-0 rounded-lg bg-ivory-50 border border-ivory-200 overflow-hidden">
+                      <span className="relative w-10 h-12 shrink-0 bg-ivory-50 border border-ivory-200 overflow-hidden">
                         <Image src={line.image} alt="" fill sizes="40px" className="object-contain p-0.5" />
                       </span>
                       <span className="flex-1 min-w-0 text-xs text-cellar-800">

@@ -65,7 +65,7 @@ export default async function AccountPage(props: {
               <Link
                 key={href}
                 href={href}
-                className="group flex items-center gap-3 rounded-2xl bg-white border border-ivory-200 p-5 shadow-sm hover:border-wine-300 transition-colors"
+                className="group flex items-center gap-3 bg-white border border-ivory-200 p-5 hover:border-wine-300 transition-colors"
               >
                 <Icon className="w-5 h-5 text-wine-900" aria-hidden="true" />
                 <span className="flex-1 font-semibold text-cellar-900">{label}</span>
@@ -74,7 +74,7 @@ export default async function AccountPage(props: {
             ))}
           </div>
 
-          <section aria-labelledby="recent-orders" className="rounded-2xl bg-white border border-ivory-200 shadow-sm p-5 sm:p-6">
+          <section aria-labelledby="recent-orders" className="bg-white border border-ivory-200 p-5 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <h2 id="recent-orders" className="font-serif text-xl font-bold text-wine-950">{a.recentOrders}</h2>
               <Link href={`/account/ordini${langQuery}`} className="text-xs font-semibold text-wine-900 underline">
@@ -89,7 +89,7 @@ export default async function AccountPage(props: {
                   <li key={order.id}>
                     <Link
                       href={`/account/ordini/${order.id}${langQuery}`}
-                      className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm hover:bg-ivory-50 rounded-lg px-2 -mx-2"
+                      className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm hover:bg-ivory-50 px-2 -mx-2"
                     >
                       <span className="font-semibold text-cellar-900">
                         {a.orderNumber} {order.displayId !== null ? `#${order.displayId}` : "—"}
@@ -104,7 +104,7 @@ export default async function AccountPage(props: {
             )}
           </section>
 
-          <section aria-labelledby="delete-account" className="rounded-2xl border border-ivory-300 bg-ivory-50 p-5">
+          <section aria-labelledby="delete-account" className="border border-ivory-300 bg-ivory-50 p-5">
             <h2 id="delete-account" className="flex items-center gap-2 text-sm font-semibold text-cellar-900">
               <Trash2 className="w-4 h-4 text-cellar-500" aria-hidden="true" />
               {a.deleteAccountTitle}
@@ -121,14 +121,14 @@ export default async function AccountPage(props: {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       {/* 1. Floating Smoked Glass Island Navbar */}
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       {/* 2. Main Content */}
       <main className="flex-grow pt-28 sm:pt-36 pb-24 relative overflow-hidden">
         {/* Subtle Warm Amber Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-[#72182b]/5 via-gold-500/5 to-transparent pointer-events-none blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-wine-700/5 via-gold-500/5 to-transparent pointer-events-none blur-3xl" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           {/* Header & Breadcrumbs */}
@@ -147,7 +147,7 @@ export default async function AccountPage(props: {
               <span className="text-cellar-900 font-bold">{t.tabSignIn}</span>
             </nav>
 
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#4a141b]/10 border border-gold-500/30 text-wine-900 text-xs font-semibold tracking-widest uppercase shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-wine-950/10 border border-gold-500/30 text-wine-900 text-xs font-semibold tracking-widest uppercase">
               <Sparkles className="w-3.5 h-3.5 text-gold-600" />
               <span>{t.eyebrow}</span>
             </div>

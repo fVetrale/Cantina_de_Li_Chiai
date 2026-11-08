@@ -33,7 +33,7 @@ export function AccountShell({ dict, locale, categories, firstName, active, chil
   const comingSoon = [{ label: t.navCards, icon: CreditCard }];
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       <Navbar dict={dict} currentLocale={locale} categories={categories} />
 
       <main className="flex-grow pt-24 sm:pt-28 pb-16">
@@ -41,7 +41,7 @@ export function AccountShell({ dict, locale, categories, firstName, active, chil
           <header className="mb-8 pb-4 border-b border-ivory-300 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold text-gold-700 uppercase tracking-wider mb-1">{t.title}</p>
-              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#4a141b] tracking-tight">
+              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-wine-950 tracking-tight">
                 {t.greeting.replace("{name}", firstName)}
               </h1>
             </div>
@@ -56,9 +56,9 @@ export function AccountShell({ dict, locale, categories, firstName, active, chil
                     <Link
                       href={href}
                       aria-current={active === key ? "page" : undefined}
-                      className={`flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
-                        active === key
-                          ? "bg-wine-900 text-ivory-50"
+                      className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+ active === key
+ ?"bg-wine-900 text-ivory-50"
                           : "bg-white border border-ivory-200 text-cellar-800 hover:border-wine-300"
                       }`}
                     >
@@ -71,11 +71,11 @@ export function AccountShell({ dict, locale, categories, firstName, active, chil
                   <li key={label} className="shrink-0">
                     <span
                       aria-disabled="true"
-                      className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-medium text-cellar-400 bg-white/60 border border-dashed border-ivory-300 whitespace-nowrap"
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-cellar-400 bg-white/60 border border-dashed border-ivory-300 whitespace-nowrap"
                     >
                       <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
                       {label}
-                      <span className="ml-auto rounded-full bg-ivory-100 px-2 py-0.5 text-[10px] font-semibold text-cellar-500">
+                      <span className="ml-auto bg-ivory-100 px-2 py-0.5 text-[10px] font-semibold text-cellar-500">
                         {t.comingSoon}
                       </span>
                     </span>

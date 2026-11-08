@@ -78,7 +78,7 @@ export function StorySection({ dict }: StorySectionProps) {
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <a
                 href="#galleria"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4a141b]/80 hover:bg-[#5e1922] border border-gold-400/35 text-gold-200 text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-wine-950/80 hover:bg-wine-800 border border-gold-400/35 text-gold-200 text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
               >
                 <span>{dict.estatePage.gallery.viewAll}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-gold-300" />

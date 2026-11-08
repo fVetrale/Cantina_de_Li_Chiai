@@ -45,7 +45,7 @@ export function CatalogUnavailable({
         </p>
         <Heading
           id="catalog-unavailable-title"
-          className="font-serif text-3xl sm:text-4xl font-bold text-[#4a141b] tracking-tight mb-4"
+          className="font-serif text-3xl sm:text-4xl font-bold text-wine-950 tracking-tight mb-4"
         >
           {t.title}
         </Heading>
@@ -56,7 +56,7 @@ export function CatalogUnavailable({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             href={retryHref}
-            className="inline-flex items-center gap-2 rounded-full bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 transition-colors hover:bg-wine-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+            className="inline-flex items-center gap-2 bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 transition-colors hover:bg-wine-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
           >
             <RotateCw className="h-4 w-4" aria-hidden="true" />
             {t.retry}
@@ -64,7 +64,7 @@ export function CatalogUnavailable({
           {homeHref && (
             <Link
               href={homeHref}
-              className="inline-flex items-center rounded-full border border-ivory-300 px-6 py-3 text-sm font-semibold text-cellar-900 transition-colors hover:border-wine-900 hover:text-wine-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+              className="inline-flex items-center border border-ivory-300 px-6 py-3 text-sm font-semibold text-cellar-900 transition-colors hover:border-wine-900 hover:text-wine-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
             >
               {t.backHome}
             </Link>

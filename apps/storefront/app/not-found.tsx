@@ -13,9 +13,9 @@ export default function NotFound() {
       <Navbar dict={pickNavbarDictionary(dict)} currentLocale={defaultLocale} />
 
       <main className="flex-grow flex items-center justify-center pt-28 pb-20 px-4">
-        <div className="max-w-md w-full text-center space-y-6 bg-white p-8 sm:p-12 rounded-3xl border border-ivory-200 shadow-xl">
-          <div className="w-16 h-16 rounded-full bg-ivory-100 border border-gold-400/30 flex items-center justify-center mx-auto text-[#4a141b]">
-            <Wine className="w-8 h-8 text-[#4a141b]" />
+        <div className="max-w-md w-full text-center space-y-6 bg-white p-8 sm:p-12 border border-ivory-200">
+          <div className="w-16 h-16 rounded-full bg-ivory-100 border border-gold-400/30 flex items-center justify-center mx-auto text-wine-950">
+            <Wine className="w-8 h-8 text-wine-950" />
           </div>
 
           <div className="space-y-2">
@@ -33,7 +33,7 @@ export default function NotFound() {
           <div className="pt-2">
             <Link
               href="/vini"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#4a141b] hover:bg-[#3d0f18] text-gold-100 font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95"
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-wine-950 hover:bg-wine-900 text-gold-100 font-bold text-xs uppercase tracking-wider transition-all active:scale-95"
             >
               <ArrowLeft className="w-4 h-4 text-gold-300" />
               <span>{dict.pdp.backToCatalog}</span>

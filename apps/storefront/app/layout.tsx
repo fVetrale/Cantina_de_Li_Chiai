@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
+import { Bodoni_Moda, Lato } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
 import { getCurrentCartSummary } from "@/lib/data/cart-session";
 import { CustomerProvider } from "@/components/CustomerProvider";
 import { getCurrentCustomer } from "@/lib/data/auth-session";
 
-const cormorant = Cormorant_Garamond({
+// Editorial typography (ADR 045): Bodoni Moda for titles and long text, Lato for labels.
+// Bodoni Moda's lightest weight is 400.
+const bodoni = Bodoni_Moda({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const jakarta = Plus_Jakarta_Sans({
+const lato = Lato({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "700"],
   display: "swap",
 });
 
@@ -67,9 +70,9 @@ export default async function RootLayout({
   return (
     <html
       lang="it"
-      className={`${cormorant.variable} ${jakarta.variable} h-full antialiased`}
+      className={`${bodoni.variable} ${lato.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-700 selection:text-gold-100">
+      <body className="min-h-full flex flex-col bg-ivory-50 text-cellar-900 selection:bg-black selection:text-white">
         {/* Only the first name and the wishlist product ids reach the browser (ADR 040, 042). */}
         <CustomerProvider
           customer={customer ? { firstName: customer.firstName, wishlist: customer.wishlist } : null}

@@ -64,7 +64,7 @@ export function CartLineItem({ line, productHref, t, cartT }: CartLineItemProps)
     >
       <Link
         href={productHref}
-        className="relative w-20 h-24 sm:w-24 sm:h-28 shrink-0 rounded-xl bg-ivory-50 border border-ivory-200 overflow-hidden"
+        className="relative w-20 h-24 sm:w-24 sm:h-28 shrink-0 bg-ivory-50 border border-ivory-200 overflow-hidden"
       >
         <Image src={line.image} alt={line.title} fill sizes="96px" className="object-contain p-1.5" />
       </Link>

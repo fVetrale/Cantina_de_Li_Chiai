@@ -139,7 +139,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
             <Sparkles className="w-3.5 h-3.5" />
             <span>{dict.catalog.eyebrow}</span>
           </div>
-          <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-[#4a141b] mb-3">
+          <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-wine-950 mb-3">
             {dict.catalog.title}
           </h2>
           <p className="text-cellar-600 text-sm sm:text-base leading-relaxed">
@@ -158,7 +158,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
                 onClick={() => handleCategoryChange(opt.handle)}
                 className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-200 border ${
                   isSelected
-                    ? "bg-[#4a141b] text-gold-200 border-gold-400 shadow-md scale-105"
+                    ? "bg-wine-950 text-gold-200 border-gold-400 shadow-md scale-105"
                     : "bg-white text-cellar-700 border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-sm"
                 }`}
               >
@@ -194,7 +194,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
                 aria-label={dict.catalog.viewSlider || "Pagine scorrevoli"}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   viewMode === "slider"
-                    ? "bg-[#4a141b] text-gold-200 shadow-sm"
+                    ? "bg-wine-950 text-gold-200 shadow-sm"
                     : "text-cellar-600 hover:text-cellar-900"
                 }`}
               >
@@ -208,7 +208,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
                 aria-label={dict.catalog.viewGrid || "Griglia completa"}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   viewMode === "grid"
-                    ? "bg-[#4a141b] text-gold-200 shadow-sm"
+                    ? "bg-wine-950 text-gold-200 shadow-sm"
                     : "text-cellar-600 hover:text-cellar-900"
                 }`}
               >
@@ -329,7 +329,7 @@ export function WineCatalog({ products, categories, dict }: WineCatalogProps) {
                         aria-label={`${dict.catalog.pageOf || "Pagina"} ${idx + 1}`}
                         className={`h-9 min-w-9 px-3 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-center border ${
                           isCurrent
-                            ? "bg-[#4a141b] text-gold-200 border-[#4a141b] shadow-md scale-110"
+                            ? "bg-wine-950 text-gold-200 border-wine-950 shadow-md scale-110"
                             : "bg-white text-cellar-700 border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-sm"
                         }`}
                       >

@@ -50,33 +50,22 @@ export default async function WinesPage(props: {
   const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
-      {/* 1. Floating Smoked Aglianico Glass Island Navbar */}
+    <div className="flex min-h-screen flex-col bg-white text-black selection:bg-black selection:text-white">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       {/* 2. Main Full-Screen Catalog with Filters & Wines directly visible */}
-      <main className="flex-grow pt-24 sm:pt-28 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Streamlined Header & Breadcrumbs */}
-          <div className="mb-6 pb-4 border-b border-ivory-300">
-            <nav
-              aria-label="Breadcrumbs"
-              className="flex items-center gap-2 text-xs font-semibold text-gold-700 uppercase tracking-wider mb-1.5"
-            >
-              <Link
-                href="/"
-                className="hover:text-wine-900 transition-colors"
-              >
+      <main className="flex-grow pt-16 lg:pt-[72px] pb-16">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="pt-12 lg:pt-16 pb-2 text-center">
+            <nav aria-label="Breadcrumbs" className="flex items-center justify-center gap-3 label-caps text-[11px] mb-6">
+              <Link href={`/${langQuery}`} className="text-gray-600 hover:text-black transition-colors">
                 {t.breadcrumbsHome}
               </Link>
-              <span className="text-ivory-400">•</span>
-              <span className="text-cellar-900 font-bold">
-                {t.breadcrumbsCurrent}
-              </span>
+              <span aria-hidden="true" className="text-gray-300">/</span>
+              <span className="text-gold-700" aria-current="page">{t.breadcrumbsCurrent}</span>
             </nav>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#4a141b] tracking-tight">
-              {t.title}
-            </h1>
+            <h1 className="title-page">{t.title}</h1>
+            <p className="mt-6 text-editorial text-gray-600 max-w-2xl mx-auto">{t.subtitle}</p>
           </div>
 
           {/* 3. Interactive Catalog Filter & Products Grid */}

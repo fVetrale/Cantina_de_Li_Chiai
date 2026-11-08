@@ -39,7 +39,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
   const [view, categories] = await Promise.all([getCurrentCartView(), getCategories()]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
       <main className="flex-grow pt-24 sm:pt-28 pb-16">
@@ -55,7 +55,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
               <span className="text-ivory-400">•</span>
               <span className="text-cellar-900 font-bold">{t.title}</span>
             </nav>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#4a141b] tracking-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-wine-950 tracking-tight">
               {t.title}
             </h1>
           </div>
@@ -78,7 +78,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
               </h2>
               <Link
                 href={`/vini${langQuery}`}
-                className="inline-flex items-center rounded-full bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950 transition-colors"
+                className="inline-flex items-center bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950 transition-colors"
               >
                 {t.emptyCta}
               </Link>
@@ -88,7 +88,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
           {view.status === "ok" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Lines */}
-              <section className="lg:col-span-8 bg-white rounded-3xl border border-ivory-200 shadow-sm px-5 sm:px-7" aria-label={t.title}>
+              <section className="lg:col-span-8 bg-white border border-ivory-200 px-5 sm:px-7" aria-label={t.title}>
                 <ul>
                   {view.cart.lines.map((line) => (
                     <CartLineItem
@@ -109,7 +109,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
 
               {/* Summary */}
               <aside
-                className="lg:col-span-4 bg-white rounded-3xl border border-ivory-200 shadow-sm p-6 sm:p-7 lg:sticky lg:top-28"
+                className="lg:col-span-4 bg-white border border-ivory-200 p-6 sm:p-7 lg:sticky lg:top-28"
                 aria-labelledby="cart-summary-title"
               >
                 <h2 id="cart-summary-title" className="font-serif text-2xl font-bold text-wine-950 mb-4">
@@ -139,7 +139,7 @@ export default async function CartPage(props: { searchParams?: Promise<{ lang?: 
 
                 <Link
                   href={`/checkout${langQuery}`}
-                  className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-wine-900 px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 transition-colors"
+                  className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-wine-900 px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 transition-colors"
                 >
                   <Lock className="w-4 h-4" aria-hidden="true" />
                   {t.proceedToCheckout}
@@ -179,7 +179,7 @@ function FreeShippingProgress({
       : t.freeShippingReached;
 
   return (
-    <div className="mt-5 rounded-2xl bg-ivory-50 border border-ivory-200 p-4">
+    <div className="mt-5 bg-ivory-50 border border-ivory-200 p-4">
       <p className="flex items-center gap-2 text-xs font-semibold text-cellar-800">
         <Truck className="w-4 h-4 text-wine-900 shrink-0" aria-hidden="true" />
         {label}

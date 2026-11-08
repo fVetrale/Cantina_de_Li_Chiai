@@ -83,8 +83,8 @@ export function CheckoutShippingForm({ t, groups, selected }: CheckoutShippingFo
             return (
               <label
                 key={option.id}
-                className={`flex items-start gap-3 rounded-2xl border p-4 cursor-pointer transition-colors ${
-                  checked ? "border-wine-800 bg-wine-900/5" : "border-ivory-300 hover:border-wine-300"
+                className={`flex items-start gap-3 border p-4 cursor-pointer transition-colors ${
+ checked ?"border-wine-800 bg-wine-900/5" : "border-ivory-300 hover:border-wine-300"
                 }`}
               >
                 <input
@@ -116,7 +116,7 @@ export function CheckoutShippingForm({ t, groups, selected }: CheckoutShippingFo
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-full bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+          className="inline-flex items-center justify-center bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
         >
           {isPending ? t.saving : t.saveShipping}
         </button>

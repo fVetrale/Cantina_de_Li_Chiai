@@ -19,7 +19,7 @@ export function orderStatusLabel(status: OrderStatusKey, t: Dictionary["accountA
 
 export function OrderStatusBadge({ status, t }: { status: OrderStatusKey; t: Dictionary["accountArea"] }) {
   return (
-    <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${STYLES[status]}`}>
+    <span className={`inline-flex border px-2.5 py-0.5 text-[11px] font-semibold ${STYLES[status]}`}>
       {orderStatusLabel(status, t)}
     </span>
   );

@@ -67,11 +67,11 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
   return (
     <div className="relative w-full">
       {/* 1. Main Studio Showcase Card */}
-      <div className="relative rounded-3xl bg-white border border-ivory-200 shadow-sm p-6 sm:p-10 min-h-[500px] sm:min-h-[580px] flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative bg-white p-6 sm:p-10 min-h-[500px] sm:min-h-[580px] flex flex-col items-center justify-center overflow-hidden">
 
         {/* Top Badges */}
         <div className="absolute top-5 left-5 z-10 flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#521521] text-gold-200 border border-gold-400/30 shadow-sm">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] bg-black text-white border border-gold-400/30 shadow-sm">
             <Sparkles className="w-3 h-3 text-gold-300" />
             <span>{product.badge || "Edizione Limitata"}</span>
           </span>
@@ -83,7 +83,7 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
           onClick={() => setIsModalOpen(true)}
           aria-label="Ingrandisci foto a tutto schermo"
           title="Visualizza in primo piano"
-          className="absolute top-5 right-5 p-2 rounded-full bg-white/90 hover:bg-white border border-ivory-300 shadow-sm text-cellar-600 hover:text-[#521521] transition-all hover:scale-105 active:scale-95 z-20"
+          className="absolute top-5 right-5 p-2 rounded-full bg-white/90 hover:bg-white border border-ivory-300 shadow-sm text-cellar-600 hover:text-wine-800 transition-all hover:scale-105 active:scale-95 z-20"
         >
           <Maximize2 className="w-4 h-4" />
         </button>
@@ -94,7 +94,7 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
             type="button"
             onClick={handlePrev}
             aria-label="Foto precedente"
-            className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-[#521521] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 z-20"
+            className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-wine-800 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 z-20"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -129,7 +129,7 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
             type="button"
             onClick={handleNext}
             aria-label="Foto successiva"
-            className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-[#521521] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 z-20"
+            className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-wine-800 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 z-20"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -144,9 +144,9 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
                 type="button"
                 onClick={() => setActiveIdx(idx)}
                 aria-label={`Visualizza foto ${idx + 1}`}
-                className={`relative w-11 h-11 rounded-xl overflow-hidden border-2 transition-all bg-white shadow-sm ${
+                className={`relative w-11 h-11 overflow-hidden border-2 transition-all bg-white shadow-sm ${
                   activeIdx === idx
-                    ? "border-[#72182b] ring-2 ring-[#72182b]/20 scale-105"
+                    ? "border-wine-700 ring-2 ring-wine-700/20 scale-105"
                     : "border-ivory-300 hover:border-ivory-400 opacity-70 hover:opacity-100"
                 }`}
               >
@@ -169,17 +169,17 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed inset-0 z-[9999] bg-[#080204]/98 backdrop-blur-3xl flex items-center justify-center p-3 sm:p-8 animate-fadeIn"
+            className="fixed inset-0 z-[9999] bg-black/98 backdrop-blur-3xl flex items-center justify-center p-3 sm:p-8 animate-fadeIn"
             onClick={() => setIsModalOpen(false)}
           >
             <div
-              className="relative bg-white rounded-3xl p-5 sm:p-8 max-w-4xl w-full border border-gold-400/40 shadow-2xl space-y-5 text-cellar-900 z-10 max-h-[94vh] flex flex-col justify-between"
+              className="relative bg-white p-5 sm:p-8 max-w-4xl w-full border border-gold-400/40 shadow-2xl space-y-5 text-cellar-900 z-10 max-h-[94vh] flex flex-col justify-between"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top Bar with Title, Counter and Close Button */}
               <div className="flex items-center justify-between border-b border-ivory-200 pb-3">
                 <div>
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#72182b] block">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-wine-700 block">
                     Cantina de Li Chiai • Cilento DOC
                   </span>
                   <h3 className="font-serif text-xl sm:text-2xl font-bold text-wine-950">
@@ -205,14 +205,14 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
               </div>
 
               {/* High-Resolution Viewport with Lateral Arrows */}
-              <div className="relative w-full h-[360px] sm:h-[480px] flex items-center justify-center bg-[#f9f8f5] rounded-2xl p-4 overflow-hidden">
+              <div className="relative w-full h-[360px] sm:h-[480px] flex items-center justify-center bg-ivory-50 p-4 overflow-hidden">
                 {/* Prev Button inside modal */}
                 {images.length > 1 && (
                   <button
                     type="button"
                     onClick={handlePrev}
                     aria-label="Foto precedente"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-[#72182b] flex items-center justify-center transition-all z-20"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-wine-700 flex items-center justify-center transition-all z-20"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -233,7 +233,7 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
                     type="button"
                     onClick={handleNext}
                     aria-label="Foto successiva"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-[#72182b] flex items-center justify-center transition-all z-20"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white border border-ivory-300 shadow-md text-cellar-800 hover:text-wine-700 flex items-center justify-center transition-all z-20"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -249,9 +249,9 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
                       type="button"
                       onClick={() => setActiveIdx(idx)}
                       aria-label={`Visualizza foto ${idx + 1}`}
-                      className={`relative w-14 h-14 rounded-xl overflow-hidden border-2 transition-all bg-white shadow-sm shrink-0 ${
+                      className={`relative w-14 h-14 overflow-hidden border-2 transition-all bg-white shadow-sm shrink-0 ${
                         activeIdx === idx
-                          ? "border-[#72182b] ring-2 ring-[#72182b]/20 scale-105"
+                          ? "border-wine-700 ring-2 ring-wine-700/20 scale-105"
                           : "border-ivory-300 hover:border-ivory-400 opacity-60 hover:opacity-100"
                       }`}
                     >
@@ -268,7 +268,7 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
 
               {/* Footer Specs Pills */}
               <div className="grid grid-cols-2 gap-3 text-xs pt-1 border-t border-ivory-200">
-                <div className="p-2.5 rounded-xl bg-ivory-50 border border-ivory-200">
+                <div className="p-2.5 bg-ivory-50 border border-ivory-200">
                   <span className="text-cellar-500 block text-[10px] uppercase font-bold tracking-wider">
                     Uve Certificate
                   </span>
@@ -276,7 +276,7 @@ export function WineBottleGallery({ product }: WineBottleGalleryProps) {
                     {product.details?.grapes || "100% Selezione Manuale"}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-ivory-50 border border-ivory-200">
+                <div className="p-2.5 bg-ivory-50 border border-ivory-200">
                   <span className="text-cellar-500 block text-[10px] uppercase font-bold tracking-wider">
                     Suolo d&apos;Origine
                   </span>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Wine,
   ShoppingCart,
@@ -53,6 +53,9 @@ export function Navbar({
   // Logged-in customer (ADR 040): only the first name is known on the client.
   const customer = useCustomer();
   const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const winesActive = pathname.startsWith("/vini") || pathname.startsWith("/prodotti");
+  const estateActive = pathname.startsWith("/la-cantina");
   const accountLabel = customer
     ? dict.accountModal.greeting.replace("{name}", customer.firstName)
     : dict.nav.account;
@@ -91,117 +94,110 @@ export function Navbar({
     maximumFractionDigits: 2,
   });
 
+  // Editorial header (ADR 045): black bar, Lato uppercase items around the centered name,
+  // each item preceded by a thin diagonal line. Behaviour is unchanged.
+  const navItem =
+    "relative inline-flex items-center gap-1.5 py-2 pl-5 font-sans text-[12px] font-bold uppercase tracking-[4px] hover:text-gold-400 focus-visible:text-gold-400 transition-colors duration-200 whitespace-nowrap " +
+    "before:content-[''] before:absolute before:left-1 before:top-1/2 before:h-4 before:w-px before:-translate-y-1/2 before:rotate-[30deg] before:bg-white/40";
+  // Active page: gold text with a thin white bar under it.
+  const navActive = "text-gold-400 after:content-[''] after:absolute after:left-5 after:right-0 after:-bottom-1 after:h-px after:bg-white";
+  const navClass = (active = false) => `${navItem} ${active ? navActive : "text-white/90"}`;
+  const iconButton =
+    "relative flex items-center justify-center p-2 text-white/90 hover:text-gold-400 transition-colors duration-200 shrink-0";
+
   return (
-    <header className="fixed top-3 sm:top-5 inset-x-0 z-50 flex flex-col items-center px-3 sm:px-6 pointer-events-none">
-      {/* 1. Main Floating Frosted Glass Island Bar */}
-      <div className="pointer-events-auto w-full max-w-5xl rounded-full bg-[#20080e]/85 backdrop-blur-xl border border-gold-400/35 shadow-2xl py-2 px-3 sm:px-6 flex items-center justify-between transition-all duration-300">
-        {/* Brand / Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 shrink-0 group focus:outline-none whitespace-nowrap"
-          aria-label="Cantina de Li Chiai - Home"
-        >
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#521521] to-[#20080e] border border-gold-400/40 flex items-center justify-center text-gold-300 shadow-md group-hover:scale-105 transition-transform shrink-0">
-            <Wine className="w-4 h-4 text-gold-300" />
-          </div>
-          <div className="flex flex-col whitespace-nowrap">
-            <span className="font-serif text-xs sm:text-sm font-bold tracking-widest text-gold-100 uppercase group-hover:text-gold-300 transition-colors whitespace-nowrap">
-              {dict.common.brand}
-            </span>
-            <span className="text-[9px] uppercase tracking-widest text-gold-400/80 font-medium whitespace-nowrap">
-              Cilento
-            </span>
-          </div>
-        </Link>
+    <header className="fixed top-0 inset-x-0 z-50 bg-black text-white border-b border-white/10">
+      <div className="mx-auto max-w-[1400px] h-16 lg:h-[72px] px-4 sm:px-6 lg:px-10 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        {/* Left: main navigation (desktop) or menu toggle (mobile) */}
+        <div className="flex items-center min-w-0">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden -ml-2 p-2 text-white hover:text-gold-400 transition-colors"
+            aria-label={mobileMenuOpen ? "Chiudi menu" : "Apri menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
 
-        {/* Center: Essential Clean Navigation Links (Desktop) */}
-        <nav
-          aria-label="Navigazione principale"
-          className="hidden md:flex items-center gap-1 sm:gap-2 lg:gap-3 whitespace-nowrap shrink-0"
-        >
-          {/* I Nostri Vini (con Hover Dropdown Dinamico Categorie) */}
-          <div className="relative group">
-            <Link
-              href="/vini"
-              className="px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 transition-all inline-flex items-center gap-1.5 whitespace-nowrap"
-            >
-              <span>{dict.nav.wines}</span>
-              <ChevronDown className="w-3 h-3 text-gold-400/70 transition-transform duration-200 group-hover:rotate-180" />
-            </Link>
-
-            {/* Hover Floating Island Menu */}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 opacity-0 invisible translate-y-1.5 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
-              <div className="w-60 rounded-2xl bg-[#20080e]/95 backdrop-blur-2xl border border-gold-400/35 shadow-2xl p-2.5 space-y-1 text-left">
-                {/* Voce Tutti i Vini */}
-                <Link
-                  href="/vini"
-                  className="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-gold-200 hover:bg-white/10 transition-colors border-b border-white/10 pb-2 mb-1 whitespace-nowrap"
-                >
-                  <span>{dict.winesPage?.filterAll || "Tutti i Vini"}</span>
-                  <Wine className="w-3.5 h-3.5 text-gold-400" />
-                </Link>
-
-                {/* Categorie dinamiche (da Medusa v2 / database) */}
-                {dynamicCategories.map((cat) => (
+          <nav aria-label="Navigazione principale" className="hidden lg:flex items-center gap-5 xl:gap-7">
+            {/* Wines, with the category dropdown (opens on hover and on keyboard focus) */}
+            <div className="relative group">
+              <Link href="/vini" className={navClass(winesActive)} aria-current={winesActive ? "page" : undefined}>
+                <span>{dict.nav.wines}</span>
+                <ChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
+              </Link>
+              <div className="absolute top-full left-0 pt-4 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200 z-50">
+                <div className="w-64 bg-black border border-white/15 p-2 text-left shadow-2xl">
                   <Link
-                    key={cat.id}
-                    href={`/vini?categoria=${cat.handle}`}
-                    className="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 transition-colors whitespace-nowrap"
+                    href="/vini"
+                    className="flex items-center justify-between px-4 py-3 font-sans text-[11px] font-bold uppercase tracking-[3px] text-gold-400 hover:bg-white/10 transition-colors border-b border-white/10 whitespace-nowrap"
                   >
-                    <span>{cat.name}</span>
-                    <span className="text-[10px] text-gold-400/60 font-serif">→</span>
+                    <span>{dict.winesPage?.filterAll || "Tutti i Vini"}</span>
+                    <Wine className="w-3.5 h-3.5" />
                   </Link>
-                ))}
+                  {dynamicCategories.map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/vini?categoria=${cat.handle}`}
+                      className="flex items-center justify-between px-4 py-3 font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/85 hover:text-gold-400 hover:bg-white/10 transition-colors whitespace-nowrap"
+                    >
+                      <span>{cat.name}</span>
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* La Cantina */}
-          <Link
-            href="/la-cantina"
-            className="px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 transition-all whitespace-nowrap"
-          >
-            {dict.nav.estate}
-          </Link>
+            <Link href="/la-cantina" className={navClass(estateActive)} aria-current={estateActive ? "page" : undefined}>
+              {dict.nav.estate}
+            </Link>
 
-          {/* Contatti */}
-          <Link
-            href="/#footer"
-            className="px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 transition-all whitespace-nowrap"
-          >
-            {dict.nav.contact}
-          </Link>
-        </nav>
+            <Link href="/#footer" className={navClass()}>
+              {dict.nav.contact}
+            </Link>
+          </nav>
+        </div>
 
-        {/* Right Action Island: Language, Search & Floating Cart Bubble */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0 whitespace-nowrap">
-          {/* Language Switcher Pill */}
+        {/* Center: the name as logo */}
+        <Link
+          href="/"
+          className="flex flex-col items-center text-center leading-none whitespace-nowrap"
+          aria-label="Cantina de Li Chiai - Home"
+        >
+          <span className="font-serif text-[15px] sm:text-lg lg:text-[22px] tracking-[2px] sm:tracking-[3px] uppercase text-white">
+            {dict.common.brand}
+          </span>
+          <span className="mt-1 font-sans text-[9px] font-bold uppercase tracking-[4px] text-gold-400">
+            Cilento
+          </span>
+        </Link>
+
+        {/* Right: language, search, account, cart */}
+        <div className="flex items-center justify-end gap-1 sm:gap-2 min-w-0">
           <button
             onClick={toggleLanguage}
             type="button"
-            className="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/10 hover:bg-white/20 border border-gold-400/30 text-gold-200 transition-all active:scale-95 flex items-center gap-1 shrink-0 whitespace-nowrap"
+            className="hidden sm:flex items-center gap-1.5 px-2 py-2 font-sans text-[11px] font-bold uppercase tracking-[3px] transition-colors shrink-0"
             aria-label="Cambia lingua"
           >
-            <span className={currentLocale === "it" ? "text-gold-300 font-extrabold" : "text-ivory-300/60"}>
-              IT
-            </span>
-            <span className="text-ivory-400/40 font-light">|</span>
-            <span className={currentLocale === "en" ? "text-gold-300 font-extrabold" : "text-ivory-300/60"}>
-              EN
-            </span>
+            <span className={currentLocale === "it" ? "text-gold-400" : "text-white/60 hover:text-white"}>IT</span>
+            <span className="text-white/30" aria-hidden="true">/</span>
+            <span className={currentLocale === "en" ? "text-gold-400" : "text-white/60 hover:text-white"}>EN</span>
           </button>
 
-          {/* Quick Search Icon: conduce a /vini */}
           <Link
             href="/vini"
-            className="hidden sm:flex items-center justify-center p-2 rounded-full text-gold-300 hover:text-white hover:bg-white/10 transition-colors shrink-0"
+            className={`hidden sm:flex ${iconButton}`}
             aria-label="Cerca nel catalogo vini"
             title="Cerca nel catalogo vini"
           >
             <Search className="w-4 h-4" />
           </Link>
 
-          {/* Account: Accedi / Registrati con Menu a Tendina e Popup Modal (Signorvino Style) */}
+          {/* Account: dropdown on hover, login popup or reserved area on click */}
           <div
             className="relative hidden sm:block shrink-0"
             onMouseEnter={() => setAccountMenuOpen(true)}
@@ -210,28 +206,27 @@ export function Navbar({
             <button
               type="button"
               onClick={() => openAccountEntry()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-ivory-200/90 hover:text-gold-200 hover:bg-white/10 border border-transparent hover:border-gold-400/30 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+              className="flex items-center gap-2 px-2 py-2 text-white/90 hover:text-gold-400 transition-colors duration-200 cursor-pointer whitespace-nowrap"
               aria-label={accountLabel}
               title={accountLabel}
             >
-              <User className="w-3.5 h-3.5 text-gold-300 shrink-0" />
-              <span className="hidden xl:inline text-[11px] uppercase tracking-wider font-bold whitespace-nowrap">
+              <User className="w-4 h-4 shrink-0" />
+              <span className="hidden xl:inline font-sans text-[11px] font-bold uppercase tracking-[3px] whitespace-nowrap">
                 {accountLabel}
               </span>
-              <ChevronDown className="w-3 h-3 text-gold-400/70 shrink-0" />
+              <ChevronDown className="w-3 h-3 shrink-0" />
             </button>
-
             {/* Menu a Tendina Account (Identico a Signorvino) */}
             {accountMenuOpen && (
               <div className="absolute right-0 top-full pt-2 z-50 w-72 animate-fadeIn pointer-events-auto">
-                <div className="rounded-2xl bg-white text-cellar-900 border border-ivory-200 shadow-2xl overflow-hidden py-2 divide-y divide-ivory-100">
+                <div className="bg-white text-black border border-ivory-300 shadow-2xl overflow-hidden py-2 divide-y divide-ivory-300">
                   {!customer && (<>
                   {/* Riga 1: Accedi/Registrazione > */}
                   <div className="p-1.5">
                     <button
                       type="button"
                       onClick={() => openAccountEntry()}
-                      className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-[#72182b] hover:bg-ivory-50 transition-colors text-left cursor-pointer group"
+                      className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-wine-700 hover:bg-ivory-50 transition-colors text-left cursor-pointer group"
                     >
                       <span className="underline group-hover:no-underline">
                         {dict.accountModal.dropdownTitle}
@@ -251,14 +246,14 @@ export function Navbar({
                       }}
                       className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-ivory-50 transition-colors text-left cursor-pointer group"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-[#72182b]/10 text-[#72182b] flex items-center justify-center font-bold text-xs shrink-0 font-serif">
+                      <div className="w-7 h-7 rounded-lg bg-wine-700/10 text-wine-700 flex items-center justify-center font-bold text-xs shrink-0 font-serif">
                         CC
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-semibold text-cellar-900">
                           {dict.accountModal.club}
                         </span>
-                        <span className="text-[11px] text-cellar-500 underline group-hover:text-[#72182b]">
+                        <span className="text-[11px] text-cellar-500 underline group-hover:text-wine-700">
                           {dict.accountModal.clubDesc}
                         </span>
                       </div>
@@ -320,7 +315,7 @@ export function Navbar({
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#72182b] hover:bg-ivory-50 transition-colors text-left cursor-pointer"
+                        className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-wine-700 hover:bg-ivory-50 transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" aria-hidden="true" />
                         <span>{dict.accountModal.logout}</span>
@@ -332,102 +327,78 @@ export function Navbar({
             )}
           </div>
 
-          {/* Cart Icon Button (Simbolo Carrello compatto con badge) */}
           <Link
             href={cartHref}
-            className="relative flex items-center justify-center p-2 rounded-full text-gold-300 hover:text-white hover:bg-white/10 transition-colors shrink-0 active:scale-95 group"
+            className={`${iconButton} group`}
             aria-label={`${dict.nav.cart}: ${cartCount} (€ ${formattedTotal})`}
             title={`${dict.nav.cart} (€ ${formattedTotal})`}
           >
-            <ShoppingCart className="w-4.5 h-4.5 text-gold-300 group-hover:scale-110 transition-transform" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gold-400 text-wine-950 font-extrabold text-[9px] flex items-center justify-center shadow">
+            <ShoppingCart className="w-[18px] h-[18px]" />
+            <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-gold-400 text-black font-bold text-[9px] flex items-center justify-center">
               {cartCount}
             </span>
           </Link>
-
-          {/* Mobile Hamburger Toggle */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-full text-white hover:bg-white/10 transition-colors"
-            aria-label="Apri menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
       </div>
 
-      {/* 2. Mobile Dropdown Floating Island */}
+      {/* Mobile menu: full-width panel under the bar */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto mt-2 w-full max-w-sm rounded-3xl bg-[#20080e]/95 backdrop-blur-2xl border border-gold-400/35 shadow-2xl p-5 text-center space-y-3 animate-fadeIn">
-          <div className="flex flex-col space-y-2 text-sm font-semibold text-ivory-100">
-            {/* Mobile Wines Group con Categorie */}
-            <div className="text-left bg-white/5 rounded-2xl p-2.5 space-y-1">
-              <Link
-                href="/vini"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1.5 px-2.5 rounded-xl text-gold-200 font-bold flex items-center justify-between text-xs uppercase tracking-wider hover:bg-white/10 transition-colors"
-              >
-                <span>{dict.nav.wines}</span>
-                <Wine className="w-3.5 h-3.5 text-gold-400" />
-              </Link>
-              <div className="pl-3.5 pt-1 space-y-1 border-l border-gold-400/20 ml-2">
-                {dynamicCategories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/vini?categoria=${cat.handle}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1 px-2 rounded-lg text-xs text-ivory-200/80 hover:text-gold-200 hover:bg-white/5 transition-colors"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
-              </div>
+        <div id="mobile-menu" className="lg:hidden border-t border-white/10 bg-black px-6 pb-8 pt-4 animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <nav aria-label="Menu mobile" className="flex flex-col">
+            <Link
+              href="/vini"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-4 border-b border-white/10 font-sans text-xs font-bold uppercase tracking-[4px] text-white hover:text-gold-400 transition-colors flex items-center justify-between"
+            >
+              <span>{dict.nav.wines}</span>
+              <Wine className="w-4 h-4 text-gold-400" />
+            </Link>
+            <div className="py-2 pl-4 border-b border-white/10">
+              {dynamicCategories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/vini?categoria=${cat.handle}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-2.5 font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/70 hover:text-gold-400 transition-colors"
+                >
+                  {cat.name}
+                </Link>
+              ))}
             </div>
-
-            {/* La Cantina */}
             <Link
               href="/la-cantina"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2.5 rounded-xl hover:bg-white/10 text-gold-200 transition-colors"
+              className="py-4 border-b border-white/10 font-sans text-xs font-bold uppercase tracking-[4px] text-white hover:text-gold-400 transition-colors"
             >
               {dict.nav.estate}
             </Link>
-
-            {/* Contatti */}
             <Link
               href="/#footer"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2.5 rounded-xl hover:bg-white/10 text-gold-200 transition-colors"
+              className="py-4 border-b border-white/10 font-sans text-xs font-bold uppercase tracking-[4px] text-white hover:text-gold-400 transition-colors"
             >
               {dict.nav.contact}
             </Link>
-
-            {/* Accedi / Registrati (Apre Popup Modal) */}
             <button
               type="button"
               onClick={() => openAccountEntry()}
-              className="py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-gold-200 transition-colors flex items-center justify-between text-xs uppercase tracking-wider font-bold w-full cursor-pointer text-left"
+              className="py-4 border-b border-white/10 font-sans text-xs font-bold uppercase tracking-[4px] text-white hover:text-gold-400 transition-colors flex items-center gap-3 w-full cursor-pointer text-left"
             >
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-gold-300" />
-                <span>{accountLabel}</span>
-              </div>
-              <span className="text-[10px] text-gold-400/60 font-serif">→</span>
+              <User className="w-4 h-4 text-gold-400" />
+              <span>{accountLabel}</span>
             </button>
             {customer && (
               <button
                 type="button"
                 onClick={handleLogout}
-                className="py-2.5 px-3 rounded-xl hover:bg-white/10 text-gold-200 transition-colors flex items-center gap-2 text-xs uppercase tracking-wider font-bold w-full cursor-pointer text-left"
+                className="py-4 border-b border-white/10 font-sans text-xs font-bold uppercase tracking-[4px] text-white hover:text-gold-400 transition-colors flex items-center gap-3 w-full cursor-pointer text-left"
               >
-                <LogOut className="w-4 h-4 text-gold-300" aria-hidden="true" />
+                <LogOut className="w-4 h-4 text-gold-400" aria-hidden="true" />
                 <span>{dict.accountModal.logout}</span>
               </button>
             )}
-          </div>
-
-          <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gold-300/80">
+          </nav>
+          <div className="pt-6 flex items-center justify-between font-sans text-[11px] font-bold uppercase tracking-[3px] text-white/60">
             <span>Parco Nazionale del Cilento</span>
             <button
               onClick={() => {
@@ -435,9 +406,10 @@ export function Navbar({
                 setMobileMenuOpen(false);
               }}
               type="button"
-              className="px-2.5 py-1 bg-white/10 rounded-full font-bold text-gold-200"
+              className="px-3 py-2 border border-white/30 text-gold-400"
+              aria-label="Cambia lingua"
             >
-              {currentLocale.toUpperCase()}
+              {currentLocale === "it" ? "EN" : "IT"}
             </button>
           </div>
         </div>

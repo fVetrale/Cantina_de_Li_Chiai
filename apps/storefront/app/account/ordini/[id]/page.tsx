@@ -51,7 +51,7 @@ export default async function OrderDetailPage(props: Props) {
       {!result.ok ? (
         <CatalogUnavailable dict={dict} retryHref={`/account/ordini/${encodeURIComponent(id)}${lang}`} />
       ) : (
-        <section aria-labelledby="order-title" className="rounded-2xl bg-white border border-ivory-200 shadow-sm p-6 sm:p-7 space-y-6">
+        <section aria-labelledby="order-title" className="bg-white border border-ivory-200 p-6 sm:p-7 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
             <h2 id="order-title" className="font-serif text-2xl font-bold text-wine-950">
               {t.orderNumber} {result.data.display_id ? `#${result.data.display_id}` : "—"}
@@ -65,7 +65,7 @@ export default async function OrderDetailPage(props: Props) {
             <ul className="divide-y divide-ivory-200">
               {(result.data.items ?? []).map((item) => (
                 <li key={item.id} className="flex items-center gap-3 py-3">
-                  <span className="relative w-10 h-12 shrink-0 rounded-lg bg-ivory-50 border border-ivory-200 overflow-hidden">
+                  <span className="relative w-10 h-12 shrink-0 bg-ivory-50 border border-ivory-200 overflow-hidden">
                     <Image src={getLocalProductImage(item.product_handle ?? "")} alt="" fill sizes="40px" className="object-contain p-0.5" />
                   </span>
                   <span className="flex-1 min-w-0 text-sm">

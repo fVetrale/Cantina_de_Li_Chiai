@@ -37,8 +37,8 @@ export function SocialMosaic({ dict }: SocialMosaicProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#4a141b] mb-1.5">
-            <Camera className="w-4 h-4 text-[#4a141b]" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-wine-950 mb-1.5">
+            <Camera className="w-4 h-4 text-wine-950" />
             <span>@cantinadelichiai</span>
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-wine-950 mb-2">

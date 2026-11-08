@@ -469,6 +469,16 @@ export const dictionaries = {
       stat3Label: "Abatemarco (Salerno)",
       imageCaption: "I filari e la vigna di Cantina de Li Chiai con la valle di Abatemarco sullo sfondo.",
       ctaExploreWines: "Guarda i Nostri Vini",
+      emblemPlaceholder: "Emblema provvisorio della cantina",
+      chaptersLabel: "Capitoli della storia",
+      chapters: {
+        land: "La Terra",
+        craft: "Il Lavoro",
+        pickup: "Il Ritiro",
+        family: "La Famiglia",
+        gallery: "Galleria",
+        values: "I Valori",
+      },
       gallery: {
         badge: "Galleria Fotografica Documentaria",
         title: "Dalla Vigna alla Cantina: Gli Scatti Reali",
@@ -1177,6 +1187,16 @@ export const dictionaries = {
       stat3Label: "Abatemarco (Salerno)",
       imageCaption: "Vineyard rows and vines of Cantina de Li Chiai with the Abatemarco valley in the background.",
       ctaExploreWines: "Browse Our Wines",
+      emblemPlaceholder: "Temporary cellar emblem",
+      chaptersLabel: "Story chapters",
+      chapters: {
+        land: "The Land",
+        craft: "The Craft",
+        pickup: "Pickup",
+        family: "The Family",
+        gallery: "Gallery",
+        values: "Values",
+      },
       gallery: {
         badge: "Documentary Photo Gallery",
         title: "From Vines to Cellar: Real Moments",

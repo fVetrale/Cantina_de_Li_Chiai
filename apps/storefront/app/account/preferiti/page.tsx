@@ -36,7 +36,7 @@ export default async function WishlistPage(props: Props) {
 
   return (
     <AccountShell dict={dict} locale={locale} categories={categories} firstName={customer.firstName} active="wishlist">
-      <section aria-labelledby="wishlist-title" className="rounded-2xl bg-white/60 border border-ivory-200 shadow-sm p-6 sm:p-7">
+      <section aria-labelledby="wishlist-title" className="bg-white/60 border border-ivory-200 p-6 sm:p-7">
         <h2 id="wishlist-title" className="font-serif text-2xl font-bold text-wine-950 mb-5">
           {t.pageTitle}
         </h2>
@@ -47,7 +47,7 @@ export default async function WishlistPage(props: Props) {
             <p className="text-sm text-cellar-600">{t.empty}</p>
             <Link
               href={`/vini${lang}`}
-              className="inline-flex items-center rounded-full bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
+              className="inline-flex items-center bg-wine-900 px-6 py-3 text-sm font-semibold text-ivory-50 hover:bg-wine-950"
             >
               {t.browse}
             </Link>

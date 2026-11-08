@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Gift, ShieldCheck, Sparkles } from "lucide-react";
+import { Gift, ShieldCheck } from "lucide-react";
 import type { getDictionary } from "@/lib/i18n";
 
 interface PromoBannerProps {
@@ -11,34 +11,31 @@ export function PromoBanner({ dict }: PromoBannerProps) {
     <section
       id="promo"
       aria-label="Confezioni regalo e degustazioni"
-      className="py-16 bg-white border-b border-ivory-200"
+      className="py-16 lg:py-24 bg-white"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#3b0f18] via-[#4a141b] to-[#201518] text-white shadow-xl p-8 sm:p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-10 border border-gold-500/20">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="relative overflow-hidden bg-black text-white p-8 sm:p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-10">
           {/* Left Narrative Block */}
           <div className="max-w-xl space-y-5 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-gold-400/30 text-gold-300 text-xs uppercase tracking-widest font-bold">
-              <Sparkles className="w-3.5 h-3.5 text-gold-400" />
-              <span>{dict.promoBanner.badge}</span>
-            </div>
+            <p className="label-caps text-gold-400">{dict.promoBanner.badge}</p>
 
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-ivory-50">
+            <h2 className="title-section text-white">
               {dict.promoBanner.title}
             </h2>
 
-            <p className="text-sm sm:text-base text-ivory-200/90 leading-relaxed font-sans">
+            <p className="text-editorial text-white/75">
               {dict.promoBanner.description}
             </p>
 
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
               <a
-                href="#catalog"
-                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-gold text-wine-950 font-bold text-xs uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all"
+                href="/vini"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-white text-black label-caps hover:bg-gold-400 transition-colors duration-300"
               >
                 <Gift className="w-4 h-4" />
                 <span>{dict.promoBanner.cta}</span>
               </a>
-              <div className="flex items-center gap-2 text-xs text-gold-300 font-medium">
+              <div className="flex items-center gap-2 text-xs text-white/70">
                 <ShieldCheck className="w-4 h-4 text-gold-400 shrink-0" />
                 <span>Consegna in 24/48h con imballi anti-rottura</span>
               </div>
@@ -46,24 +43,14 @@ export function PromoBanner({ dict }: PromoBannerProps) {
           </div>
 
           {/* Right Visual Frame */}
-          <div className="relative w-full max-w-sm sm:max-w-md aspect-[4/3] rounded-2xl overflow-hidden border-2 border-gold-400/20 shadow-xl">
+          <div className="relative w-full max-w-sm sm:max-w-md aspect-[4/3] overflow-hidden">
             <Image
               src="/images/VecchiaBottiglia.jpeg"
-              alt="Cofanetto Tradizione Cilentana - Cantina de Li Chiai"
+              alt="La bottiglia di Chiai, Aglianico della famiglia"
               fill
               sizes="(max-width: 1024px) 100vw, 450px"
               className="object-cover object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
-              <div className="text-left">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gold-300 block mb-1">
-                  Edizione Limitata
-                </span>
-                <p className="text-xs text-ivory-100 font-medium">
-                  Cofanetto Tradizione Cilentana (2 o 3 bottiglie)
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

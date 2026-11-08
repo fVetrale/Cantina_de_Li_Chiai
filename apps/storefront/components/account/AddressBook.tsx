@@ -82,8 +82,8 @@ export function AddressBook({ t, checkoutT, addresses }: { t: T; checkoutT: Dict
           required={opts.required ?? true}
           aria-invalid={isInvalid}
           aria-describedby={isInvalid ? `${id}-error` : undefined}
-          className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-wine-800/30 ${
-            isInvalid ? "border-rose-500" : "border-ivory-300 focus:border-wine-800"
+          className={`w-full border bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-wine-800/30 ${
+ isInvalid ?"border-rose-500" : "border-ivory-300 focus:border-wine-800"
           }`}
         />
         {isInvalid && (
@@ -101,7 +101,7 @@ export function AddressBook({ t, checkoutT, addresses }: { t: T; checkoutT: Dict
 
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {addresses.map((a) => (
-          <li key={a.id} className="rounded-2xl border border-ivory-200 bg-white p-4 shadow-sm">
+          <li key={a.id} className="border border-ivory-200 bg-white p-4">
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 mt-0.5 text-wine-900 shrink-0" aria-hidden="true" />
               <address className="not-italic text-sm text-cellar-800 flex-1">
@@ -121,7 +121,7 @@ export function AddressBook({ t, checkoutT, addresses }: { t: T; checkoutT: Dict
                 )}
               </address>
               {a.isDefault && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-gold-100 border border-gold-300 px-2 py-0.5 text-[10px] font-semibold text-gold-700">
+                <span className="inline-flex items-center gap-1 bg-gold-100 border border-gold-300 px-2 py-0.5 text-[10px] font-semibold text-gold-700">
                   <Star className="w-3 h-3" aria-hidden="true" />
                   {t.defaultAddress}
                 </span>
@@ -145,13 +145,13 @@ export function AddressBook({ t, checkoutT, addresses }: { t: T; checkoutT: Dict
         <button
           type="button"
           onClick={() => open()}
-          className="inline-flex items-center gap-2 rounded-full border-2 border-wine-900 px-5 py-2.5 text-sm font-bold text-wine-900 hover:bg-wine-900/5"
+          className="inline-flex items-center gap-2 border-2 border-wine-900 px-5 py-2.5 text-sm font-bold text-wine-900 hover:bg-wine-900/5"
         >
           <Plus className="w-4 h-4" aria-hidden="true" />
           {t.addAddress}
         </button>
       ) : (
-        <form onSubmit={onSubmit} noValidate className="rounded-2xl border border-ivory-200 bg-white p-5 space-y-4">
+        <form onSubmit={onSubmit} noValidate className="border border-ivory-200 bg-white p-5 space-y-4">
           <h3 className="font-serif text-lg font-bold text-wine-950">{editing === "new" ? t.newAddressTitle : t.editAddressTitle}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
             {field("firstName", "address.firstName", checkoutT.firstName, "given-name", { maxLength: 60, span: "sm:col-span-3" })}
@@ -177,7 +177,7 @@ export function AddressBook({ t, checkoutT, addresses }: { t: T; checkoutT: Dict
             <button
               type="submit"
               disabled={isPending}
-              className="inline-flex items-center justify-center rounded-full bg-wine-900 px-6 py-2.5 text-sm font-bold text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+              className="inline-flex items-center justify-center bg-wine-900 px-6 py-2.5 text-sm font-bold text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
             >
               {isPending ? t.saving : t.saveAddress}
             </button>

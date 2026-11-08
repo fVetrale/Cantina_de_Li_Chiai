@@ -20,7 +20,7 @@ export function LogoutButton({ label, homeHref }: { label: string; homeHref: str
           router.push(homeHref);
         })
       }
-      className="inline-flex items-center gap-2 rounded-full border-2 border-[#72182b] px-6 py-2.5 text-sm font-bold text-[#72182b] hover:bg-[#72182b]/5 disabled:opacity-60"
+      className="inline-flex items-center gap-2 border-2 border-wine-700 px-6 py-2.5 text-sm font-bold text-wine-700 hover:bg-wine-700/5 disabled:opacity-60"
     >
       <LogOut className="w-4 h-4" aria-hidden="true" />
       {label}

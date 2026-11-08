@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { Search, SlidersHorizontal, RotateCcw, Wine, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { WineCard } from "./WineCard";
 import type { WineProduct, WineCategory } from "@/lib/data/products";
@@ -122,134 +124,149 @@ export function WinesCatalogView({
     return processedProducts.slice(start, start + itemsPerPage);
   }, [processedProducts, currentPage, itemsPerPage]);
 
+  const selectCategory = (handle: string) => {
+    setActiveCategory(handle);
+    setCurrentPage(0);
+  };
+  const selectedCategory = categoryFilters.find((c) => c.handle === activeCategory && c.handle !== "all");
+  const winesInSelected = selectedCategory
+    ? products.filter((p) => p.categoryHandle === selectedCategory.handle)
+    : [];
+
+  const priceButton = (value: PriceFilter, label: string) => (
+    <button
+      type="button"
+      onClick={() => setActivePrice(value)}
+      aria-pressed={activePrice === value}
+      className={`relative py-2 font-sans text-[11px] font-bold uppercase tracking-[2px] transition-colors duration-200 ${
+        activePrice === value ? "text-black after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-black" : "text-gray-500 hover:text-black"
+      }`}
+    >
+      {label}
+    </button>
+  );
+
   return (
-    <div className="space-y-10">
-      {/* Control Bar: Filters, Search and Sorting */}
-      <div className="bg-white rounded-2xl p-6 border border-ivory-300 shadow-sm space-y-6">
-        {/* Top Row: Search input + Sorting selector */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          {/* Quick Search */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-cellar-600" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.searchPlaceholder}
-              className="w-full pl-10 pr-4 py-2.5 bg-ivory-50 border border-ivory-300 rounded-xl text-xs sm:text-sm text-cellar-900 placeholder:text-cellar-600 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-cellar-600 hover:text-cellar-900"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {/* Right Controls: Sort Dropdown + Reset if filters active */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-cellar-700">
-              <ArrowUpDown className="w-3.5 h-3.5 text-gold-600" />
-              <label htmlFor="sort-select" className="hidden sm:inline">
-                {t.sortLabel}:
-              </label>
-              <select
-                id="sort-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="bg-ivory-50 border border-ivory-300 rounded-xl px-3 py-2 text-xs font-semibold text-cellar-900 focus:outline-none focus:border-gold-500 cursor-pointer"
-              >
-                <option value="recommended">{t.sortRecommended}</option>
-                <option value="price-asc">{t.sortPriceAsc}</option>
-                <option value="price-desc">{t.sortPriceDesc}</option>
-                <option value="alcohol">{t.sortAlcohol}</option>
-                <option value="name">{t.sortName}</option>
-              </select>
-            </div>
-
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-terracotta-700 bg-terracotta-100 hover:bg-terracotta-300/40 transition-colors"
-                title={t.resetFilters}
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{t.resetFilters}</span>
-              </button>
-            )}
-          </div>
+    <div className="space-y-12">
+      {/* Catalog selector (ADR 045): large serif categories over a blurred, almost white vineyard */}
+      <section aria-label={t.title} className="relative overflow-hidden -mx-4 sm:-mx-6 lg:-mx-10">
+        <div className="absolute inset-0" aria-hidden="true">
+          <Image src="/images/vigneto.jpeg" alt="" fill sizes="100vw" className="object-cover blur-2xl scale-110 opacity-40" />
+          <div className="absolute inset-0 bg-white/80" />
         </div>
-
-        {/* Divider */}
-        <div className="h-px bg-ivory-200" />
-
-        {/* Bottom Row: Category Tabs & Price Pills */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          {/* Categories Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2">
+        <div
+          className={`relative px-4 sm:px-6 lg:px-10 py-16 lg:py-24 grid gap-10 transition-all duration-300 ${
+            selectedCategory ? "lg:grid-cols-2 items-center" : "grid-cols-1"
+          }`}
+        >
+          <ul className={`flex flex-col gap-2 sm:gap-3 ${selectedCategory ? "items-center lg:items-start" : "items-center"}`}>
             {categoryFilters.map((cat) => {
               const isSelected = activeCategory === cat.handle;
               return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setActiveCategory(cat.handle)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-200 border ${
-                    isSelected
-                      ? "bg-[#4a141b] text-gold-200 border-gold-400 shadow-sm scale-105"
-                      : "bg-ivory-50 text-cellar-700 border-ivory-300 hover:border-wine-800 hover:text-wine-900"
-                  }`}
-                >
-                  {cat.name}
-                </button>
+                <li key={cat.id}>
+                  <button
+                    type="button"
+                    onClick={() => selectCategory(cat.handle)}
+                    aria-pressed={isSelected}
+                    className={`font-serif text-[clamp(2rem,5.5vw,4.5rem)] leading-[1.1] transition-colors duration-300 ${
+                      isSelected ? "text-gold-700" : "text-black hover:text-gold-700"
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                </li>
               );
             })}
+          </ul>
+
+          {selectedCategory && (
+            <div className="relative flex gap-6 lg:gap-10 justify-center lg:justify-start animate-fade-in">
+              <span aria-hidden="true" className="w-px self-stretch bg-gradient-to-b from-gold-500 via-gold-500/60 to-black" />
+              <div>
+                <p className="label-caps text-gray-600">
+                  {selectedCategory.name} · {winesInSelected.length}
+                </p>
+                <ul className="mt-6 space-y-4">
+                  {winesInSelected.map((wine) => (
+                    <li key={wine.id}>
+                      <Link
+                        href={`/prodotti/${wine.handle}`}
+                        className="group flex items-baseline gap-4 font-serif text-2xl sm:text-3xl hover:text-gold-700 transition-colors duration-200"
+                      >
+                        <span>{wine.title}</span>
+                        <span className="font-sans text-xs text-gray-600 group-hover:text-gold-700">€ {wine.price.toLocaleString("it-IT", { minimumFractionDigits: 2 })}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Control bar: search, sorting, price */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-y border-ivory-300 py-5">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" aria-hidden="true" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t.searchPlaceholder}
+            aria-label={t.searchPlaceholder}
+            className="w-full pl-7 pr-8 py-2 bg-transparent border-b border-ivory-400 text-sm text-black placeholder:text-gray-500 focus:outline-none focus:border-black transition-colors"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              aria-label={t.resetFilters}
+              className="absolute right-0 top-1/2 -translate-y-1/2 text-xs text-gray-600 hover:text-black"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          <div className="flex items-center gap-4" role="group" aria-label={t.priceLabel}>
+            <SlidersHorizontal className="w-3.5 h-3.5 text-gray-600" aria-hidden="true" />
+            {priceButton("all", t.priceAll)}
+            {priceButton("under-30", t.priceUnder30)}
+            {priceButton("over-30", t.priceOver30)}
           </div>
 
-          {/* Price Range Filter */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-cellar-700">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-gold-600" />
-            <span className="hidden sm:inline">{t.priceLabel}:</span>
-            <div className="inline-flex rounded-lg border border-ivory-300 p-0.5 bg-ivory-50 text-[11px]">
-              <button
-                type="button"
-                onClick={() => setActivePrice("all")}
-                className={`px-2.5 py-1 rounded-md transition-all ${
-                  activePrice === "all"
-                    ? "bg-[#4a141b] text-gold-200 font-bold"
-                    : "text-cellar-700 hover:text-cellar-900"
-                }`}
-              >
-                {t.priceAll}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActivePrice("under-30")}
-                className={`px-2.5 py-1 rounded-md transition-all ${
-                  activePrice === "under-30"
-                    ? "bg-[#4a141b] text-gold-200 font-bold"
-                    : "text-cellar-700 hover:text-cellar-900"
-                }`}
-              >
-                {t.priceUnder30}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActivePrice("over-30")}
-                className={`px-2.5 py-1 rounded-md transition-all ${
-                  activePrice === "over-30"
-                    ? "bg-[#4a141b] text-gold-200 font-bold"
-                    : "text-cellar-700 hover:text-cellar-900"
-                }`}
-              >
-                {t.priceOver30}
-              </button>
-            </div>
+          <div className="flex items-center gap-2">
+            <ArrowUpDown className="w-3.5 h-3.5 text-gray-600" aria-hidden="true" />
+            <label htmlFor="sort-select" className="sr-only">
+              {t.sortLabel}
+            </label>
+            <select
+              id="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="bg-transparent border-b border-ivory-400 py-2 pr-2 font-sans text-[11px] font-bold uppercase tracking-[2px] text-black focus:outline-none focus:border-black cursor-pointer"
+            >
+              <option value="recommended">{t.sortRecommended}</option>
+              <option value="price-asc">{t.sortPriceAsc}</option>
+              <option value="price-desc">{t.sortPriceDesc}</option>
+              <option value="alcohol">{t.sortAlcohol}</option>
+              <option value="name">{t.sortName}</option>
+            </select>
           </div>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="inline-flex items-center gap-1.5 font-sans text-[11px] font-bold uppercase tracking-[2px] text-gold-700 hover:text-black transition-colors"
+              title={t.resetFilters}
+            >
+              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{t.resetFilters}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -257,7 +274,7 @@ export function WinesCatalogView({
       <div className="flex items-center justify-between text-xs text-cellar-600 px-1">
         <div className="flex items-center gap-2">
           <Wine className="w-4 h-4 text-gold-600" />
-          <span className="font-semibold text-cellar-800">
+          <span className="label-caps text-black">
             {processedProducts.length}{" "}
             {processedProducts.length === 1 ? t.singleResultCount : t.resultsCount}
           </span>
@@ -266,7 +283,7 @@ export function WinesCatalogView({
         {hasActiveFilters && (
           <div className="flex items-center gap-2">
             <span className="text-gold-700 font-medium">Filtri attivi</span>
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-gold-500" />
+            <span className="inline-block w-1.5 h-1.5 bg-gold-500" />
           </div>
         )}
       </div>
@@ -292,7 +309,7 @@ export function WinesCatalogView({
                 type="button"
                 onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
                 disabled={currentPage === 0}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-ivory-300 bg-white text-xs font-semibold text-cellar-800 hover:border-wine-800 hover:text-wine-900 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 border border-ivory-300 bg-white text-xs font-semibold text-cellar-800 hover:border-black hover:text-black disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 <span>Precedente</span>
@@ -306,10 +323,10 @@ export function WinesCatalogView({
                       key={`page-${idx}`}
                       type="button"
                       onClick={() => setCurrentPage(idx)}
-                      className={`h-9 min-w-9 px-3 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-center border ${
+                      className={`h-9 min-w-9 px-3 text-xs font-bold transition-all duration-200 flex items-center justify-center border ${
                         isCurrent
-                          ? "bg-[#4a141b] text-gold-200 border-[#4a141b] shadow-md scale-105"
-                          : "bg-white text-cellar-700 border-ivory-300 hover:border-wine-800 hover:text-wine-900 shadow-sm"
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-gray-600 border-ivory-300 hover:border-black hover:text-black"
                       }`}
                     >
                       {idx + 1}
@@ -322,7 +339,7 @@ export function WinesCatalogView({
                 type="button"
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
                 disabled={currentPage >= totalPages - 1}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-ivory-300 bg-white text-xs font-semibold text-cellar-800 hover:border-wine-800 hover:text-wine-900 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 border border-ivory-300 bg-white text-xs font-semibold text-cellar-800 hover:border-black hover:text-black disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >
                 <span>Successiva</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -332,8 +349,8 @@ export function WinesCatalogView({
         </div>
       ) : (
         /* Empty State */
-        <div className="bg-white rounded-3xl p-12 text-center border border-ivory-300 max-w-xl mx-auto space-y-4">
-          <div className="w-14 h-14 rounded-full bg-[#4a141b]/10 text-[#4a141b] mx-auto flex items-center justify-center">
+        <div className="bg-white p-12 text-center border border-ivory-300 max-w-xl mx-auto space-y-4">
+          <div className="w-14 h-14 rounded-full border border-black/20 text-black mx-auto flex items-center justify-center">
             <Wine className="w-7 h-7" />
           </div>
           <h3 className="font-serif text-2xl font-bold text-cellar-900">
@@ -345,7 +362,7 @@ export function WinesCatalogView({
           <button
             type="button"
             onClick={handleResetFilters}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#4a141b] text-gold-200 font-bold text-xs uppercase tracking-wider hover:bg-[#3d0f18] transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-black text-white label-caps hover:bg-gold-700 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{t.resetFilters}</span>

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Sparkles, Mountain, ShieldCheck, Award, ArrowRight, Quote } from "lucide-react";
+import Image from "next/image";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { Navbar } from "@/components/Navbar";
-import { StorySection } from "@/components/StorySection";
+import { ChapterNav } from "@/components/ChapterNav";
+import { Reveal } from "@/components/Reveal";
 import { FeaturesSection } from "@/components/FeaturesSection";
 import { Footer } from "@/components/Footer";
 import { AgeGateModal } from "@/components/AgeGateModal";
@@ -37,171 +38,153 @@ export default async function EstatePage(props: {
     searchParams.lang === "en" ? "en" : defaultLocale;
   const dict = getDictionary(currentLocale);
   const t = dict.estatePage;
+  const langQuery = currentLocale === "en" ? "?lang=en" : "";
 
   const categories = await getCategories();
 
+  // Full-screen narrative chapters (ADR 045). Ids are stable: the footer links to #galleria and #valori.
+  const chapters = [
+    { id: "terra", label: t.chapters.land },
+    { id: "lavoro", label: t.chapters.craft },
+    { id: "ritiro", label: t.chapters.pickup },
+    { id: "story", label: t.chapters.family },
+    { id: "galleria", label: t.chapters.gallery },
+    { id: "valori", label: t.chapters.values },
+  ];
+
+  const chapterClass =
+    "scroll-mt-32 min-h-[100svh] flex items-center py-20 lg:py-28 border-b border-ivory-300";
+  const frame = "relative aspect-[4/5] w-full max-w-md mx-auto shadow-[0_20px_50px_-20px_rgba(0,0,0,0.35)]";
+
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-[#661022] selection:text-gold-200">
-      {/* 1. Floating Smoked Aglianico Glass Island Navbar */}
+    <div className="flex min-h-screen flex-col bg-white text-black selection:bg-black selection:text-white">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
-      {/* 2. Main Central Body: Story, Cellar Photography & Historical Heritage */}
-      <main className="flex-grow pt-24 sm:pt-32 pb-20">
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Breadcrumbs & Header */}
-          <header className="space-y-4 text-center max-w-3xl mx-auto">
-            <nav
-              aria-label="Breadcrumbs"
-              className="flex items-center justify-center gap-2 text-xs font-semibold text-gold-700 uppercase tracking-wider mb-2"
-            >
-              <Link
-                href="/"
-                className="hover:text-wine-900 transition-colors"
-              >
-                {t.breadcrumbsHome}
-              </Link>
-              <span className="text-ivory-400">•</span>
-              <span className="text-cellar-900 font-bold">
-                {t.breadcrumbsCurrent}
-              </span>
-            </nav>
+      <main className="flex-grow pt-16 lg:pt-[72px]">
+        {/* Chapter tabs: under the header on small screens */}
+        <ChapterNav chapters={chapters} label={t.chaptersLabel} className="lg:hidden sticky top-16 z-30 border-b" />
 
-            {/* Prestige Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#4a141b]/10 border border-gold-500/30 text-wine-900 text-xs font-semibold tracking-widest uppercase shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-gold-600" />
-              <span>{t.eyebrow}</span>
+        {/* Opening: emblem, title, family facts */}
+        <header className="min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-72px)] flex flex-col items-center justify-center text-center px-4 sm:px-6 py-20 bg-ivory">
+          {/* Placeholder emblem until the client provides the real one (see docs/restyling-editoriale.md) */}
+          <div
+            role="img"
+            aria-label={t.emblemPlaceholder}
+            className="mb-10 flex h-20 w-20 items-center justify-center rounded-full border border-black/30 font-serif text-2xl tracking-[2px] animate-fade-in"
+          >
+            LC
+          </div>
+          <nav aria-label="Breadcrumbs" className="flex items-center gap-3 label-caps text-[11px] mb-6">
+            <Link href={`/${langQuery}`} className="text-gray-600 hover:text-black transition-colors">
+              {t.breadcrumbsHome}
+            </Link>
+            <span aria-hidden="true" className="text-gray-300">/</span>
+            <span className="text-gold-700" aria-current="page">{t.breadcrumbsCurrent}</span>
+          </nav>
+          <p className="label-caps text-gold-700 mb-6">{t.eyebrow}</p>
+          <h1 className="title-page max-w-4xl text-balance animate-fade-in">{t.title}</h1>
+          <p className="mt-8 text-editorial text-gray-600 max-w-2xl">{t.subtitle}</p>
+          <dl className="mt-14 grid grid-cols-3 gap-6 sm:gap-16">
+            {[
+              [t.stat1Number, t.stat1Label],
+              [t.stat2Number, t.stat2Label],
+              [t.stat3Number, t.stat3Label],
+            ].map(([n, l]) => (
+              <div key={n} className="flex flex-col items-center">
+                <dt className="font-serif text-xl sm:text-2xl">{n}</dt>
+                <dd className="mt-2 font-sans text-[10px] font-bold uppercase tracking-[3px] text-gray-600">{l}</dd>
+              </div>
+            ))}
+          </dl>
+        </header>
+
+        {/* 1. The land: text left, photo right */}
+        <section id="terra" aria-labelledby="terra-title" className={chapterClass}>
+          <Reveal className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
+            <div className="max-w-xl lg:ml-auto">
+              <h2 id="terra-title" className="title-page text-[clamp(2rem,4vw,3.5rem)]">{t.p1Title}</h2>
+              <p className="mt-8 text-editorial lg:text-[1.375rem] lg:leading-[1.7] text-gray-600 drop-cap">{t.p1}</p>
             </div>
+            <div className={frame}>
+              <Image src="/images/raccolta.jpeg" alt="La vendemmia a mano a Li Chiai" fill loading="lazy" sizes="(min-width: 1024px) 448px, 90vw" className="object-cover" />
+            </div>
+          </Reveal>
+        </section>
 
-            <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#4a141b] tracking-tight leading-tight">
-              {t.title}
-            </h1>
+        {/* 2. The craft: photo left, text right, with the quote */}
+        <section id="lavoro" aria-labelledby="lavoro-title" className={`${chapterClass} bg-gray-100`}>
+          <Reveal className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
+            <div className={`${frame} lg:order-first order-last`}>
+              <Image src="/images/lavorazione.jpeg" alt="La lavorazione del vino in cantina" fill loading="lazy" sizes="(min-width: 1024px) 448px, 90vw" className="object-cover" />
+            </div>
+            <div className="max-w-xl">
+              <h2 id="lavoro-title" className="title-page text-[clamp(2rem,4vw,3.5rem)]">{t.p2Title}</h2>
+              <p className="mt-8 text-editorial lg:text-[1.375rem] lg:leading-[1.7] text-gray-600">{t.p2}</p>
+              <blockquote className="mt-10 border-l border-gold-500 pl-6">
+                <p className="font-serif italic text-xl leading-relaxed">{t.quote}</p>
+                <footer className="mt-4 label-caps text-[10px] text-gold-700">— {t.quoteAuthor}</footer>
+              </blockquote>
+            </div>
+          </Reveal>
+        </section>
 
-            <p className="text-sm sm:text-base text-cellar-700 font-light leading-relaxed">
-              {t.subtitle}
-            </p>
-          </header>
+        {/* 3. Pickup and tasting: text left, photo right */}
+        <section id="ritiro" aria-labelledby="ritiro-title" className={chapterClass}>
+          <Reveal className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
+            <div className="max-w-xl lg:ml-auto">
+              <h2 id="ritiro-title" className="title-page text-[clamp(2rem,4vw,3.5rem)]">{t.p3Title}</h2>
+              <p className="mt-8 text-editorial lg:text-[1.375rem] lg:leading-[1.7] text-gray-600">{t.p3}</p>
+              <Link href={`/vini${langQuery}`} className="mt-10 link-editorial text-black hover:text-gold-700">
+                {t.ctaExploreWines}
+              </Link>
+            </div>
+            <div className={frame}>
+              <Image src="/images/produzione.jpeg" alt="Le bottiglie pronte in cantina" fill loading="lazy" sizes="(min-width: 1024px) 448px, 90vw" className="object-cover" />
+            </div>
+          </Reveal>
+        </section>
 
-          {/* Authentic Documentary Cellar Gallery (Sliding Carousel & Archive) */}
+        {/* 4. The family (Antonio and Matteo): dark chapter */}
+        <section id="story" aria-labelledby="story-title" className={`${chapterClass} bg-black text-white border-black`}>
+          <Reveal className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
+            <div className={`${frame} lg:order-first order-last`}>
+              <Image src="/images/vigneto.jpeg" alt="I filari della vigna di famiglia" fill loading="lazy" sizes="(min-width: 1024px) 448px, 90vw" className="object-cover" />
+            </div>
+            <div className="max-w-xl">
+              <p className="label-caps text-gold-400">{dict.story.eyebrow}</p>
+              <h2 id="story-title" className="mt-6 title-page text-[clamp(2rem,4vw,3.5rem)]">{dict.story.title}</h2>
+              <p className="mt-8 font-serif italic text-xl leading-relaxed text-white/90">{dict.story.quote}</p>
+              <p className="mt-8 text-editorial text-white/70">{dict.story.p1}</p>
+              <p className="mt-5 text-editorial text-white/70">{dict.story.p2}</p>
+              <dl className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-white/15 pt-8">
+                {[
+                  [dict.story.badge1, dict.story.badge1Desc],
+                  [dict.story.badge2, dict.story.badge2Desc],
+                  [dict.story.badge3, dict.story.badge3Desc],
+                ].map(([title, desc]) => (
+                  <div key={title}>
+                    <dt className="font-serif text-lg text-gold-400">{title}</dt>
+                    <dd className="mt-2 text-xs leading-relaxed text-white/60">{desc}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* 5. Photo gallery (id="galleria" inside) */}
+        <div className="scroll-mt-32 py-20 lg:py-28 mx-auto max-w-5xl w-full px-4 sm:px-6">
           <CellarGallery dict={dict} />
-
-          {/* 3 Pillar Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="bg-white rounded-2xl p-5 border border-ivory-300 shadow-sm text-center space-y-1.5">
-              <div className="w-10 h-10 rounded-full bg-[#4a141b]/10 text-[#4a141b] flex items-center justify-center mx-auto mb-2">
-                <Award className="w-5 h-5 text-gold-600" />
-              </div>
-              <div className="font-serif text-2xl font-bold text-wine-900">
-                {t.stat1Number}
-              </div>
-              <div className="text-xs text-cellar-600 font-medium">
-                {t.stat1Label}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-ivory-300 shadow-sm text-center space-y-1.5">
-              <div className="w-10 h-10 rounded-full bg-[#4a141b]/10 text-[#4a141b] flex items-center justify-center mx-auto mb-2">
-                <ShieldCheck className="w-5 h-5 text-gold-600" />
-              </div>
-              <div className="font-serif text-2xl font-bold text-wine-900">
-                {t.stat2Number}
-              </div>
-              <div className="text-xs text-cellar-600 font-medium">
-                {t.stat2Label}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-ivory-300 shadow-sm text-center space-y-1.5">
-              <div className="w-10 h-10 rounded-full bg-[#4a141b]/10 text-[#4a141b] flex items-center justify-center mx-auto mb-2">
-                <Mountain className="w-5 h-5 text-gold-600" />
-              </div>
-              <div className="font-serif text-2xl font-bold text-wine-900">
-                {t.stat3Number}
-              </div>
-              <div className="text-xs text-cellar-600 font-medium">
-                {t.stat3Label}
-              </div>
-            </div>
-          </div>
-
-          {/* Historical Narrative Chapters */}
-          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-ivory-300 shadow-sm space-y-10 text-cellar-800 leading-relaxed font-sans">
-            {/* Chapter 1 */}
-            <section className="space-y-3">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#4a141b]">
-                {t.p1Title}
-              </h2>
-              <p className="text-sm sm:text-base text-cellar-700 leading-relaxed">
-                {t.p1}
-              </p>
-            </section>
-
-            {/* Chapter 2 */}
-            <section className="space-y-3 pt-6 border-t border-ivory-200">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#4a141b]">
-                {t.p2Title}
-              </h2>
-              <p className="text-sm sm:text-base text-cellar-700 leading-relaxed">
-                {t.p2}
-              </p>
-            </section>
-
-            {/* Winemaker Quote Card */}
-            <div className="rounded-2xl bg-gradient-to-br from-[#290a12] to-[#17050a] text-white p-6 sm:p-8 border border-gold-500/30 shadow-md relative overflow-hidden">
-              <Quote className="absolute -bottom-2 -right-2 w-24 h-24 text-gold-500/10 pointer-events-none" />
-              <p className="font-serif italic text-base sm:text-lg text-gold-100 leading-relaxed mb-4 relative z-10">
-                {t.quote}
-              </p>
-              <span className="text-xs uppercase tracking-widest text-gold-300 font-bold block relative z-10">
-                — {t.quoteAuthor}
-              </span>
-            </div>
-
-            {/* Chapter 3 */}
-            <section className="space-y-3 pt-6 border-t border-ivory-200">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#4a141b]">
-                {t.p3Title}
-              </h2>
-              <p className="text-sm sm:text-base text-cellar-700 leading-relaxed">
-                {t.p3}
-              </p>
-            </section>
-
-            {/* Final Clean CTA to browse wines */}
-            <div className="pt-8 border-t border-ivory-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-center sm:text-left">
-                <span className="font-serif text-xl font-bold text-wine-900 block">
-                  Dalla Terra al Ritiro in Cantina
-                </span>
-                <span className="text-xs text-cellar-600">
-                  Scopri i prodotti di Antonio e Matteo e prenota il tuo ritiro ad Abatemarco
-                </span>
-              </div>
-              <Link
-                href="/vini"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#521521] hover:bg-[#3d0f18] text-white font-bold text-xs uppercase tracking-wider shadow-lg transition-all border border-gold-400/30 hover:scale-105 active:scale-95"
-              >
-                <span>{t.ctaExploreWines}</span>
-                <ArrowRight className="w-4 h-4 text-gold-300" />
-              </Link>
-            </div>
-          </div>
-        </article>
-
-        {/* 3. La Storia di Famiglia (Antonio e Matteo a 'Li Chiai') */}
-        <div className="mt-16 sm:mt-24">
-          <StorySection dict={dict} />
         </div>
 
-        {/* 4. I Valori e il Terroir di Cantina de Li Chiai */}
-        <div className="mt-0">
-          <FeaturesSection dict={dict} />
-        </div>
+        {/* 6. Values (id="valori" inside) */}
+        <FeaturesSection dict={dict} className="scroll-mt-32 py-20 lg:py-28 bg-gray-100" />
+
+        {/* Chapter tabs anchored at the bottom on large screens */}
+        <ChapterNav chapters={chapters} label={t.chaptersLabel} className="hidden lg:block sticky bottom-0 z-30 border-t" />
       </main>
 
-      {/* 4. Footer Finale */}
       <Footer dict={dict} />
-
-      {/* 4. Legal Age Gate */}
       <AgeGateModal dict={dict} />
     </div>
   );

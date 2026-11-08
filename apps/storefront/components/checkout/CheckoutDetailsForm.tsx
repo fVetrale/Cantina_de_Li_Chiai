@@ -109,8 +109,8 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
           required={options.required ?? true}
           aria-invalid={invalid}
           aria-describedby={invalid ? `${id}-error` : undefined}
-          className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:outline-none focus:ring-2 focus:ring-wine-800/30 ${
-            invalid ? "border-rose-500" : "border-ivory-300 focus:border-wine-800"
+          className={`w-full border bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:outline-none focus:ring-2 focus:ring-wine-800/30 ${
+ invalid ?"border-rose-500" : "border-ivory-300 focus:border-wine-800"
           }`}
         />
         {invalid && (
@@ -193,7 +193,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
               setShipping(pickAddress(chosen));
               if (chosen.phone) setPhone(chosen.phone);
             }}
-            className="w-full rounded-xl border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
+            className="w-full border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
           >
             <option value="" disabled>
               {t.savedAddressesPlaceholder}
@@ -227,7 +227,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
       </label>
 
       {!billingSame && (
-        <fieldset className="space-y-4 rounded-2xl border border-ivory-200 p-4">
+        <fieldset className="space-y-4 border border-ivory-200 p-4">
           <legend className="px-1 text-sm font-semibold text-cellar-900">{t.billingTitle}</legend>
           {addressFields("billing", billing, setBilling, "billing")}
         </fieldset>
@@ -237,7 +237,7 @@ export function CheckoutDetailsForm({ t, initial, savedAddresses = [] }: Checkou
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-full bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+          className="inline-flex items-center justify-center bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
         >
           {isPending ? t.saving : t.saveDetails}
         </button>

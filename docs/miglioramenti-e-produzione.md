@@ -115,6 +115,10 @@ Legenda: 🔴 bloccante per la produzione · 🟠 da decidere con il cliente · 
 
 ## 6. Interfaccia e contenuti (audit grafico in programma) ⚪
 
+- [x] **Restyling editoriale** (nero, bianco, un solo oro; Bodoni Moda e Lato; scheda prodotto a tre colonne, "La
+      Cantina" a capitoli, selettore dei vini): fatto il 2026-11-05 (ADR 045). Dettagli e materiale da chiedere al cliente
+      (logo, etichetta storica, foto su fondo bianco, archivio) in **`docs/restyling-editoriale.md`**.
+
 - [ ] 🟡 **Audit completo** di responsive (telefono, tablet, desktop), pulsanti morti e testi ingannevoli — da fare dopo
       l'area riservata (deciso il 2026-11-05).
 - [ ] ⚪ Scheda prodotto: "consegna entro il …" con una data calcolata a caso, codice articolo di riserva finto,
