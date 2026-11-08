@@ -69,7 +69,7 @@ export function CheckoutPlaceOrderForm({ t, locale, ready }: CheckoutPlaceOrderF
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5" aria-busy={isPending}>
       <div className="max-w-xs">
-        <label htmlFor="checkout-birth-date" className="block text-xs font-semibold text-cellar-700 mb-1">
+        <label htmlFor="checkout-birth-date" className="block font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600 mb-1">
           {t.birthDate}
         </label>
         <input
@@ -84,53 +84,53 @@ export function CheckoutPlaceOrderForm({ t, locale, ready }: CheckoutPlaceOrderF
           required
           aria-invalid={error === "birth_date" || error === "underage" || error === "invalid_input"}
           aria-describedby="checkout-birth-date-hint"
-          className="w-full border border-ivory-300 bg-white px-3.5 py-2.5 text-sm text-cellar-900 focus:border-wine-800 focus:outline-none focus:ring-2 focus:ring-wine-800/30"
+          className="w-full border px-0 py-2.5 text-sm text-black focus:outline-none"
         />
-        <p id="checkout-birth-date-hint" className="mt-1 text-[11px] text-cellar-500">
+        <p id="checkout-birth-date-hint" className="mt-2 text-xs text-gray-600">
           {t.birthDateHint}
         </p>
       </div>
 
-      <label className="flex items-start gap-2.5 text-sm text-cellar-800 cursor-pointer">
+      <label className="flex items-start gap-3 text-sm text-black cursor-pointer">
         <input
           type="checkbox"
           checked={declaredAdult}
           onChange={(e) => setDeclaredAdult(e.target.checked)}
           aria-invalid={error === "declaration"}
-          className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-wine-900 focus:ring-wine-800"
+          className="mt-0.5 w-4 h-4 accent-black"
         />
         <span>{t.declareAdult}</span>
       </label>
 
-      <label className="flex items-start gap-2.5 text-sm text-cellar-800 cursor-pointer">
+      <label className="flex items-start gap-3 text-sm text-black cursor-pointer">
         <input
           type="checkbox"
           checked={acceptTerms}
           onChange={(e) => setAcceptTerms(e.target.checked)}
           aria-invalid={error === "terms"}
-          className="mt-0.5 w-4 h-4 rounded border-ivory-400 text-wine-900 focus:ring-wine-800"
+          className="mt-0.5 w-4 h-4 accent-black"
         />
         <span>
           {t.acceptTermsPrefix}{" "}
           <Link
             href={locale === "en" ? "/legal?lang=en" : "/legal"}
             target="_blank"
-            className="underline text-wine-900 hover:text-wine-950"
+            className="underline text-black hover:text-gold-700"
           >
             {t.termsLink}
           </Link>
         </span>
       </label>
 
-      <p className="flex items-start gap-2 text-xs text-cellar-600">
-        <IdCard className="w-4 h-4 shrink-0 text-wine-900" aria-hidden="true" />
+      <p className="flex items-start gap-2 text-xs text-gray-600">
+        <IdCard className="w-4 h-4 shrink-0 text-gold-700" aria-hidden="true" />
         {t.idCheckNotice}
       </p>
 
       <button
         type="submit"
         disabled={isPending}
-        className="inline-flex items-center justify-center gap-2 bg-wine-900 px-7 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-black px-12 py-5 label-caps text-white hover:bg-gold-700 transition-colors duration-300 disabled:opacity-60"
       >
         <Lock className="w-4 h-4" aria-hidden="true" />
         {isPending ? t.placing : t.placeOrder}

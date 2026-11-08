@@ -72,22 +72,22 @@ export function CheckoutShippingForm({ t, labels, groups, selected }: CheckoutSh
             : null;
 
   if (groups.length === 0) {
-    return <p className="text-sm text-cellar-700">{t.noShippingOptions}</p>;
+    return <p className="text-sm text-gray-600">{t.noShippingOptions}</p>;
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-5" aria-busy={isPending}>
       {groups.map((group) => (
-        <fieldset key={group.profileId} className="space-y-2.5">
-          <legend className="mb-1 text-sm font-semibold text-cellar-900">{t.shippingChoiceLegend}</legend>
+        <fieldset key={group.profileId} className="[&>label:first-of-type]:border-t [&>label:first-of-type]:border-ivory-300">
+          <legend className="float-left w-full mb-4 label-caps text-black">{t.shippingChoiceLegend}</legend>
           {group.options.map((option) => {
             const checked = selection[group.profileId] === option.id;
             const amount = option.amount ?? 0;
             return (
               <label
                 key={option.id}
-                className={`flex items-start gap-3 border p-4 cursor-pointer transition-colors ${
- checked ?"border-wine-800 bg-wine-900/5" : "border-ivory-300 hover:border-wine-300"
+                className={`flex items-start gap-4 border-b border-ivory-300 py-5 px-3 cursor-pointer transition-colors ${
+                  checked ? "bg-gray-100" : "hover:bg-gray-100/60"
                 }`}
               >
                 <input
@@ -96,17 +96,17 @@ export function CheckoutShippingForm({ t, labels, groups, selected }: CheckoutSh
                   value={option.id}
                   checked={checked}
                   onChange={() => setSelection({ ...selection, [group.profileId]: option.id })}
-                  className="mt-1 w-4 h-4 text-wine-900 focus:ring-wine-800"
+                  className="mt-1 w-4 h-4 accent-black"
                 />
                 <span className="flex-1">
                   <span className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm font-semibold text-cellar-900">{shippingName(labels, option.name, option.type?.code)}</span>
-                    <span className="text-sm font-bold text-wine-950 whitespace-nowrap">
+                    <span className="font-sans text-[12px] font-bold uppercase tracking-[3px] text-black">{shippingName(labels, option.name, option.type?.code)}</span>
+                    <span className="font-serif text-lg whitespace-nowrap">
                       {amount === 0 ? t.free : `€ ${formatEuro(amount)}`}
                     </span>
                   </span>
                   {option.type?.description && (
-                    <span className="block text-xs text-cellar-600 mt-0.5">
+                    <span className="block text-sm text-gray-600 mt-1">
                       {shippingDescription(labels, option.type.description, option.type.code)}
                     </span>
                   )}
@@ -121,7 +121,7 @@ export function CheckoutShippingForm({ t, labels, groups, selected }: CheckoutSh
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center bg-wine-900 px-6 py-3 text-sm font-bold uppercase tracking-wider text-ivory-50 hover:bg-wine-950 disabled:opacity-60"
+          className="inline-flex items-center justify-center bg-black px-8 py-4 label-caps text-white hover:bg-gold-700 transition-colors duration-300 disabled:opacity-60"
         >
           {isPending ? t.saving : t.saveShipping}
         </button>

@@ -404,7 +404,7 @@ html:not([data-reveal-ready]) .reveal-block[data-state="armed"] .reveal-block__m
 
 /* Editorial form fields (reserved area, login, ADR 050): underlined, square, transparent.
    Scoped with .form-editorial so the forms' markup and logic stay unchanged. */
-.form-editorial :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input:not([type]), select, textarea) {
+.form-editorial :is(input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="date"], input:not([type]), select, textarea) {
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: var(--color-gray-300);

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { Check, ChevronDown } from "lucide-react";
 import { getDictionary, Locale, defaultLocale } from "@/lib/i18n";
 import { getCategories } from "@/lib/data/products";
 import { getCurrentCheckoutView } from "@/lib/data/checkout";
@@ -56,145 +57,134 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
     redirect(`/carrello${langQuery}`);
   }
 
+  // Step state for the indicator (ADR 051): it only reflects what the checkout already knows.
+  const detailsDone = view.status === "ok" && !!view.checkout.email && !!view.checkout.shippingAddress;
+  const shippingDone = view.status === "ok" && view.checkout.shippingComplete;
+  const steps = [
+    { id: "step-details", label: t.stepDetails, done: detailsDone },
+    { id: "step-shipping", label: t.stepShipping, done: shippingDone },
+    { id: "step-review", label: t.stepReview, done: false },
+  ];
+  const currentStep = steps.findIndex((s) => !s.done);
+
   return (
-    <div className="flex min-h-screen flex-col bg-ivory-50 text-cellar-900 selection:bg-wine-800 selection:text-gold-200">
+    <div className="flex min-h-screen flex-col bg-white text-black selection:bg-black selection:text-white">
       <Navbar dict={dict} currentLocale={currentLocale} categories={categories} />
 
-      <main className="flex-grow pt-24 sm:pt-28 pb-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 pb-4 border-b border-ivory-300">
-            <nav
-              aria-label="Breadcrumbs"
-              className="flex items-center gap-2 text-xs font-semibold text-gold-700 uppercase tracking-wider mb-1.5"
-            >
-              <Link href={`/carrello${langQuery}`} className="hover:text-wine-900 transition-colors">
-                {t.breadcrumbsCart}
-              </Link>
-              <span className="text-ivory-400">•</span>
-              <span className="text-cellar-900 font-bold">{t.title}</span>
-            </nav>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-wine-950 tracking-tight">
-              {t.title}
-            </h1>
-          </div>
+      <main className="flex-grow pt-16 lg:pt-[72px] pb-24">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
+          <header className="pt-12 lg:pt-20 pb-10">
+            <Link href={`/carrello${langQuery}`} className="link-editorial text-gray-600 hover:text-black">
+              {t.backToCart}
+            </Link>
+            <p className="mt-10 label-caps text-gold-700 mb-5">{t.eyebrow}</p>
+            <h1 className="title-page">{t.title}</h1>
+
+            {view.status === "ok" && (
+              <nav aria-label={t.stepsLabel} className="mt-10">
+                <ol className="flex flex-wrap items-center gap-x-8 gap-y-3">
+                  {steps.map((step, index) => {
+                    const state = step.done ? "done" : index === currentStep ? "current" : "next";
+                    return (
+                      <li key={step.id}>
+                        <a
+                          href={`#${step.id}`}
+                          aria-current={state === "current" ? "step" : undefined}
+                          className={`flex items-center gap-3 font-sans text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
+                            state === "done" ? "text-gold-700" : state === "current" ? "text-black" : "text-gray-500"
+                          }`}
+                        >
+                          <span className="font-serif text-lg tracking-normal">{String(index + 1).padStart(2, "0")}</span>
+                          <span>{step.label}</span>
+                          {state === "done" && (
+                            <>
+                              <Check className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span className="sr-only">({t.stepCompleted})</span>
+                            </>
+                          )}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </nav>
+            )}
+          </header>
 
           {view.status === "unavailable" && (
             <CatalogUnavailable dict={dict} retryHref={`/checkout${langQuery}`} homeHref={`/${langQuery}`} />
           )}
 
           {view.status === "ok" && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              <div className="lg:col-span-8 space-y-6">
-                <section
-                  aria-labelledby="step-details"
-                  className="bg-white border border-ivory-200 p-6 sm:p-7"
-                >
-                  <h2 id="step-details" className="font-serif text-2xl font-bold text-wine-950 mb-5">
-                    {t.stepDetails}
-                  </h2>
-                  <CheckoutDetailsForm
-                    t={t}
-                    initial={{
-                      email: view.checkout.email || customer?.email || "",
-                      shipping: view.checkout.shippingAddress ?? defaultAddress ?? null,
-                      billing: view.checkout.billingAddress,
-                      billingSameAsShipping: view.checkout.billingSameAsShipping,
-                      phone: customer?.phone ?? "",
-                    }}
-                    savedAddresses={savedAddresses}
-                  />
-                </section>
+            <>
+              {/* Mobile: collapsible summary at the top, closed by default */}
+              <details className="lg:hidden mb-10 bg-gray-100 group">
+                <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                  <span className="label-caps text-black">{t.showSummary}</span>
+                  <span className="flex items-center gap-3 font-serif text-xl">
+                    € {formatEuro(view.checkout.total)}
+                    <ChevronDown className="w-4 h-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+                  </span>
+                </summary>
+                <div className="px-5 pb-6">
+                  <SummaryContent view={view.checkout} t={t} langQuery={langQuery} />
+                </div>
+              </details>
 
-                <section
-                  aria-labelledby="step-shipping"
-                  className="bg-white border border-ivory-200 p-6 sm:p-7"
-                >
-                  <h2 id="step-shipping" className="font-serif text-2xl font-bold text-wine-950 mb-5">
-                    {t.stepShipping}
-                  </h2>
-                  {view.checkout.shippingGroups === null ? (
-                    <p className="text-sm text-cellar-600">{t.shippingAfterAddress}</p>
-                  ) : (
-                    <CheckoutShippingForm
-                      labels={dict.shipping}
-                      // Reset the local selection when the offered options change.
-                      key={view.checkout.shippingGroups.flatMap((g) => g.options.map((o) => o.id)).join(",")}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start">
+                <div className="lg:col-span-7 form-editorial">
+                  <section id="step-details" aria-labelledby="step-details-title" className="scroll-mt-32 border-t border-black pt-8 pb-14">
+                    <StepTitle number="01" id="step-details-title" label={t.stepDetails} />
+                    <CheckoutDetailsForm
                       t={t}
-                      groups={view.checkout.shippingGroups}
-                      selected={view.checkout.selectedOptionIds}
+                      initial={{
+                        email: view.checkout.email || customer?.email || "",
+                        shipping: view.checkout.shippingAddress ?? defaultAddress ?? null,
+                        billing: view.checkout.billingAddress,
+                        billingSameAsShipping: view.checkout.billingSameAsShipping,
+                        phone: customer?.phone ?? "",
+                      }}
+                      savedAddresses={savedAddresses}
                     />
-                  )}
-                </section>
+                  </section>
 
-                <section
-                  aria-labelledby="step-review"
-                  className="bg-white border border-ivory-200 p-6 sm:p-7"
+                  <section id="step-shipping" aria-labelledby="step-shipping-title" className="scroll-mt-32 border-t border-black pt-8 pb-14">
+                    <StepTitle number="02" id="step-shipping-title" label={t.stepShipping} />
+                    {view.checkout.shippingGroups === null ? (
+                      <p className="text-sm text-gray-600">{t.shippingAfterAddress}</p>
+                    ) : (
+                      <CheckoutShippingForm
+                        labels={dict.shipping}
+                        // Reset the local selection when the offered options change.
+                        key={view.checkout.shippingGroups.flatMap((g) => g.options.map((o) => o.id)).join(",")}
+                        t={t}
+                        groups={view.checkout.shippingGroups}
+                        selected={view.checkout.selectedOptionIds}
+                      />
+                    )}
+                  </section>
+
+                  <section id="step-review" aria-labelledby="step-review-title" className="scroll-mt-32 border-t border-black pt-8">
+                    <StepTitle number="03" id="step-review-title" label={t.stepReview} />
+                    <CheckoutPlaceOrderForm
+                      t={t}
+                      locale={currentLocale}
+                      ready={!!view.checkout.email && view.checkout.shippingComplete}
+                    />
+                  </section>
+                </div>
+
+                <aside
+                  aria-labelledby="checkout-summary"
+                  className="hidden lg:block lg:col-span-5 bg-gray-100 p-8 lg:p-10 lg:sticky lg:top-[calc(var(--header-offset)+2rem)] transition-[top] duration-300"
                 >
-                  <h2 id="step-review" className="font-serif text-2xl font-bold text-wine-950 mb-5">
-                    {t.stepReview}
+                  <h2 id="checkout-summary" className="label-caps text-black mb-8">
+                    {t.summaryTitle}
                   </h2>
-                  <CheckoutPlaceOrderForm
-                    t={t}
-                    locale={currentLocale}
-                    ready={!!view.checkout.email && view.checkout.shippingComplete}
-                  />
-                </section>
+                  <SummaryContent view={view.checkout} t={t} langQuery={langQuery} />
+                </aside>
               </div>
-
-              <aside
-                aria-labelledby="checkout-summary"
-                className="lg:col-span-4 bg-white border border-ivory-200 p-6 sm:p-7 lg:sticky lg:top-28"
-              >
-                <h2 id="checkout-summary" className="font-serif text-2xl font-bold text-wine-950 mb-4">
-                  {t.summaryTitle}
-                </h2>
-                <ul className="space-y-3 mb-4">
-                  {view.checkout.lines.map((line) => (
-                    <li key={line.id} className="flex items-center gap-3">
-                      <span className="relative w-10 h-12 shrink-0 bg-ivory-50 border border-ivory-200 overflow-hidden">
-                        <Image src={line.image} alt="" fill sizes="40px" className="object-contain p-0.5" />
-                      </span>
-                      <span className="flex-1 min-w-0 text-xs text-cellar-800">
-                        <span className="block font-semibold truncate">{line.title}</span>
-                        <span className="text-cellar-500">× {line.quantity}</span>
-                      </span>
-                      <span className="text-xs font-semibold text-cellar-900 whitespace-nowrap">
-                        € {formatEuro(line.lineTotal)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <dl className="space-y-1.5 border-t border-ivory-200 pt-4 text-sm">
-                  <div className="flex justify-between">
-                    <dt className="text-cellar-700">{t.itemsTotal}</dt>
-                    <dd className="font-semibold">€ {formatEuro(view.checkout.itemTotal)}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-cellar-700">{t.shipping}</dt>
-                    <dd className="font-semibold">
-                      {view.checkout.shippingComplete
-                        ? view.checkout.shippingTotal === 0
-                          ? t.free
-                          : `€ ${formatEuro(view.checkout.shippingTotal)}`
-                        : t.shippingToChoose}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between items-baseline border-t border-ivory-200 pt-3 mt-2">
-                    <dt className="font-semibold text-cellar-900">{t.total}</dt>
-                    <dd className="font-serif text-2xl font-bold text-wine-950">
-                      € {formatEuro(view.checkout.total)}
-                    </dd>
-                  </div>
-                </dl>
-                <p className="text-[11px] text-cellar-500 text-right">{t.ivaIncluded}</p>
-                <Link
-                  href={`/carrello${langQuery}`}
-                  className="mt-4 block text-center text-xs font-semibold text-wine-900 underline hover:text-wine-950"
-                >
-                  {t.editCart}
-                </Link>
-              </aside>
-            </div>
+            </>
           )}
         </div>
       </main>
@@ -202,5 +192,72 @@ export default async function CheckoutPage(props: { searchParams?: Promise<{ lan
       <Footer dict={dict} />
       <AgeGateModal dict={dict} />
     </div>
+  );
+}
+
+function StepTitle({ number, id, label }: { number: string; id: string; label: string }) {
+  return (
+    <h2 id={id} className="mb-8 flex items-baseline gap-5">
+      <span className="font-serif text-4xl text-gold-700">{number}</span>
+      <span className="title-section">{label}</span>
+    </h2>
+  );
+}
+
+type CheckoutData = Extract<Awaited<ReturnType<typeof getCurrentCheckoutView>>, { status: "ok" }>["checkout"];
+
+/** Order summary: wines, totals, IVA (desktop sidebar and mobile collapsible). */
+function SummaryContent({
+  view,
+  t,
+  langQuery,
+}: {
+  view: CheckoutData;
+  t: ReturnType<typeof getDictionary>["checkout"];
+  langQuery: string;
+}) {
+  return (
+    <>
+      <ul className="space-y-4 mb-6">
+        {view.lines.map((line) => (
+          <li key={line.id} className="flex items-center gap-4">
+            <span className="relative w-12 h-16 shrink-0 overflow-hidden bg-white">
+              <Image src={line.image} alt="" fill sizes="48px" className="object-cover" />
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block font-serif text-lg truncate">{line.title}</span>
+              <span className="font-sans text-[11px] font-bold uppercase tracking-[2px] text-gray-600">× {line.quantity}</span>
+            </span>
+            <span className="font-serif text-lg whitespace-nowrap">€ {formatEuro(line.lineTotal)}</span>
+          </li>
+        ))}
+      </ul>
+      <dl className="space-y-2 border-t border-ivory-400 pt-5 text-sm">
+        <div className="flex justify-between">
+          <dt className="text-gray-600">{t.itemsTotal}</dt>
+          <dd>€ {formatEuro(view.itemTotal)}</dd>
+        </div>
+        <div className="flex justify-between">
+          <dt className="text-gray-600">{t.shipping}</dt>
+          <dd>
+            {view.shippingComplete
+              ? view.shippingTotal === 0
+                ? t.free
+                : `€ ${formatEuro(view.shippingTotal)}`
+              : t.shippingToChoose}
+          </dd>
+        </div>
+        <div className="flex justify-between items-baseline border-t border-ivory-400 pt-4 mt-3">
+          <dt className="label-caps text-black">{t.total}</dt>
+          <dd className="font-serif text-3xl">€ {formatEuro(view.total)}</dd>
+        </div>
+      </dl>
+      <p className="mt-1 text-xs text-gray-600 text-right">{t.ivaIncluded}</p>
+      <div className="mt-6 text-center">
+        <Link href={`/carrello${langQuery}`} className="link-editorial text-black hover:text-gold-700">
+          {t.editCart}
+        </Link>
+      </div>
+    </>
   );
 }

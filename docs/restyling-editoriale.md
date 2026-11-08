@@ -193,6 +193,17 @@ cliente.
   - stato degli ordini con un pallino colorato.
 - **Pulizia:** cancellati i componenti e i testi non più usati.
 
+## 3g. Checkout e "Ordine ricevuto" (2026-11-08, ADR 051)
+
+- **Checkout:**
+  - in alto "Torna al carrello", il titolo e l'indicatore dei passaggi **01 Contatti e indirizzo · 02 Spedizione ·
+    03 Conferma ordine** (completati in oro con la spunta, quello attuale in nero);
+  - i tre passaggi con un grande numero in oro, campi sottolineati, opzioni di spedizione come righe eleganti e un
+    grande pulsante nero "Conferma ordine";
+  - riepilogo su grigio a destra; su telefono in cima, richiudibile ("Mostra riepilogo · € X").
+- **"Ordine ricevuto":** intestazione nera con il numero d'ordine grande e l'email, poi i vini e il totale su grigio.
+  Senza un ordine recente si vede una pagina a tutto schermo, come il carrello vuoto.
+
 ## 4. Cosa del file di indicazioni NON è stato fatto, e perché
 
 | Indicazione | Perché no (per ora) |
